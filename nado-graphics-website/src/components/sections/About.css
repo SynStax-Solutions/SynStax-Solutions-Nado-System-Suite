@@ -1,0 +1,12 @@
+.about-section {
+  position: relative; z-index: 4;
+  background: var(--paper);
+  margin-top: -44px;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  padding-top: 150px;
+}
+.about-body { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; flex-wrap: wrap; }
+.about-body > p { max-width: 480px; font-size: 18px; line-height: 1.6; color: rgba(33,26,16,0.72); }
+.about-stats { display: flex; gap: 40px; flex-wrap: wrap; }
+.about-stat-value { font-family: var(--font-display); font-size: 40px; color: var(--ink); }
+.about-stat-label { margin-top: 6px; font-size: 14px; color: rgba(33,26,16,0.6); max-width: 140px; }

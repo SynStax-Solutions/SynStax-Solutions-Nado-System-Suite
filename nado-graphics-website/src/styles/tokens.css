@@ -1,0 +1,21 @@
+:root {
+  --paper: #FAF4E7;
+  --card: #F1E4CB;
+  --mustard-wash: #F3DE9E;
+  --ink: #211A10;
+  --rust: #B8371C;
+  --mustard: #D9A417;
+  --amber: #E07A2C;
+  --line: rgba(33, 26, 16, 0.12);
+  --line-dark: rgba(250, 244, 231, 0.16);
+
+  --font-display: 'Archivo Black', 'Archivo', sans-serif;
+  --font-voice: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+
+  --wrap-max: 1180px;
+  --wrap-pad: 32px;
+  --radius-lg: 56px;
+  --radius-md: 44px;
+  --radius-sm: 18px;
+}

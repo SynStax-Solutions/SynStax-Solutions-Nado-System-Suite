@@ -1,0 +1,20 @@
+.contact-section {
+  position: relative; z-index: 7;
+  background: var(--ink);
+  min-height: 92vh;
+  display: flex; align-items: center;
+  margin-top: -56px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.contact { text-align: center; position: relative; overflow: hidden; padding: 60px 20px; width: 100%; }
+.contact h2 {
+  font-family: var(--font-voice); font-style: italic; font-weight: 500;
+  font-size: clamp(34px,6vw,68px);
+  max-width: 760px; margin: 0 auto 32px;
+  color: var(--paper);
+}
+.contact-dot {
+  position: absolute; width: 220px; height: 220px; border-radius: 50%;
+  background: var(--mustard); opacity: 0.22; filter: blur(70px);
+  top: -70px; left: 50%; transform: translateX(-50%);
+}
