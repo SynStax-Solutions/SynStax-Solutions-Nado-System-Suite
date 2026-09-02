@@ -1,3 +1,4 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import Hero from './components/sections/Hero'
@@ -6,21 +7,40 @@ import About from './components/sections/About'
 import WorkGrid from './components/sections/WorkGrid'
 import Process from './components/sections/Process'
 import CTA from './components/sections/CTA'
+
+import AboutPage from './pages/AboutPage'
+import PortfolioPage from './pages/PortfolioPage'
+import ContactPage from './pages/ContactPage'
+
 import './App.css'
 
-function App() {
+
+function HomePage() {
   return (
     <div className="app">
-      <Navbar />
       <Hero />
       <Marquee />
       <About />
       <WorkGrid />
       <Process />
       <CTA />
-      <Footer />
     </div>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <Router>
+      <div className="app">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
+  )
+}
