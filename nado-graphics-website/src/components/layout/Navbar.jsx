@@ -1,5 +1,15 @@
 import { Link, useLocation } from 'react-router-dom'
-import Button from '../ui/Button'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import {
+  faInstagram,
+  faFacebookF,
+  faLinkedinIn,
+} from '@fortawesome/free-brands-svg-icons'
+
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
+
+import Logo from '../../assets/Logo.svg'
 import './Navbar.css'
 
 const LINKS = [
@@ -9,24 +19,52 @@ const LINKS = [
   { path: '/contact', label: 'Contact Us' },
 ]
 
-export default function Navbar({ logo = 'NADO' }) {
-  const location = useLocation()
-  return (
+const SOCIALS = [
+  {
+    name: 'Instagram',
+    url: '#',
+    icon: faInstagram,
+  },
+  {
+    name: 'Facebook',
+    url: '#',
+    icon: faFacebookF,
+  },
+  {
+    name: 'LinkedIn',
+    url: '#',
+    icon: faLinkedinIn,
+  },
+  {
+    name: 'Email',
+    url: 'mailto:hello@nadographics.co.za',
+    icon: faEnvelope,
+  },
+]
 
+export default function Navbar() {
+  const location = useLocation()
+
+  return (
     <nav>
       <div className="wrap navbar-inner">
+
+        {/* Logo */}
         <Link to="/" className="logo">
-        {logo}<span>.</span>
+          <img src={Logo} alt="Nado Graphics logo" />
         </Link>
-    
+
+        {/* Page Navigation */}
         <div className="navlinks">
           {LINKS.map((link) => {
-            const isActive = link.path === '/' 
-              ? location.pathname === '/' 
-              : location.pathname.startsWith(link.path)
+            const isActive =
+              link.path === '/'
+                ? location.pathname === '/'
+                : location.pathname.startsWith(link.path)
+
             return (
-              <Link 
-                key={link.path} 
+              <Link
+                key={link.path}
                 to={link.path}
                 className={isActive ? 'active' : ''}
               >
@@ -36,9 +74,21 @@ export default function Navbar({ logo = 'NADO' }) {
           })}
         </div>
 
-        <Button to="/contact" variant="primary" className="navcta">
-          Start a project
-        </Button>
+        {/* Social Media */}
+        <div className="social-links">
+          {SOCIALS.map((social) => (
+            <a
+              key={social.name}
+              href={social.url}
+              className="social-link"
+              aria-label={social.name}
+              title={social.name}
+            >
+              <FontAwesomeIcon icon={social.icon} />
+            </a>
+          ))}
+        </div>
+
       </div>
     </nav>
   )

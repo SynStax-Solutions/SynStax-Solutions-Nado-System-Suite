@@ -3,7 +3,7 @@ import './CTA.css'
 
 export default function CTA({
   heading = "Got a brand that deserves better? Let's make something warm and loud.",
-  email = 'hello@nado.design',
+  email = 'enquiries@nadographics.com',
 }) {
   return (
     <section className="contact-section snap" id="contact">
