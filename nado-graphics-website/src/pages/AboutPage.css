@@ -1,0 +1,111 @@
+/* src/pages/AboutPage.css */
+ 
+/*
+  Self-contained LIGHT theme for the About page only.
+  Scoped to .about-page so nothing leaks into Home, Navbar, or Footer.
+*/
+.about-page {
+  --nd-bg: #ffffff;
+  --nd-bg-soft: #f5f5f7;
+  --nd-surface: #ffffff;
+  --nd-border: rgba(0, 0, 0, 0.08);
+  --nd-text: #1d1d1f;
+  --nd-text-dim: rgba(29, 29, 31, 0.62);
+  --nd-text-faint: rgba(29, 29, 31, 0.4);
+ 
+  --nd-violet: #8b5cf6;
+  --nd-pink: #ec4899;
+  --nd-blue: #3b82f6;
+  --nd-cyan: #22d3ee;
+  --nd-coral: #ff6b4a;
+  --nd-amber: #ffb020;
+ 
+  --nd-grad-1: linear-gradient(135deg, #8b5cf6, #ec4899);
+  --nd-grad-2: linear-gradient(135deg, #3b82f6, #22d3ee);
+  --nd-grad-3: linear-gradient(135deg, #ff6b4a, #ffb020);
+ 
+  --nd-radius-lg: 48px;
+  --nd-radius-md: 32px;
+  --nd-radius-sm: 20px;
+ 
+  --nd-font: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+ 
+  background: var(--nd-bg);
+  color: var(--nd-text);
+  font-family: var(--nd-font);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+ 
+.about-page section {
+  position: relative;
+}
+ 
+/* ---------- scroll reveal utility (used by <Reveal>) ---------- */
+.about-page .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+.about-page .reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-page .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+ 
+/* ---------- shared building blocks reused across every About section ---------- */
+ 
+/* A plain elevated card - white, hairline border, soft shadow. No blur, no glass. */
+.about-page .surface-card {
+  background: var(--nd-surface);
+  border: 1px solid var(--nd-border);
+  border-radius: var(--nd-radius-sm);
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.04);
+}
+ 
+.about-page .nd-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 100px;
+  background: var(--nd-bg-soft);
+  border: 1px solid var(--nd-border);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--nd-text-dim);
+  text-transform: uppercase;
+}
+.about-page .nd-eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--nd-grad-1);
+  flex-shrink: 0;
+}
+ 
+.about-page .nd-heading {
+  font-family: var(--nd-font);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--nd-text);
+  margin-top: 20px;
+}
+ 
+.about-page .nd-lead {
+  color: var(--nd-text-dim);
+  line-height: 1.6;
+  font-weight: 400;
+}

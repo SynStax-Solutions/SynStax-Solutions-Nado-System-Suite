@@ -1,0 +1,127 @@
+/* src/components/sections/Story.css */
+
+.nd-story {
+  padding: 140px 0;
+  background: var(--nd-bg-soft);
+}
+
+.nd-story-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 90px;
+  align-items: start;
+}
+
+.nd-story-copy {
+  width: 100%;
+}
+
+.nd-story-title {
+  font-size: clamp(28px, 3.4vw, 44px);
+  max-width: 680px;
+  line-height: 1.08;
+}
+
+.nd-story-title em {
+  font-style: italic;
+  font-weight: 700;
+}
+
+.nd-story-text {
+  margin-top: 30px;
+  max-width: 100%;
+  width: 100%;
+  font-size: 17px;
+  line-height: 1.8;
+  letter-spacing: -0.01em;
+}
+
+.nd-story-text strong {
+  font-weight: 700;
+}
+
+.nd-story-closing {
+  margin-top: 36px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+}
+
+.nd-story-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 70px;
+}
+
+.nd-stat-card {
+  padding: 36px 32px;
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease;
+}
+
+.nd-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.07);
+}
+
+.nd-stat-value {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.nd-stat-card p {
+  color: var(--nd-text-dim);
+  font-size: 14.5px;
+  line-height: 1.55;
+  max-width: 280px;
+}
+
+.nd-grad-text-1 {
+  background: var(--nd-grad-1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.nd-grad-text-2 {
+  background: var(--nd-grad-2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.nd-grad-text-3 {
+  background: var(--nd-grad-3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (max-width: 900px) {
+  .nd-story {
+    padding: 100px 0;
+  }
+
+  .nd-story-grid {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+
+  .nd-story-stats {
+    padding-top: 0;
+  }
+
+  .nd-story-text {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .nd-story-closing {
+    max-width: 100%;
+  }
+}

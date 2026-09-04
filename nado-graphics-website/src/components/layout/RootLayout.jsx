@@ -19,7 +19,7 @@ export default function RootLayout() {
       smoothWheel: true,
       wheelMultiplier: 1.0,
       touchMultiplier: 1.5,
-      autoRaf: false, // GSAP drives the RAF ticker instead
+      autoRaf: false, 
     });
 
     // Notify ScrollTrigger on Lenis scroll

@@ -55,7 +55,6 @@ button {
 
 /* 
    Lenis handles the smooth scrolling.
-   We don't want CSS scroll snapping fighting it.
 */
 .snap {
   scroll-snap-align: none;
