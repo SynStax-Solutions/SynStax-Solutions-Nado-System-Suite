@@ -1,0 +1,6 @@
+@Nado_Graphic_MS_Frontend_HostAddress = http://localhost:5295
+
+GET {{Nado_Graphic_MS_Frontend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
