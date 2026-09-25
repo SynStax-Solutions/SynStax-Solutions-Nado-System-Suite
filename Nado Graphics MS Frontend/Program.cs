@@ -1,8 +1,20 @@
+using Nado_Graphics_MS_Frontend.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddHttpClient("BMSApi", client =>
+{
+    client.BaseAddress = new Uri(
+        builder.Configuration["ApiSettings:BaseUrl"]!
+    );
+});
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrganisationService>();
+builder.Services.AddScoped<ClientService>();
+builder.Services.AddScoped<SupplierService>();
+builder.Services.AddScoped<JobCardService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
