@@ -7,4 +7,11 @@
     <RootNamespace>Nado_Graphics_MS_Frontend</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Admins\" />
+    <Folder Include="Views\Designers\" />
+    <Folder Include="Views\JobCards\" />
+    <Folder Include="Views\Managers\" />
+  </ItemGroup>
+
 </Project>

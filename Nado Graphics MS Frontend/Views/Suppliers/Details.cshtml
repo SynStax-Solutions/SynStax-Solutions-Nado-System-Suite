@@ -1,0 +1,261 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.SupplierModel
+
+@{
+    ViewData["Title"] = "Supplier Details";
+}
+
+<div style="width: 100%;">
+
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 25px; ">
+
+        <div>
+
+            <h1 style="
+                margin: 0;
+                font-size: 32px;
+                font-weight: 700;
+                color: #24463A; ">
+                Supplier Details
+            </h1>
+
+            <p style="
+                margin: 5px 0 0 0;
+                color: #555;
+                font-size: 15px; ">
+                View the details of @Model.SupplierName.
+            </p>
+
+        </div>
+
+        <a asp-action="Index"
+           style="
+                background-color: #68926D;
+                color: white;
+                text-decoration: none;
+                padding: 11px 20px;
+                border-radius: 7px;
+                font-weight: 600; ">
+            Back to Suppliers
+        </a>
+
+    </div>
+
+    <div style="
+        background-color: white;
+        border: 2px solid black;
+        border-radius: 14px;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.20);
+        padding: 25px;
+        max-width: 900px; ">
+
+        <h2 style="
+            margin: 0;
+            color: #24463A;
+            font-size: 21px;
+            font-weight: 700;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #68926D; ">
+            Supplier Information
+        </h2>
+
+
+        <div style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 25px; ">
+
+            <div>
+
+                <label style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px; ">
+                    Supplier Name
+                </label>
+
+                <div style="
+                    border: 2px solid black;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5; ">
+                    @Model.SupplierName
+                </div>
+
+            </div>
+
+            <div>
+
+                <label style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px; ">
+                    Service Type
+                </label>
+
+                <div style="
+                    border: 2px solid black;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5; ">
+                    @Model.ServiceType
+                </div>
+
+            </div>
+
+            <div>
+
+                <label style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px; ">
+                    Contact Number
+                </label>
+
+                <div style="
+                    border: 2px solid black;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5; ">
+                    @(string.IsNullOrWhiteSpace(Model.ContactNumber) ? "—" : Model.ContactNumber)
+                </div>
+
+            </div>
+
+            <div>
+
+                <label style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px; ">
+                    Email Address
+                </label>
+
+                <div style="
+                    border: 2px solid black;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5; ">
+                    @(string.IsNullOrWhiteSpace(Model.SupplierEmail) ? "—" : Model.SupplierEmail)
+                </div>
+
+            </div>
+
+            <div>
+
+                <label style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px; ">
+                    Lead Time
+                </label>
+
+                <div style="
+                    border: 2px solid black;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5; ">
+                    @Model.LeadTime
+                </div>
+
+            </div>
+
+            <div>
+
+                <label style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px; ">
+                    Supplier ID
+                </label>
+
+                <div style="
+                    border: 2px solid black;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5; ">
+                    @Model.SupplierID
+                </div>
+
+            </div>
+
+
+            <div style="grid-column: 1 / -1;">
+
+                <label style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px; ">
+                    Supplier Address
+                </label>
+
+                <div style="
+                    border: 2px solid black;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5;
+                    min-height: 45px; ">
+                    @(string.IsNullOrWhiteSpace(Model.SupplierAddress) ? "—" : Model.SupplierAddress)
+                </div>
+
+            </div>
+
+            <div>
+
+                <label style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px; ">
+                    Created At
+                </label>
+
+                <div style="
+                    border: 2px solid black;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5; ">
+                    @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")
+                </div>
+
+            </div>
+
+        </div>
+
+        <div style="
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 25px; ">
+
+            <a asp-action="Index"
+               style="
+                    background-color: #68926D;
+                    color: white;
+                    text-decoration: none;
+                    padding: 11px 22px;
+                    border-radius: 7px;
+                    font-weight: 600; ">
+                Back to Suppliers
+            </a>
+
+            <a asp-action="Edit"
+               asp-route-id="@Model.SupplierID"
+               style="
+                    background-color: #5A93C8;
+                    color: white;
+                    text-decoration: none;
+                    padding: 11px 22px;
+                    border-radius: 7px;
+                    font-weight: 600; ">
+                Edit Supplier
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
