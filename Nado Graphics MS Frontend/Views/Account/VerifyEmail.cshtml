@@ -1,0 +1,51 @@
+﻿@model VerifyEmailViewModel
+
+@{
+    ViewData["Title"] = "Verify Email";
+}
+
+@* This page opens from the link in the verification email. *@
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5 text-center">
+
+        @* Success is empty until the user clicks the button. *@
+        @if (Model.Success == null)
+        {
+            @* If the link has no token, it can't be used. *@
+            if (string.IsNullOrEmpty(Model.Token))
+            {
+                <h2>Invalid link</h2>
+                <p class="text-muted">This verification link is missing its code. Please use the link from your email.</p>
+            }
+            else
+            {
+                <h2>Verify your email</h2>
+                <p class="text-muted">Click the button below to verify your email address and activate your account.</p>
+
+                @* The button sends the token to be checked. *@
+                <form asp-action="VerifyEmail" method="post">
+                    <input asp-for="Token" type="hidden" />
+                    <button type="submit" class="btn"
+                            style="background-color: #68926D; color: white; padding: 10px 20px;">
+                        Verify my email
+                    </button>
+                </form>
+            }
+        }
+        else if (Model.Success == true)
+        {
+            @* This shows when verification worked. *@
+            <h2 style="color: #68926D;">Email verified</h2>
+            <p>@Model.Message</p>
+            <a asp-action="Login" class="btn" style="background-color: #68926D; color: white;">Go to login</a>
+        }
+        else
+        {
+            @* This shows when the link is wrong, expired or already used. *@
+            <h2 style="color: #D46271;">Verification failed</h2>
+            <p>@Model.Message</p>
+            <a asp-action="Login" class="btn btn-secondary">Go to login</a>
+        }
+
+    </div>
+</div>

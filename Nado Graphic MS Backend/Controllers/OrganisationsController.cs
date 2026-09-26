@@ -2,11 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
+using Microsoft.AspNetCore.Authorization;
+using Nado_Graphics_MS_Backend.Security;
 
 namespace Nado_Graphics_MS_Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+
+    //Only a logged-in Manager (Owner) or PA/Admin can use these endpoints.
+    [Authorize(Roles = AppRoles.ManagerOrAdmin)]
     public class OrganisationsController : ControllerBase
     {
         private readonly BMSDbContext _context;
@@ -114,4 +119,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
         }
     }
 }
+/* References
+Microsoft (n.d.) Role-based authorization in ASP.NET Core. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles
+ */
 //--------------------------------------------------<>\\<>End of Program<>//<>------------------------------------------------------------//

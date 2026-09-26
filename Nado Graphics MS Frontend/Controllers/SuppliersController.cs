@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nado_Graphics_MS_Frontend.Models;
 using Nado_Graphics_MS_Frontend.Services;
+using Microsoft.AspNetCore.Authorization;
+using Nado_Graphics_MS_Frontend.Security;
 
 namespace Nado_Graphics_MS_Frontend.Controllers
 {
+    //Only a logged-in Manager (Owner) or PA/Admin can open these pages.
+    [Authorize(Roles = AppRoles.ManagerOrAdmin)]
     public class SuppliersController : Controller
     {
         private readonly SupplierService _supplierService;

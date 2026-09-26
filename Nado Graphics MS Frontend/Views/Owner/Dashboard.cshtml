@@ -2,30 +2,45 @@
     ViewData["Title"] = "Owner Dashboard";
 }
 
+@* This is the Owner (Manager) dashboard. Only the Manager can open it. *@
 <div class="container mt-5">
 
     <h1>Owner Dashboard</h1>
 
+    @* This shows the logged-in user's name. *@
     <p class="text-muted">
-        Manage the Business Management System.
+        Welcome, @User.Identity?.Name. Manage the Business Management System.
     </p>
 
-    <div class="row mt-4">
+    <div class="row mt-4 g-3">
 
         <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">User Management</h5>
+                    <p class="card-text">Create, view, edit and delete user accounts.</p>
+                    <a asp-controller="Users" asp-action="Index" class="btn btn-primary">Manage Users</a>
+                </div>
+            </div>
+        </div>
 
-                    <p class="card-text">
-                        Create, view, edit and delete user accounts.
-                    </p>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Clients &amp; Organisations</h5>
+                    <p class="card-text">Manage clients and the organisations they belong to.</p>
+                    <a asp-controller="Clients" asp-action="Index" class="btn btn-primary">Clients</a>
+                    <a asp-controller="Organisations" asp-action="Index" class="btn btn-outline-primary">Organisations</a>
+                </div>
+            </div>
+        </div>
 
-                    <a asp-controller="Users"
-                       asp-action="Index"
-                       class="btn btn-primary">
-                        Manage Users
-                    </a>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Suppliers</h5>
+                    <p class="card-text">Manage suppliers.</p>
+                    <a asp-controller="Suppliers" asp-action="Index" class="btn btn-primary">Suppliers</a>
                 </div>
             </div>
         </div>

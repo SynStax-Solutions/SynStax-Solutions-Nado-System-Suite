@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Services;
+using Microsoft.AspNetCore.Authorization;
+using Nado_Graphics_MS_Backend.Security;
 
 namespace Nado_Graphics_MS_Backend.Controllers
 {
@@ -9,6 +11,9 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
     //Defines the API route as /api/Clients.
     [Route("api/[controller]")]
+
+    //Only a logged-in Manager (Owner) or PA/Admin can use these endpoints.
+    [Authorize(Roles = AppRoles.ManagerOrAdmin)]
     public class ClientsController : ControllerBase
     {
         //The below line stores the ClientService used to handle client operations.
@@ -107,4 +112,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
         }
     }
 }
+/* References
+ Microsoft (n.d.) Role-based authorization in ASP.NET Core. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles
+ */
 //--------------------------------------------------<>\\<>End of Program<>//<>------------------------------------------------------------//

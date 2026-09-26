@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Designer Dashboard";
+}
+
+@* This is the Graphic Designer dashboard. Any logged-in user can open it. *@
+<div class="container mt-5">
+
+    <h1>Designer Dashboard</h1>
+    <p class="text-muted">Welcome, @User.Identity?.Name.</p>
+
+    <div class="row mt-4 g-3">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Job Cards</h5>
+                    <p class="card-text">Your assigned jobs will appear here.</p>
+                    @* TODO: add a link to JobCards/Index once the Job Card pages are built. *@
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
