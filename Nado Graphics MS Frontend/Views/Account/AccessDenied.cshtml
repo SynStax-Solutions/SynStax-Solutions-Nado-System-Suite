@@ -1,0 +1,16 @@
+﻿@* This page shows when a user tries to open a page their role isn't allowed to see. *@
+@{
+    ViewData["Title"] = "Access Denied";
+
+    //This works out which dashboard to send the user back to.
+    var (action, controller) = AppRoles.DashboardFor(User.FindFirst(ClaimTypes.Role)?.Value);
+}
+
+<div class="text-center mt-5">
+    <h1 style="color: #D46271;">Access Denied</h1>
+    <p class="text-muted">Your role does not have permission to open this page.</p>
+    <a asp-controller="@controller" asp-action="@action" class="btn"
+       style="background-color: #68926D; color: white;">
+        Back to my dashboard
+    </a>
+</div>

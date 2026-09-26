@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Nado_Graphics_MS_Frontend.Controllers
 {
+    //Any logged-in user can open these pages (all roles work with job cards).
+    [Authorize]
     public class JobCardsController : Controller
     {
         //Routes to the Job Cards index view.
@@ -32,4 +35,4 @@ namespace Nado_Graphics_MS_Frontend.Controllers
         }
     }
 }
-//---------
+// ------------------------- END OF FILE ------------------------- //

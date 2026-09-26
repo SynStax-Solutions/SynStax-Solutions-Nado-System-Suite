@@ -18,7 +18,9 @@ namespace Nado_Graphics_MS_Backend.Models
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [MinLength(6)]
+        //Passwords must be 8-64 characters (BCrypt only uses the first 72 bytes).
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters.")]
+        [MaxLength(64, ErrorMessage = "Password can't be longer than 64 characters.")]
         public string Password { get; set; } = string.Empty;
 
         [Required]

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Security;
 using Nado_Graphics_MS_Backend.Services;
 
 namespace Nado_Graphics_MS_Backend.Controllers
@@ -9,6 +11,9 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
     //Defines the API route as /api/Users.
     [Route("api/[controller]")]
+
+    //Only a logged-in Manager (Owner) or PA/Admin can use these endpoints.
+    [Authorize(Roles = AppRoles.ManagerOrAdmin)]
     public class UsersController : ControllerBase
     {
         //The below line stores the UserService used to handle user operations.
@@ -20,6 +25,10 @@ namespace Nado_Graphics_MS_Backend.Controllers
             //Storing the injected UserService.
             _userService = userService;
         }
+
+        //The logged-in user's ID and role, read from their JWT.
+        private int CurrentUserId => int.TryParse(User.FindFirst(AppClaims.UserId)?.Value, out var id) ? id : 0;
+        private string? CurrentUserRole => User.FindFirst(AppClaims.Role)?.Value;
         //----------------------------------------------------------------------------------//
         //Handles GET requests sent to /api/Users.
         [HttpGet]
@@ -52,26 +61,21 @@ namespace Nado_Graphics_MS_Backend.Controllers
         //----------------------------------------------------------------------------------//
         //Handles POST requests sent to /api/Users.
         [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(UserRequest request)
+        public async Task<IActionResult> CreateUser(UserRequest request)
         {
             //Sending the user request to the UserService for creation.
-            var success = await _userService.CreateUserAsync(request);
+            //The logged-in user's role is passed so the service can check they may create this role.
+            var result = await _userService.CreateUserAsync(request, CurrentUserRole);
 
             //Checking if the user creation fails.
-            if (!success)
+            if (!result.Success)
             {
-                //Returning an HTTP 400 Bad Request response.
-                return BadRequest();
+                //Returning an HTTP 400 Bad Request response (with the reason).
+                return BadRequest(new { message = result.Message });
             }
 
-            //Getting the newly created user from the UserService.
-            var users = await _userService.GetUsersAsync();
-
-            //Getting the most recently created user.
-            var user = users.OrderByDescending(u => u.UserID).First();
-
-            //Returning the newly created user with an HTTP 201 Created response.
-            return Ok(user);
+            //Returning an HTTP 200 OK response with a message for the frontend to show.
+            return Ok(new { message = result.Message });
         }
         //----------------------------------------------------------------------------------//
         //Handles PUT requests sent to /api/Users/{id}.
@@ -81,17 +85,17 @@ namespace Nado_Graphics_MS_Backend.Controllers
             UpdateUser request)
         {
             //Sending the user ID and updated information to the UserService.
-            var success = await _userService.UpdateUserAsync(id, request);
+            var result = await _userService.UpdateUserAsync(id, request, CurrentUserId, CurrentUserRole);
 
             //Checking if the user update fails.
-            if (!success)
+            if (!result.Success)
             {
-                //Returning an HTTP 400 Bad Request response.
-                return BadRequest();
+                //Returning an HTTP 400 Bad Request response (with the reason).
+                return BadRequest(new { message = result.Message });
             }
 
-            //Returning an HTTP 204 No Content response.
-            return NoContent();
+            //Returning an HTTP 200 OK response with a message for the frontend to show.
+            return Ok(new { message = result.Message });
         }
         //----------------------------------------------------------------------------------//
         //Handles DELETE requests sent to /api/Users/{id}.
@@ -99,19 +103,44 @@ namespace Nado_Graphics_MS_Backend.Controllers
         public async Task<IActionResult> DeleteUser(int id)
         {
             //Sending the user ID to the UserService for deletion.
-            var success =
-                await _userService.DeleteUserAsync(id);
+            var result =
+                await _userService.DeleteUserAsync(id, CurrentUserId, CurrentUserRole);
 
             //Checking if the user deletion fails.
-            if (!success)
+            if (!result.Success)
             {
-                //Returning an HTTP 404 Not Found response.
-                return NotFound();
+                //Returning an HTTP 400 Bad Request response (with the reason).
+                return BadRequest(new { message = result.Message });
             }
 
-            //Returning an HTTP 204 No Content response.
-            return NoContent();
+            //Returning an HTTP 200 OK response with a message for the frontend to show.
+            return Ok(new { message = result.Message });
+        }
+        //----------------------------------------------------------------------------------//
+        //Handles POST requests sent to /api/Users/{id}/resend-verification.
+        [HttpPost("{id}/resend-verification")]
+        public async Task<IActionResult> ResendVerification(int id)
+        {
+            //Asking the UserService to send a new verification email.
+            var result = await _userService.ResendVerificationAsync(id, CurrentUserId, CurrentUserRole);
+
+            //Checking if sending fails.
+            if (!result.Success)
+            {
+                //Returning an HTTP 400 Bad Request response (with the reason).
+                return BadRequest(new { message = result.Message });
+            }
+
+            //Returning an HTTP 200 OK response with a message for the frontend to show.
+            return Ok(new { message = result.Message });
         }
     }
 }
+/* References
+Microsoft (n.d.) Role-based authorization in ASP.NET Core. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles
+
+Microsoft (n.d.) Create web APIs with ASP.NET Core. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/web-api/
+
+OWASP Foundation (n.d.) Authorization Cheat Sheet. OWASP Cheat Sheet Series. Available at: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
+ */
 //--------------------------------------------------<>\\<>End of Program<>//<>------------------------------------------------------------//

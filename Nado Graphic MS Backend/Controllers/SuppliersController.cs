@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Services;
+using Microsoft.AspNetCore.Authorization;
+using Nado_Graphics_MS_Backend.Security;
 
 namespace Nado_Graphics_MS_Backend.Controllers
 {
@@ -9,6 +11,9 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
     //Defines the API route as /api/Suppliers.
     [Route("api/[controller]")]
+
+    //Only a logged-in Manager (Owner) or PA/Admin can use these endpoints.
+    [Authorize(Roles = AppRoles.ManagerOrAdmin)]
     public class SuppliersController : ControllerBase
     {
         //The below line stores the SupplierService used to handle supplier operations.
@@ -107,4 +112,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
         }
     }
 }
+/* References
+Microsoft (n.d.) Role-based authorization in ASP.NET Core. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles
+ */
 //--------------------------------------------------<>\\<>End of Program<>//<>------------------------------------------------------------//
