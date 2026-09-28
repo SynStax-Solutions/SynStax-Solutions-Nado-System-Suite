@@ -1,11 +1,11 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Nado_Graphics_MS_Backend.Services;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Security;
-using Nado_Graphics_MS_Backend.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -99,6 +99,14 @@ builder.Services.AddScoped<ClientService>();
 builder.Services.AddScoped<SupplierService>();
 builder.Services.AddScoped<JobCardService>();
 builder.Services.AddScoped<UserService>();
+
+//Service for quote creation and reference counter
+builder.Services.AddScoped<QuoteService>();
+builder.Services.AddScoped<ReferenceNumberService>();
+
+
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<ProductCategoryService>();
 
 //These are the new services for login and emails.
 builder.Services.AddScoped<EmailService>();

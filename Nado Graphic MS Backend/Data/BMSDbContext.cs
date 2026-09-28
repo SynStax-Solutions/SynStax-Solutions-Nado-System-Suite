@@ -13,6 +13,12 @@ namespace Nado_Graphics_MS_Backend.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<JobCard> JobCards { get; set; }
+        public DbSet<Quote> Quotes { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<QuoteItem> QuoteItems { get; set; }
+
+        public DbSet<ProductCategory> ProductCategories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -22,6 +28,43 @@ namespace Nado_Graphics_MS_Backend.Data
             modelBuilder.Entity<Client>().ToTable("Client");
             modelBuilder.Entity<Supplier>().ToTable("Supplier");
             modelBuilder.Entity<JobCard>().ToTable("JobCard");
+            
+            
+            
+            modelBuilder.Entity<Product>().ToTable("Product");
+            modelBuilder.Entity<Product>()
+                .HasOne<ProductCategory>()
+                .WithMany()
+                .HasForeignKey(p => p.ProductCategoryID)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+           
+            modelBuilder.Entity<ProductCategory>().ToTable("ProductCategory");
+
+
+            modelBuilder.Entity<Quote>().ToTable("Quote");
+            modelBuilder.Entity<Quote>()
+                .HasOne<Client>()
+                .WithMany()
+                .HasForeignKey(q => q.ClientID);
+            modelBuilder.Entity<Quote>()
+                .HasIndex(q => q.ReferenceNumber)
+                .IsUnique();
+            modelBuilder.Entity<Quote>()
+                .HasMany(q => q.QuoteItems)
+                .WithOne()
+                .HasForeignKey(qi => qi.QuoteID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+            modelBuilder.Entity<QuoteItem>().ToTable("QuoteItem");
+            modelBuilder.Entity<QuoteItem>()
+                .HasOne<Product>()
+                .WithMany()
+                .HasForeignKey(qi => qi.ProductID)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }
+//---------------------------------------------------------------END OF FILE---------------------------------------------------
