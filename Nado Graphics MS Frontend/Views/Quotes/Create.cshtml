@@ -1,0 +1,172 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.QuoteModel
+
+@{
+    ViewData["Title"] = "Create Quote";
+    var clientsList = (List<Nado_Graphics_MS_Frontend.Models.ClientModel>)ViewBag.Clients;
+    var productsList = (List<Nado_Graphics_MS_Frontend.Models.ProductModel>)ViewBag.Products;
+}
+
+<div style="width: 100%; max-width: 900px;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">Create Quote</h1>
+        <a asp-controller="Quotes" asp-action="Index"
+               style="background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+            Back
+        </a>
+    </div>
+
+    <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px;">
+
+        <form asp-controller="Quotes" asp-action="Create" method="post" id="quoteForm">
+            @Html.AntiForgeryToken()
+
+            @* <div asp-validation-summary="ModelOnly" style="color: #C85A5A; margin-bottom: 15px;"></div> *@
+            <div asp-validation-summary="All" style="color: #C85A5A; margin-bottom: 15px;"></div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Client</label>
+                <select asp-for="ClientID" style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;">
+                    <option value="">Select a client...</option>
+                    @foreach (var client in clientsList)
+                    {
+                        <option value="@client.ClientID">@client.FirstName @client.LastName</option>
+                    }
+                </select>
+                <span asp-validation-for="ClientID" style="color: #C85A5A; font-size: 13px;"></span>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Valid Until</label>
+                <input asp-for="ValidUntil" type="date"
+                       style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;" />
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Notes</label>
+                <textarea asp-for="Notes" rows="3"
+                          style="width: 100%; padding: 10px 12px; border: 1px solid #aaa; border-radius: 7px; resize: vertical;"></textarea>
+            </div>
+
+            <h3 style="color: #24463A; font-size: 18px; margin-bottom: 12px;">Products</h3>
+
+            <div id="itemsContainer" style="margin-bottom: 12px;"></div>
+
+            <button type="button" id="addItemBtn"
+                    style="background-color: #5A93C8; color: white; border: none; padding: 10px 18px; border-radius: 7px; font-weight: 600; cursor: pointer; margin-bottom: 20px;">
+                + Add Product
+            </button>
+
+            <div style="text-align: right; font-size: 18px; font-weight: 700; color: #24463A; margin-bottom: 25px;">
+                Estimated Total: R<span id="grandTotal">0.00</span>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <a asp-controller="Quotes" asp-action="Index"
+                       style="padding: 10px 24px; border-radius: 7px; text-decoration: none; color: #24463A; border: 1px solid #aaa; font-weight: 600;">
+                    Cancel
+                </a>
+                <button type="submit"
+                        style="background-color: #68926D; color: white; border: none; padding: 10px 24px; border-radius: 7px; font-weight: 600; cursor: pointer;">
+                    Create Quote
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<template id="itemRowTemplate">
+    <div class="quote-item-row"
+         style="display: grid; grid-template-columns: 2fr 100px 140px 120px 40px; gap: 10px; align-items: center; margin-bottom: 10px;">
+        <select name="QuoteItems[__INDEX__].ProductID" class="item-product" required
+                style="height: 42px; padding: 6px 10px; border: 1px solid #aaa; border-radius: 7px;">
+            <option value="">Select a product...</option>
+            @foreach (var product in productsList)
+            {
+                <option value="@product.ProductID" data-price="@product.Price">@product.ProductName (R @product.Price)</option>
+            }
+        </select>
+        <input type="number" name="QuoteItems[__INDEX__].Quantity" class="item-quantity" min="1" value="1" required
+               style="height: 42px; padding: 6px 10px; border: 1px solid #aaa; border-radius: 7px;" />
+        
+        <input type="number" step="0.01" name="QuoteItems[__INDEX__].UnitPrice" class="item-unitprice" min="0"
+               placeholder="Default price"
+               style="height: 42px; padding: 6px 10px; border: 1px solid #aaa; border-radius: 7px;" />
+        <span class="item-linetotal" style="font-weight: 600; color: #24463A;">R0.00</span>
+        <button type="button" class="remove-item-btn"
+                style="background-color: #C85A5A; color: white; border: none; border-radius: 7px; height: 42px; cursor: pointer;">
+            X
+        </button>
+    </div>
+</template>
+
+@section Scripts {
+    <script>
+        const itemsContainer = document.getElementById("itemsContainer");
+        const template = document.getElementById("itemRowTemplate").innerHTML;
+        let rowIndex = 0;
+
+        function calculateLineTotal(row) {
+            const select = row.querySelector(".item-product");
+            const quantityInput = row.querySelector(".item-quantity");
+            const unitPriceInput = row.querySelector(".item-unitprice");
+            const lineTotalSpan = row.querySelector(".item-linetotal");
+
+            const selectedOption = select.options[select.selectedIndex];
+            const defaultPrice = selectedOption ? parseFloat(selectedOption.dataset.price || 0) : 0;
+            const unitPrice = unitPriceInput.value ? parseFloat(unitPriceInput.value) : defaultPrice;
+            const quantity = parseFloat(quantityInput.value) || 0;
+
+            const lineTotal = quantity * unitPrice;
+            lineTotalSpan.textContent = "R" + lineTotal.toFixed(2);
+
+            updateGrandTotal();
+        }
+
+        function updateGrandTotal() {
+            let total = 0;
+            document.querySelectorAll(".quote-item-row").forEach(function (row) {
+                const text = row.querySelector(".item-linetotal").textContent.replace("R", "");
+                total += parseFloat(text) || 0;
+            });
+            document.getElementById("grandTotal").textContent = total.toFixed(2);
+        }
+
+        function reindexRows() {
+            const rows = itemsContainer.querySelectorAll(".quote-item-row");
+            rows.forEach(function (row, i) {
+                row.querySelectorAll("[name]").forEach(function (field) {
+                    field.name = field.name.replace(/\[\d+\]/, "[" + i + "]");
+                });
+            });
+            rowIndex = rows.length;
+        }
+
+        function addRow() {
+            const html = template.replaceAll("__INDEX__", rowIndex);
+            const wrapper = document.createElement("div");
+            wrapper.innerHTML = html.trim();
+            const row = wrapper.firstElementChild;
+
+            itemsContainer.appendChild(row);
+            rowIndex++;
+
+            row.querySelector(".item-product").addEventListener("change", function () { calculateLineTotal(row); });
+            row.querySelector(".item-quantity").addEventListener("input", function () { calculateLineTotal(row); });
+            row.querySelector(".item-unitprice").addEventListener("input", function () { calculateLineTotal(row); });
+            row.querySelector(".remove-item-btn").addEventListener("click", function () {
+                row.remove();
+                reindexRows();
+                updateGrandTotal();
+            });
+        }
+
+        document.getElementById("addItemBtn").addEventListener("click", addRow);
+
+        //Every quote starts with one blank row to fill in.
+        addRow();
+    </script>
+}

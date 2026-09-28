@@ -1,0 +1,308 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Nado_Graphics_MS_Backend.Data;
+using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Models.QuoteStates;
+
+namespace Nado_Graphics_MS_Backend.Services
+{
+    //This class is the service that handles quote business logic.
+    // This is where all validation, total
+    // calculation, and state transitions occur.
+    public class QuoteService
+    {
+        private readonly BMSDbContext _context;
+        private readonly ReferenceNumberService _referenceNumberService;
+
+        //The 4 statuses allowed by the Check_Quote_Status constraint.
+        private static readonly string[] ValidStatuses = { "Pending", "Accepted", "Rejected", "Expired" };
+
+        public QuoteService(BMSDbContext context, ReferenceNumberService referenceNumberService)
+        {
+            _context = context;
+            _referenceNumberService = referenceNumberService;
+        }
+        //----------------------------------------------------------------------------------
+        // Returns every quote, newest first, with their line items
+        // loaded so the API response contains full quote details
+        // in a single query
+        public async Task<List<Quote>> GetQuotesAsync()
+        {
+            return await _context.Quotes
+                .Include(q => q.QuoteItems)
+                .OrderByDescending(q => q.QuoteDate)
+                .ToListAsync();
+        }
+        //----------------------------------------------------------------------------------
+        // Fetches a single quote with its items. Returns null if not found
+        // the controller turns that into a 404.
+        public async Task<Quote?> GetQuoteAsync(int id)
+        {
+            return await _context.Quotes
+                .Include(q => q.QuoteItems)
+                .FirstOrDefaultAsync(q => q.QuoteID == id); ;
+        }
+        //----------------------------------------------------------------------------------
+        // Creates a new quote from scratch, including validating and pricing
+        // every line item, then calculating the total and generating a
+        // reference number.
+        public async Task<(bool Success, string? Error)> CreateQuoteAsync(Quote quote)
+        {
+            // Force these to values regardless of what the caller
+            // sent, QuoteID must be 0 for EF to treat this as an insert, and
+            // QuoteDate should always be "now", not whatever a client passed.
+            quote.QuoteID = 0;
+            quote.QuoteDate = DateTime.Now;
+
+            // A quote can't exist without a client linked to it.
+            var client = await _context.Clients.FindAsync(quote.ClientID);
+
+            // If no status was supplied, default to Pending - this is the
+            // only valid starting state for a new quote.
+            if (client == null)
+            {
+                return (false, "Client not found.");
+            }
+
+            if (string.IsNullOrWhiteSpace(quote.QuoteStatus))
+            {
+                quote.QuoteStatus = "Pending";
+            }
+
+            if (!ValidStatuses.Contains(quote.QuoteStatus))
+            {
+                return (false, "Invalid quote status.");
+            }
+
+            //A quote must have at least one product/service on it.
+            if (quote.QuoteItems == null || !quote.QuoteItems.Any())
+            {
+                return (false, "A quote must have at least one item.");
+            }
+
+            decimal total = 0;
+
+            // Validate and price every line item.
+            foreach (var item in quote.QuoteItems)
+            {
+                item.QuoteItemID = 0;
+
+                var product = await _context.Products.FindAsync(item.ProductID);
+
+                if (product == null || !product.IsActive)
+                {
+                    return (false, $"Product {item.ProductID} not found or inactive.");
+                }
+
+                if (item.Quantity <= 0)
+                {
+                    return (false, "Quantity must be greater than zero.");
+                }
+
+                //If the caller didn't specify a price, snapshot the product's current price.
+                if (item.UnitPrice <= 0)
+                {
+                    item.UnitPrice = product.Price;
+                }
+
+                item.LineTotal = item.Quantity * item.UnitPrice;
+                total += item.LineTotal;
+            }
+
+            //TotalAmount is now calculated from the line items - it's never trusted from the request body.
+            quote.TotalAmount = total;
+
+            quote.ReferenceNumber = await _referenceNumberService.GenerateReferenceNumberAsync(client.FirstName);
+
+            _context.Quotes.Add(quote);
+
+            await _context.SaveChangesAsync();
+
+            return (true, null);
+        }
+        //----------------------------------------------------------------------------------//
+        // Updates an existing Pending quote: replaces its line items
+        // entirely, recalculates the total, and updates client/notes/valid until. 
+        public async Task<bool> UpdateQuoteAsync(int id, Quote quote)
+        {
+            if (id != quote.QuoteID)
+            {
+                return false;
+            }
+
+            var existingQuote = await _context.Quotes
+                .Include(q => q.QuoteItems)
+                .FirstOrDefaultAsync(q => q.QuoteID == id);
+
+            if (existingQuote == null)
+            {
+                return false;
+            }
+
+            //Only a Pending quote can be edited, once a client has responded, the
+            //products/pricing underneath their decision shouldn't silently change.
+            if (existingQuote.QuoteStatus != "Pending")
+            {
+                return false;
+            }
+
+            var client = await _context.Clients.FindAsync(quote.ClientID);
+
+            if (client == null)
+            {
+                return false;
+            }
+
+            //A quote must still have at least one item after editing.
+            if (quote.QuoteItems == null || !quote.QuoteItems.Any())
+            {
+                return false;
+            }
+
+            decimal total = 0;
+            var newItems = new List<QuoteItem>();
+
+            // Build a fresh set of QuoteItem entities from the incoming data,
+            // validating each one like CreateQuoteAsync.
+            foreach (var item in quote.QuoteItems)
+            {
+                var product = await _context.Products.FindAsync(item.ProductID);
+
+                if (product == null || !product.IsActive)
+                {
+                    return false;
+                }
+
+                if (item.Quantity <= 0)
+                {
+                    return false;
+                }
+
+                var unitPrice = item.UnitPrice > 0 ? item.UnitPrice : product.Price;
+                var lineTotal = item.Quantity * unitPrice;
+
+                newItems.Add(new QuoteItem
+                {
+                    QuoteID = existingQuote.QuoteID,
+                    ProductID = item.ProductID,
+                    Quantity = item.Quantity,
+                    UnitPrice = unitPrice,
+                    LineTotal = lineTotal
+                });
+
+                total += lineTotal;
+            }
+
+            //Removes the old line items so they can be fully replaced by the incoming set.
+            _context.QuoteItems.RemoveRange(existingQuote.QuoteItems);
+
+            existingQuote.ClientID = quote.ClientID;
+            existingQuote.ValidUntil = quote.ValidUntil;
+            existingQuote.Notes = quote.Notes;
+            existingQuote.QuoteItems = newItems;
+            existingQuote.TotalAmount = total;
+
+            //QuoteStatus is intentionally NOT updated here, it can only change via
+            //AcceptQuoteAsync / RejectQuoteAsync / ExpireQuoteAsync.
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        //----------------------------------------------------------------------------------//
+        // Deletes a quote
+        public async Task<bool> DeleteQuoteAsync(int id)
+        {
+            var quote = await _context.Quotes.FindAsync(id);
+
+            if (quote == null)
+            {
+                return false;
+            }
+
+            _context.Quotes.Remove(quote);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        //----------------------------------------------------------------------------------//
+        //Attempts to move a quote to Accepted using the state pattern.
+        public async Task<(bool Success, string? Error)> AcceptQuoteAsync(int id)
+        {
+            var quote = await _context.Quotes.FindAsync(id);
+
+            if (quote == null)
+            {
+                return (false, "Quote not found.");
+            }
+
+            try
+            {
+                var currentState = QuoteStateFactory.GetState(quote);
+
+                currentState.Accept(quote);
+
+                await _context.SaveChangesAsync();
+
+                return (true, null);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+        //----------------------------------------------------------------------------------//
+        // Same pattern as AcceptQuoteAsync, but for the Rejected transition.
+        public async Task<(bool Success, string? Error)> RejectQuoteAsync(int id, string reason)
+        {
+            var quote = await _context.Quotes.FindAsync(id);
+
+            if (quote == null)
+            {
+                return (false, "Quote not found.");
+            }
+
+            try
+            {
+                var currentState = QuoteStateFactory.GetState(quote);
+
+                currentState.Reject(quote, reason);
+
+                await _context.SaveChangesAsync();
+
+                return (true, null);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+        //----------------------------------------------------------------------------------//
+        // Same pattern as AcceptQuoteAsync, but for the Expiry transition.
+        public async Task<(bool Success, string? Error)> ExpireQuoteAsync(int id, string reason)
+        {
+            var quote = await _context.Quotes.FindAsync(id);
+
+            if (quote == null)
+            {
+                return (false, "Quote not found.");
+            }
+
+            try
+            {
+                var currentState = QuoteStateFactory.GetState(quote);
+
+                currentState.Expire(quote, reason);
+
+                await _context.SaveChangesAsync();
+
+                return (true, null);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+    }
+}
+//--------------------------------------------------END OF FILE------------------------------------------------------------
