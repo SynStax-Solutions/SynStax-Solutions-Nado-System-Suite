@@ -114,6 +114,19 @@ namespace Nado_Graphics_MS_Frontend.Services
         {
             public string? Message { get; set; }
         }
+
+        //----------------------------------------------------------------------------------
+        public async Task<byte[]?> DownloadQuotePdfAsync(int id)
+        {
+            var response = await _httpClient.GetAsync($"Quotes/{id}/pdf");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
     }
 }
 //--------------------------------------------------END OF FILE------------------------------------------------------------

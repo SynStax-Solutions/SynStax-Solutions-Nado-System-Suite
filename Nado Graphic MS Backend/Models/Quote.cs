@@ -48,9 +48,23 @@ namespace Nado_Graphics_MS_Backend.Models
         public string? Notes { get; set; }
 
         //----------------------------------------------------------------
+        public static readonly decimal VatRate = 0.15m;
+
+        // Prices are VAT inclusive, so this extracts
+        //the VAT portion already built into each flagged item's line total; it never
+        //changes TotalAmount.
+        [NotMapped]
+        public decimal VatAmount => QuoteItems
+            .Where(i => i.IsVatIncluded)
+            .Sum(i => Math.Round(i.LineTotal * VatRate / (1 + VatRate), 2));
+        //----------------------------------------------------------------
+
         //The products/services included on this quote. This is required because a quote can't have zero items.
         public List<QuoteItem> QuoteItems { get; set; } = new();
 
+
+
+        
     }
 }
 //----------------------------------------------------END OF FILE--------------------------------------------------------

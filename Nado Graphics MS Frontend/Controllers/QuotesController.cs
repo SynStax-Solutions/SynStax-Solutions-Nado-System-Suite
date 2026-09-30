@@ -233,6 +233,28 @@ namespace Nado_Graphics_MS_Frontend.Controllers
             ViewBag.Clients = await _clientService.GetClientsAsync();
             ViewBag.Products = await _productService.GetProductsAsync();
         }
+
+        //---------------------------------------------------------------------------------
+        // Handles GET requests sent to /Quotes/DownloadPdf/{id}.     
+        public async Task<IActionResult> DownloadPdf(int id)
+        {
+            //Getting the PDF bytes for the quote from the QuoteService
+            var pdfBytes = await _quoteService.DownloadQuotePdfAsync(id);
+
+            //Checking if the PDF could not be generated (quote not found)
+            if (pdfBytes == null)
+            {
+                //Returning an HTTP 404 Not Found response
+                return NotFound();
+            }
+
+            //Getting the quote again so the file can be named using its reference number
+            var quote = await _quoteService.GetQuoteAsync(id);
+            var fileName = $"{quote?.ReferenceNumber ?? "Quote"}.pdf";
+
+            //Returning the PDF as a downloadable file
+            return File(pdfBytes, "application/pdf", fileName);
+        }
     }
 }
 //--------------------------------------------------END OF FILE------------------------------------------------------------

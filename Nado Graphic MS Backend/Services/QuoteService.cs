@@ -103,7 +103,8 @@ namespace Nado_Graphics_MS_Backend.Services
                 {
                     item.UnitPrice = product.Price;
                 }
-
+                item.LineTotal = item.Quantity * item.UnitPrice;
+ 
                 item.LineTotal = item.Quantity * item.UnitPrice;
                 total += item.LineTotal;
             }
@@ -186,7 +187,8 @@ namespace Nado_Graphics_MS_Backend.Services
                     ProductID = item.ProductID,
                     Quantity = item.Quantity,
                     UnitPrice = unitPrice,
-                    LineTotal = lineTotal
+                    LineTotal = lineTotal,
+                    IsVatIncluded = item.IsVatIncluded
                 });
 
                 total += lineTotal;

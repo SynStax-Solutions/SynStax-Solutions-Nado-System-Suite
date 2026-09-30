@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Nado_Graphics_MS_Backend.Services;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Security;
+using Nado_Graphics_MS_Backend.Services;
 
 namespace Nado_Graphics_MS_Backend.Controllers
 {
@@ -13,11 +13,32 @@ namespace Nado_Graphics_MS_Backend.Controllers
     public class QuotesController : Controller
     {
         private readonly QuoteService _quoteService;
-        
-        public QuotesController(QuoteService quoteService)
+        private readonly QuotePDFService _quotePdfService;
+
+        public QuotesController(QuoteService quoteService, QuotePDFService quotePdfService)
         {
             _quoteService = quoteService;
+            _quotePdfService = quotePdfService;
         }
+        //--------------------------------------------------------------------------------------------------------------
+        //Handles GET requests sent to /api/Quotes/{id}/pdf.
+        [HttpGet("{id}/pdf")]
+        public async Task<IActionResult> DownloadQuotePdf(int id)
+        {
+            //Pulls the logged-in user's name from their JWT, using the same claim type
+
+            var salesRepName = User.FindFirst(AppClaims.Name)?.Value ?? "Nado Graphics";
+
+            var pdfBytes = await _quotePdfService.GenerateQuotePdfAsync(id, salesRepName);
+
+            if (pdfBytes == null)
+            {
+                return NotFound();
+            }
+
+            return File(pdfBytes, "application/pdf", $"Quote_{id}.pdf");
+        }
+
         //--------------------------------------------------------------------------------------------------------------//
         // GET api/Quotes - returns every quote.
         [HttpGet]

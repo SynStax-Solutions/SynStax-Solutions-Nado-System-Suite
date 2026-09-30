@@ -188,6 +188,11 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
+                                    <a class="dropdown-item" asp-controller="Quotes" asp-action="DownloadPdf" asp-route-id="@quote.QuoteID">
+                                        Download PDF
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" asp-controller="Quotes" asp-action="Details" asp-route-id="@quote.QuoteID">
                                         View
                                     </a>
@@ -208,7 +213,7 @@
                                             Delete
                                         </button>
                                     </form>
-                                </li>
+                                </li>                      
                             </ul>
                         </div>
                     </div>

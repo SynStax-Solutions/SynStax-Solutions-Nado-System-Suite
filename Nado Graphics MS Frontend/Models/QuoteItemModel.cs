@@ -42,6 +42,9 @@ namespace Nado_Graphics_MS_Frontend.Models
         public decimal? UnitPrice { get; set; }
 
         //-----------------------------------------------------------------------------
+        public bool IsVatIncluded { get; set; }
+
+        //-----------------------------------------------------------------------------
         // Quantity * UnitPrice for this line. Calculated and returned by the backend
         public decimal LineTotal { get; set; }
     }

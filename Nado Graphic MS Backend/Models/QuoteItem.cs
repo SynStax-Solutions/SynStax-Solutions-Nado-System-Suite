@@ -34,6 +34,11 @@ namespace Nado_Graphics_MS_Backend.Models
         // doesn't need to be recalculated every time the quote is displayed.
         [Column(TypeName = "decimal(10,2)")]
         public decimal LineTotal { get; set; }
+
+        //Decided per line item by whoever builds the quote - whether this item's
+        //listed price already includes VAT (used only to disclose the VAT portion,
+        //never to change the line's price).
+        public bool IsVatIncluded { get; set; }
     }
 }
 //--------------------------------------------------END OF FILE------------------------------------------------------------

@@ -1,13 +1,17 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Nado_Graphics_MS_Backend.Services;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Security;
+using Nado_Graphics_MS_Backend.Services;
+using QuestPDF.Infrastructure;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -102,6 +106,8 @@ builder.Services.AddScoped<UserService>();
 
 //Service for quote creation and reference counter
 builder.Services.AddScoped<QuoteService>();
+builder.Services.AddScoped<QuotePDFService>();
+builder.Services.Configure<CompanyInfoOptions>(builder.Configuration.GetSection("CompanyInfo"));
 builder.Services.AddScoped<ReferenceNumberService>();
 
 
