@@ -106,6 +106,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
             }
 
             ViewBag.Clients = await _clientService.GetClientsAsync();
+            ViewBag.Products = await _productService.GetProductsAsync();
 
             return View(quote);
         }

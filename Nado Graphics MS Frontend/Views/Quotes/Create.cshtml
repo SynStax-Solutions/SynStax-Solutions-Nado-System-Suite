@@ -57,8 +57,13 @@
                 + Add Product
             </button>
 
-            <div style="text-align: right; font-size: 18px; font-weight: 700; color: #24463A; margin-bottom: 25px;">
-                Estimated Total: R<span id="grandTotal">0.00</span>
+            <div style="text-align: right; margin-bottom: 25px;">
+                <div style="font-size: 13px; color: #666; margin-bottom: 4px;">
+                    Includes VAT: R<span id="vatAmount">0.00</span>
+                </div>
+                <div style="font-size: 18px; font-weight: 700; color: #24463A;">
+                    Estimated Total: R<span id="grandTotal">0.00</span>
+                </div>
             </div>
 
             <div style="display: flex; gap: 12px; justify-content: flex-end;">
@@ -80,7 +85,7 @@
 
 <template id="itemRowTemplate">
     <div class="quote-item-row"
-         style="display: grid; grid-template-columns: 2fr 100px 140px 120px 40px; gap: 10px; align-items: center; margin-bottom: 10px;">
+         style="display: grid; grid-template-columns: 2fr 90px 130px 110px 70px 40px; gap: 10px; align-items: center; margin-bottom: 10px;">
         <select name="QuoteItems[__INDEX__].ProductID" class="item-product" required
                 style="height: 42px; padding: 6px 10px; border: 1px solid #aaa; border-radius: 7px;">
             <option value="">Select a product...</option>
@@ -96,6 +101,10 @@
                placeholder="Default price"
                style="height: 42px; padding: 6px 10px; border: 1px solid #aaa; border-radius: 7px;" />
         <span class="item-linetotal" style="font-weight: 600; color: #24463A;">R0.00</span>
+        <label style="display: flex; align-items: center; gap: 5px; font-size: 13px;">
+            <input type="checkbox" name="QuoteItems[__INDEX__].IsVatIncluded" class="item-vat" value="true" />
+            VAT
+        </label>
         <button type="button" class="remove-item-btn"
                 style="background-color: #C85A5A; color: white; border: none; border-radius: 7px; height: 42px; cursor: pointer;">
             X
@@ -128,11 +137,23 @@
 
         function updateGrandTotal() {
             let total = 0;
+            let vatTotal = 0;
+            const vatRate = 0.15;
+            
             document.querySelectorAll(".quote-item-row").forEach(function (row) {
-                const text = row.querySelector(".item-linetotal").textContent.replace("R", "");
-                total += parseFloat(text) || 0;
+                const lineTotalText = row.querySelector(".item-linetotal").textContent.replace("R", "");
+                const lineTotal = parseFloat(lineTotalText) || 0;
+                const isVatIncluded = row.querySelector(".item-vat").checked;
+
+                total += lineTotal;
+
+                if (isVatIncluded) {
+                    vatTotal += lineTotal * vatRate / (1 + vatRate);
+                }
             });
+
             document.getElementById("grandTotal").textContent = total.toFixed(2);
+            document.getElementById("vatAmount").textContent = vatTotal.toFixed(2);
         }
 
         function reindexRows() {
@@ -157,6 +178,7 @@
             row.querySelector(".item-product").addEventListener("change", function () { calculateLineTotal(row); });
             row.querySelector(".item-quantity").addEventListener("input", function () { calculateLineTotal(row); });
             row.querySelector(".item-unitprice").addEventListener("input", function () { calculateLineTotal(row); });
+            row.querySelector(".item-vat").addEventListener("change", updateGrandTotal);
             row.querySelector(".remove-item-btn").addEventListener("click", function () {
                 row.remove();
                 reindexRows();
