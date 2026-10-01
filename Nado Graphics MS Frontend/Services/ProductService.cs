@@ -20,6 +20,27 @@ namespace Nado_Graphics_MS_Frontend.Services
         {
             return await _httpClient.GetFromJsonAsync<ProductModel>($"Products/{id}");
         }
+
+        public async Task<bool> CreateProductAsync(ProductModel model)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Products", model);
+
+            return response.IsSuccessStatusCode;
+        }
+        //----------------------------------------------------------------------------------//
+        public async Task<bool> UpdateProductAsync(ProductModel model)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Products/{model.ProductID}", model);
+
+            return response.IsSuccessStatusCode;
+        }
+        //----------------------------------------------------------------------------------//
+        public async Task<bool> DeleteProductAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"Products/{id}");
+
+            return response.IsSuccessStatusCode;
+        }
     }
 }
 //--------------------------------------------------END OF FILE------------------------------------------------------------
