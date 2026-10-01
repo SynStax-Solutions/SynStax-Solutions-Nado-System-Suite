@@ -16,8 +16,10 @@ namespace Nado_Graphics_MS_Backend.Data
         public DbSet<Quote> Quotes { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<QuoteItem> QuoteItems { get; set; }
-
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoiceItem> invoiceItems { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -63,6 +65,32 @@ namespace Nado_Graphics_MS_Backend.Data
                 .WithMany()
                 .HasForeignKey(qi => qi.ProductID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Invoice>().ToTable("Invoice");
+            modelBuilder.Entity<Invoice>()
+                .HasOne<Client>()
+                .WithMany()
+                .HasForeignKey(i => i.ClientID);
+            modelBuilder.Entity<Invoice>()
+                .HasOne<Quote>()
+                .WithMany()
+                .HasForeignKey(i => i.QuoteID);
+            modelBuilder.Entity<Invoice>()
+                .HasIndex(q => q.ReferenceNumber)
+                .IsUnique();
+            modelBuilder.Entity<Invoice>()
+                .HasMany(i => i.InvoiceItems)
+                .WithOne()
+                .HasForeignKey(ii => ii.InvoiceID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<InvoiceItem>().ToTable("InvoiceItem");
+            modelBuilder.Entity<InvoiceItem>()
+                .HasOne<Product>()
+                .WithMany()
+                .HasForeignKey(qi => qi.ProductID)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
         }
     }

@@ -1,4 +1,7 @@
-﻿namespace Nado_Graphics_MS_Backend.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+
+namespace Nado_Graphics_MS_Backend.Models
 {
 
     // Groups the two status enums used across the billing-document state
@@ -22,14 +25,17 @@
         }
 
         //-------------------------------------------------------------------------------------
-        //Matches CONSTRAINT CK_Invoice_Status.
+        //Matches CONSTRAINT CK_Invoice_Status: 'Unpaid', 'Partially Paid', 'Paid', 'Overdue', 'Cancelled'
+        //But also includes ExtensionRequested, which is not a valid status for the invoice itself, but is used to track when an extension request has been made.
         public enum InvoiceStatus
         {
             Unpaid,
+
             PartiallyPaid,
             Paid,
             Overdue,
-            Cancelled
+            Cancelled,
+            ExtensionRequested
         }
     }
 }
