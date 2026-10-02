@@ -17,30 +17,36 @@ namespace Nado_Graphics_MS_Backend.Controllers
         {
             _enquiryService = enquiryService;
         }
-        //--------------------------------------------------------------------------------------------------------------//
-        //Public endpoint - no [Authorize]. This is the only route the marketing
+        //--------------------------------------------------------------------------------------------------------------
+        //Public endpoint, no [Authorize]. This is the only route the marketing
         //site is allowed to call, and only this one carries the CORS policy.
         [HttpPost]
         [EnableCors("PublicSite")]
         [AllowAnonymous]
         public async Task<IActionResult> SubmitEnquiry(EnquiryRequest request)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Unable to submit enquiry." });
+            }
+
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
             var success = await _enquiryService.SubmitEnquiryAsync(request, ipAddress);
 
             if (!success)
             {
-                //Deliberately generic - doesn't reveal whether it was validation,
+                //doesn't reveal whether it was validation,
                 //rate limiting, or something else, so it can't be used to probe the system.
                 return BadRequest(new { message = "Unable to submit enquiry." });
             }
 
             return Ok(new { message = "Enquiry received." });
         }
-        //--------------------------------------------------------------------------------------------------------------//
-        //Everything below this point is for the PA/Manager to view inside the BMS -
-        //same role restriction as the rest of the management system.
+        //--------------------------------------------------------------------------------------------------------------
+        //for the PA/Manager to view inside the BMS
+        //same role restrictions as the rest of the system.
         [HttpGet]
         [Authorize(Roles = AppRoles.ManagerOrAdmin)]
         public async Task<ActionResult<IEnumerable<Enquiry>>> GetEnquiries()
@@ -48,7 +54,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             var enquiries = await _enquiryService.GetEnquiriesAsync();
             return Ok(enquiries);
         }
-        //--------------------------------------------------------------------------------------------------------------//
+        //--------------------------------------------------------------------------------------------------------------
         [HttpGet("{id}")]
         [Authorize(Roles = AppRoles.ManagerOrAdmin)]
         public async Task<ActionResult<Enquiry>> GetEnquiry(int id)
@@ -64,4 +70,4 @@ namespace Nado_Graphics_MS_Backend.Controllers
         }
     }
 }
-//--------------------------------------------------<>\\<>End of Program<>//<>------------------------------------------------------------//
+//--------------------------------------------------END OF FILE------------------------------------------------------------

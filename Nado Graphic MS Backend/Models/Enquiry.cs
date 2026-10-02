@@ -27,7 +27,10 @@ namespace Nado_Graphics_MS_Backend.Models
 
         public DateTime SubmittedAt { get; set; } = DateTime.Now;
 
+        public bool ConsentGiven { get; set; }
+        public DateTime? ConsentGivenAt { get; set; }
+
         public bool IsRead { get; set; }
     }
 }
-//--------------------------------------------------END OF FILE------------------------------------------------------------//
+//--------------------------------------------------END OF FILE------------------------------------------------------------
