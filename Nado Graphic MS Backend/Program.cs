@@ -119,6 +119,21 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AuthService>();
 
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PublicSite", policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .WithMethods("POST");
+    });
+});
+
+builder.Services.AddScoped<EnquiryService>();
+
+
 var app = builder.Build();
 
 //---------------- First Owner account ----------------//
@@ -157,6 +172,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 //This checks who the user is, then what they are allowed to do. The order matters.
 app.UseAuthentication();

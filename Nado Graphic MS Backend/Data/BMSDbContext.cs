@@ -19,6 +19,8 @@ namespace Nado_Graphics_MS_Backend.Data
 
         public DbSet<ProductCategory> ProductCategories { get; set; }
 
+        public DbSet<Enquiry> Enquiries { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -41,6 +43,7 @@ namespace Nado_Graphics_MS_Backend.Data
            
             modelBuilder.Entity<ProductCategory>().ToTable("ProductCategory");
 
+            modelBuilder.Entity<Enquiry>().ToTable("Enquiry");
 
             modelBuilder.Entity<Quote>().ToTable("Quote");
             modelBuilder.Entity<Quote>()
