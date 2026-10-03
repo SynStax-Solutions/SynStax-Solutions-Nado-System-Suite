@@ -23,6 +23,8 @@ namespace Nado_Graphics_MS_Backend.Data
 
         public DbSet<Enquiry> Enquiries { get; set; }
 
+        public DbSet<Statement> Statements { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -32,9 +34,9 @@ namespace Nado_Graphics_MS_Backend.Data
             modelBuilder.Entity<Client>().ToTable("Client");
             modelBuilder.Entity<Supplier>().ToTable("Supplier");
             modelBuilder.Entity<JobCard>().ToTable("JobCard");
-            
-            
-            
+
+            modelBuilder.Entity<Statement>().ToTable("Statement");
+
             modelBuilder.Entity<Product>().ToTable("Product");
             modelBuilder.Entity<Product>()
                 .HasOne<ProductCategory>()

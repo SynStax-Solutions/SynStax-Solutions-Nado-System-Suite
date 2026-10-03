@@ -147,6 +147,9 @@ builder.Services.AddScoped<ReferenceNumberService>();
 builder.Services.AddScoped<InvoiceService>();
 builder.Services.AddScoped<InvoicePDFService>();
 
+builder.Services.AddScoped<StatementService>();
+builder.Services.AddScoped<StatementPDFService>();
+
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ProductCategoryService>();
 

@@ -52,6 +52,7 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<QuoteService>();
 builder.Services.AddScoped<InvoiceService>();
 builder.Services.AddScoped<ProductCategoryService>();
+builder.Services.AddScoped<StatementService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

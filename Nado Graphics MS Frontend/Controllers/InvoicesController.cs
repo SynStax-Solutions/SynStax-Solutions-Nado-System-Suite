@@ -45,10 +45,18 @@ namespace Nado_Graphics_MS_Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(InvoiceModel model)
         {
+
+            foreach (var key in ModelState.Keys.Where(k => k.EndsWith(".UnitPrice")).ToList())
+            {
+                ModelState.Remove(key);
+            }
+
             model.InvoiceItems = model.InvoiceItems.Where(i => i.ProductID > 0).ToList();
 
             if (!ModelState.IsValid || !model.InvoiceItems.Any())
             {
+
+
                 if (!model.InvoiceItems.Any())
                 {
                     ModelState.AddModelError("", "Add at least one product to the invoice.");

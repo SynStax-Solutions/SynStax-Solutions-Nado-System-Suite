@@ -21,7 +21,7 @@
         <form asp-controller="Invoices" asp-action="Create" method="post" id="invoiceForm">
             @Html.AntiForgeryToken()
 
-            <div asp-validation-summary="ModelOnly" style="color: #C85A5A; margin-bottom: 15px;"></div>
+            <div asp-validation-summary="All" style="color: #C85A5A; margin-bottom: 15px;"></div>
 
             <div style="margin-bottom: 18px;">
                 <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Client</label>
@@ -79,7 +79,7 @@
             <option value="">Select a product...</option>
             @foreach (var product in productsList)
             {
-                <option value="@product.ProductID" data-price="@product.Price">@product.ProductName (R@product.Price)</option>
+                <option value="@product.ProductID" data-price="@product.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)">@product.ProductName (R @product.Price)</option>
             }
         </select>
         <input type="number" name="InvoiceItems[__INDEX__].Quantity" class="item-quantity" min="1" value="1" required
