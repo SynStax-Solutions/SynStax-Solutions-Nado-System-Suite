@@ -24,7 +24,7 @@ namespace Nado_Graphics_MS_Backend.Models
         [Required]
         public DateTime DateSubmitted { get; set; } = DateTime.Now;
 
-        // Relative path of the saved file, e.g. "Uploads/Portfolio/3f2a....png"
+        // Relative path of the saved file
         [Required]
         [MaxLength(255)]
         public string MediaURL { get; set; } = string.Empty;

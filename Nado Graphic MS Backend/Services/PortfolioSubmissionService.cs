@@ -93,7 +93,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return (false, "The selected job card was not found.", null);
             }
 
-            // Save the file under a generated name so uploads can never overwrite each other or escape the folder.
+            // Save the file under a generated name so uploads can never overwrite each.
             Directory.CreateDirectory(UploadFolder);
             var storedName = $"{Guid.NewGuid():N}{extension}";
             var fullPath = Path.Combine(UploadFolder, storedName);
@@ -128,7 +128,7 @@ namespace Nado_Graphics_MS_Backend.Services
             var dto = (await ToDtosAsync(new List<PortfolioSubmission> { submission })).First();
             return (true, null, dto);
         }
-        //----------------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------------
         // Returns the physical path and content type so the controller can stream the file.
         public async Task<(string Path, string ContentType)?> GetFileAsync(int id)
         {
@@ -148,7 +148,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
             return (path, GetContentType(path));
         }
-        //----------------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------------
         public async Task<bool> DeleteSubmissionAsync(int id)
         {
             var submission = await _context.PortfolioSubmissions.FindAsync(id);
@@ -180,7 +180,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
             return true;
         }
-        //----------------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------------
         private async Task<List<PortfolioSubmissionDto>> ToDtosAsync(List<PortfolioSubmission> submissions)
         {
             var jobCardIds = submissions.Where(s => s.JobCardID != null).Select(s => s.JobCardID!.Value).Distinct().ToList();
@@ -209,7 +209,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 IsImage = ImageExtensions.Contains(Path.GetExtension(s.MediaURL).ToLowerInvariant())
             }).ToList();
         }
-        //----------------------------------------------------------------------------------//
+        //----------------------------------------------------------------------------------
         private static string GetContentType(string path)
         {
             return Path.GetExtension(path).ToLowerInvariant() switch
@@ -224,4 +224,4 @@ namespace Nado_Graphics_MS_Backend.Services
         }
     }
 }
-//--------------------------------------------------END OF FILE------------------------------------------------------------//
+//--------------------------------------------------END OF FILE------------------------------------------------------------
