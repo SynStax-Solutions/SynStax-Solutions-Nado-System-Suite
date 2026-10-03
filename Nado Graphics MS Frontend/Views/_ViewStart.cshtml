@@ -1,3 +1,13 @@
-﻿@{
-    Layout = "_Layout";
+﻿@using System.Security.Claims
+
+@{
+    var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+    Layout = role switch
+    {
+        "Manager" => "_OwnerLayout",
+        "PA/Admin" => "_AdminLayout",
+        _ => "_Layout"
+    };
+
 }

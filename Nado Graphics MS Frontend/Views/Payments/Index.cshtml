@@ -1,0 +1,109 @@
+﻿```cshtml
+@model List<Nado_Graphics_MS_Frontend.Models.JobCardModel>
+
+@{
+    ViewData["Title"] = "Payment Records";
+}
+
+<div style="padding: 30px;">
+
+    <div>
+        <h1 style="margin: 0; color: #24463A;">Payment Records</h1>
+    </div>
+
+    <div style="height: 3px; background-color: #68926D; margin: 20px 0;"></div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div style="padding: 12px 15px; margin-bottom: 20px; background-color: #D46271; color: white; border-radius: 8px;">
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (Model == null || !Model.Any())
+    {
+        <div style="padding: 25px; background-color: white; border-radius: 10px;">
+            No active Job Cards have been created yet.
+        </div>
+    }
+    else
+    {
+        <div style="background-color: white; border: 2px solid black; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.20);">
+
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="background-color: #68926D; color: white; padding: 14px; text-align: left;">Reference Number</th>
+                        <th style="background-color: #68926D; color: white; padding: 14px; text-align: left;">Job Title</th>
+                        <th style="background-color: #68926D; color: white; padding: 14px; text-align: left;">Job Status</th>
+                        <th style="background-color: #68926D; color: white; padding: 14px; text-align: left;">Job Date</th>
+                        <th style="background-color: #68926D; color: white; padding: 14px; text-align: left;">Due Date</th>
+                        <th style="background-color: #68926D; color: white; padding: 14px; text-align: left;">Payment Status</th>
+                        <th style="background-color: #68926D; color: white; padding: 14px; text-align: left;">Update Payment</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var job in Model)
+                    {
+                        <tr>
+                            <td style="padding: 14px; border-bottom: 1px solid #ddd;">
+                                @job.ReferenceNumber
+                            </td>
+
+                            <td style="padding: 14px; border-bottom: 1px solid #ddd;">
+                                @job.JobTitle
+                            </td>
+
+                            <td style="padding: 14px; border-bottom: 1px solid #ddd;">
+                                @job.JobStatus
+                            </td>
+
+                            <td style="padding: 14px; border-bottom: 1px solid #ddd;">
+                                @job.JobDate.ToString("dd/MM/yyyy")
+                            </td>
+
+                            <td style="padding: 14px; border-bottom: 1px solid #ddd;">
+                                @(job.DueDate.HasValue ? job.DueDate.Value.ToString("dd/MM/yyyy") : "Not set")
+                            </td>
+
+                            <td style="padding: 14px; border-bottom: 1px solid #ddd;">
+                                @if (job.PaymentStatus == "Paid")
+                                {
+                                    <span style="display: inline-block; padding: 7px 12px; background-color: #68926D; color: white; border-radius: 20px; font-weight: 600;">
+                                        Paid
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="display: inline-block; padding: 7px 12px; background-color: #D46271; color: white; border-radius: 20px; font-weight: 600;">
+                                        Pending Payment
+                                    </span>
+                                }
+                            </td>
+
+                            <td style="padding: 14px; border-bottom: 1px solid #ddd;">
+                                <form asp-action="UpdateStatus" method="post" style="display: flex; align-items: center; gap: 8px;">
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden" name="id" value="@job.JobCardID" />
+
+                                    <select name="paymentStatus" style="padding: 8px 10px; border: 1px solid #999; border-radius: 7px; background-color: white;">
+                                        <option value="Pending Payment" selected="@(job.PaymentStatus == "Pending Payment")">Pending Payment</option>
+                                        <option value="Paid" selected="@(job.PaymentStatus == "Paid")">Paid</option>
+                                    </select>
+
+                                    <button type="submit" style="padding: 8px 14px; background-color: #5A93C8; color: white; border: none; border-radius: 7px; cursor: pointer;">
+                                        Update
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    }
+
+</div>

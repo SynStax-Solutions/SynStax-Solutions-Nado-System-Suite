@@ -30,5 +30,7 @@ namespace Nado_Graphics_MS_Backend.Models
         public string ServiceType { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public decimal? ServiceRate { get; set; }
     }
 }

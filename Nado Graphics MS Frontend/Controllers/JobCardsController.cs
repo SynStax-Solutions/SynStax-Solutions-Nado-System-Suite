@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Nado_Graphics_MS_Frontend.Models;
+using Nado_Graphics_MS_Frontend.Services;
 
 namespace Nado_Graphics_MS_Frontend.Controllers
 {
@@ -7,32 +9,115 @@ namespace Nado_Graphics_MS_Frontend.Controllers
     [Authorize]
     public class JobCardsController : Controller
     {
-        //Routes to the Job Cards index view.
-        public IActionResult Index()
+        //The below line stores the JobCardService.
+        private readonly JobCardService _jobCardService;
+
+        //The constructor receives the JobCardService using dependency injection.
+        public JobCardsController(JobCardService jobCardService)
         {
-            return View();
+            _jobCardService = jobCardService;
+        }
+
+        //----------------------------------------------------------------------------------//
+
+        //This gets all Job Cards and sends them to the Index view.
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            //This gets the Job Cards from the backend API.
+            var jobCards = await _jobCardService.GetJobCardsAsync();
+
+            //This sends the Job Cards to the page.
+            return View(jobCards);
+        }
+        //---------------------------------------------------------------------------------------------------------------------//
+        [HttpGet]
+        public async Task<IActionResult> Archived()
+        {
+            var jobCards = await _jobCardService.GetArchivedJobCardsAsync();
+
+            return View(jobCards);
         }
         //----------------------------------------------------------------------------------//
-        //Routes to the Create Job Card view.
+
+        //This gets one Job Card and sends it to the Details view.
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Details(int id)
         {
-            return View();
+            //This gets the selected Job Card from the backend API.
+            var jobCard = await _jobCardService.GetJobCardAsync(id);
+
+            //This checks whether the Job Card exists.
+            if (jobCard == null)
+            {
+                return NotFound();
+            }
+
+            //This sends the Job Card to the page.
+            return View(jobCard);
         }
+
         //----------------------------------------------------------------------------------//
-        //Routes to the Edit Job Card view.
+
+        //This gets one Job Card and sends it to the Edit view.
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            //This gets the selected Job Card from the backend API.
+            var jobCard = await _jobCardService.GetJobCardAsync(id);
+
+            //This checks whether the Job Card exists.
+            if (jobCard == null)
+            {
+                return NotFound();
+            }
+
+            //This sends the Job Card to the Edit page.
+            return View(jobCard);
         }
+
         //----------------------------------------------------------------------------------//
-        //Routes to the Job Card details view.
-        [HttpGet]
-        public IActionResult Details(int id)
+
+        //This saves the edited Job Card.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(JobCardModel model)
         {
-            return View();
+            //This checks whether the form values are valid.
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            //This sends the updated Job Card to the API.
+            var success = await _jobCardService.UpdateJobCardAsync(model);
+
+            //This shows an error if the update failed.
+            if (!success)
+            {
+                ModelState.AddModelError("", "Unable to update the job card.");
+                return View(model);
+            }
+
+            //This returns to the Job Card details page after saving.
+            return RedirectToAction(nameof(Details), new { id = model.JobCardID });
+        }
+        //-----------------------------------------------------------------------------------------------//
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStatus(int id, string status)
+        {
+            var success = await _jobCardService.UpdateStatusAsync(id, status);
+
+            if (!success)
+            {
+                TempData["Error"] = "Unable to update the job card status.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
+
 }
-// ------------------------- END OF FILE ------------------------- //
+
+

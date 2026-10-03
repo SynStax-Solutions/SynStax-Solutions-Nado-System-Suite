@@ -1,50 +1,288 @@
-﻿@{
-    ViewData["Title"] = "Owner Dashboard";
+﻿@using Nado_Graphics_MS_Frontend.Models
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-@* This is the Owner (Manager) dashboard. Only the Manager can open it. *@
-<div class="container mt-5">
+<div style="
+    padding: 35px 45px;
+    max-width: 1400px;
+    margin: 0 auto;">
 
-    <h1>Owner Dashboard</h1>
+    <!-- DASHBOARD HEADING -->
 
-    @* This shows the logged-in user's name. *@
-    <p class="text-muted">
-        Welcome, @User.Identity?.Name. Manage the Business Management System.
-    </p>
+    <div style="
+        text-align: center;
+        margin-bottom: 35px;">
 
-    <div class="row mt-4 g-3">
+        <h1 style="
+            margin: 0;
+            color: #24463A;
+            font-size: 32px;
+            font-weight: 700;">
+            Dashboard
+        </h1>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">User Management</h5>
-                    <p class="card-text">Create, view, edit and delete user accounts.</p>
-                    <a asp-controller="Users" asp-action="Index" class="btn btn-primary">Manage Users</a>
-                </div>
-            </div>
+        <div style="
+            width: 80px;
+            height: 3px;
+            background-color: #68926D;
+            margin: 12px auto 0;">
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Clients &amp; Organisations</h5>
-                    <p class="card-text">Manage clients and the organisations they belong to.</p>
-                    <a asp-controller="Clients" asp-action="Index" class="btn btn-primary">Clients</a>
-                    <a asp-controller="Organisations" asp-action="Index" class="btn btn-outline-primary">Organisations</a>
-                </div>
+    </div>
+
+    <!-- JOB CARDS -->
+
+    <div style="
+        background-color: white;
+        border: 2px solid black;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.15);">
+
+        @await Html.PartialAsync("_DashboardJobCards", (List<Nado_Graphics_MS_Frontend.Models.JobCardModel>)ViewBag.JobCards)
+
+    </div>
+
+    <!-- LOWER DASHBOARD -->
+
+    <div style="
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 30px;
+        align-items: start;">
+
+        <!-- RECENT QUOTES -->
+
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);">
+
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;">
+
+                <h2 style="
+                    margin: 0;
+                    color: #24463A;
+                    font-size: 22px;">
+                    Recent Quotes
+                </h2>
+
+                <a asp-controller="Quotes"
+                   asp-action="Index"
+                   style="
+                        color: #5A93C8;
+                        text-decoration: none;
+                        font-weight: 600;">
+                    View All
+                </a>
+
             </div>
+
+            @if (ViewBag.RecentQuotes == null ||
+                 ViewBag.RecentQuotes.Count == 0)
+            {
+                <div style="
+                    padding: 25px;
+                    text-align: center;
+                    color: #777;">
+                    No quotes have been created yet.
+                </div>
+            }
+            else
+            {
+                foreach (var quote in ViewBag.RecentQuotes)
+                {
+                    <div style="
+                        padding: 15px 0;
+                        border-bottom: 1px solid #ddd;">
+
+                        <div style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            gap: 15px;">
+
+                            <div>
+
+                                <div style="
+                                    color: #24463A;
+                                    font-weight: 700;
+                                    margin-bottom: 5px;">
+                                    @quote.ReferenceNumber
+                                </div>
+
+                                <div style="
+                                    color: #555;
+                                    font-size: 14px;">
+                                    @quote.QuoteDate.ToString("dd/MM/yyyy")
+                                </div>
+
+                            </div>
+
+                            <div>
+
+                                @if (quote.QuoteStatus == "Accepted")
+                                {
+                                    <span style="
+                                        background-color: #68926D;
+                                        color: white;
+                                        padding: 6px 11px;
+                                        border-radius: 15px;
+                                        font-size: 13px;
+                                        font-weight: 600;">
+                                        Accepted
+                                    </span>
+                                }
+                                else if (quote.QuoteStatus == "Rejected")
+                                {
+                                    <span style="
+                                        background-color: #D46271;
+                                        color: white;
+                                        padding: 6px 11px;
+                                        border-radius: 15px;
+                                        font-size: 13px;
+                                        font-weight: 600;">
+                                        Rejected
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="
+                                        background-color: #DFA738;
+                                        color: white;
+                                        padding: 6px 11px;
+                                        border-radius: 15px;
+                                        font-size: 13px;
+                                        font-weight: 600;">
+                                        @quote.QuoteStatus
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+            }
+
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Suppliers</h5>
-                    <p class="card-text">Manage suppliers.</p>
-                    <a asp-controller="Suppliers" asp-action="Index" class="btn btn-primary">Suppliers</a>
-                </div>
+        <!-- MANAGEMENT -->
+
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);">
+
+            <h2 style="
+                margin: 0 0 20px 0;
+                color: #24463A;
+                font-size: 22px;">
+                Management
+            </h2>
+
+            <div style="
+                display: flex;
+                flex-direction: column;
+                gap: 15px;">
+
+                <!-- USERS -->
+
+                <a asp-controller="Users"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 18px;
+                        background-color: #68926D;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 9px;">
+
+                    <div style="
+                        font-size: 18px;
+                        font-weight: 700;">
+                        Users
+                    </div>
+
+                    <div style="
+                        margin-top: 5px;
+                        font-size: 14px;">
+                        @ViewBag.Users.Count users
+                    </div>
+
+                </a>
+
+                <!-- CLIENTS -->
+
+                <a asp-controller="Clients"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 18px;
+                        background-color: #5A93C8;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 9px;">
+
+                    <div style="
+                        font-size: 18px;
+                        font-weight: 700;">
+                        Clients
+                    </div>
+
+                    <div style="
+                        margin-top: 5px;
+                        font-size: 14px;">
+                        @ViewBag.Clients.Count clients
+                    </div>
+
+                </a>
+
+                <!-- SUPPLIERS -->
+
+                <a asp-controller="Suppliers"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 18px;
+                        background-color: #DFA738;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 9px;">
+
+                    <div style="
+                        font-size: 18px;
+                        font-weight: 700;">
+                        Suppliers
+                    </div>
+
+                    <div style="
+                        margin-top: 5px;
+                        font-size: 14px;">
+                        @ViewBag.Suppliers.Count suppliers
+                    </div>
+
+                </a>
+
             </div>
+
         </div>
 
     </div>
 
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/10.0.0/signalr.min.js"></script>
+<script src="~/js/jobcards-live.js"></script>

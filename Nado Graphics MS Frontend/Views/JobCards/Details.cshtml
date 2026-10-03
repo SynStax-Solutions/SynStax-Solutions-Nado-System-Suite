@@ -1,0 +1,338 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.JobCardModel
+
+@{
+    ViewData["Title"] = "Job Card Details";
+}
+
+<div style="width: 100%;">
+
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 25px;">
+
+        <div>
+
+            <h1 style="
+                margin: 0;
+                font-size: 32px;
+                font-weight: 700;
+                color: #24463A;">
+                Job Card Details
+            </h1>
+
+            <p style="
+                margin: 5px 0 0 0;
+                color: #555;
+                font-size: 15px;">
+                View the details of Job Card @Model.ReferenceNumber.
+            </p>
+
+        </div>
+
+        <a asp-action="Index"
+           style="
+            background-color: #68926D;
+            color: white;
+            text-decoration: none;
+            padding: 11px 20px;
+            border-radius: 7px;
+            font-weight: 600;">
+            Back to Job Cards
+        </a>
+
+    </div>
+
+
+    <div style="
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;">
+
+
+        <!-- JOB INFORMATION -->
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.20);
+            padding: 25px;">
+
+            <h2 style="
+                margin: 0;
+                color: #24463A;
+                font-size: 21px;
+                font-weight: 700;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #68926D;">
+                Job Information
+            </h2>
+
+
+            <div style="margin-top: 20px;">
+
+                <div style="
+                    font-weight: 600;
+                    margin-bottom: 6px;">
+                    Job Card ID
+                </div>
+
+                <div style="
+                    border: 2px solid #aaa;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5;">
+                    @Model.JobCardID
+                </div>
+
+            </div>
+
+
+            <div style="margin-top: 18px;">
+
+                <div style="
+                    font-weight: 600;
+                    margin-bottom: 6px;">
+                    Reference Number
+                </div>
+
+                <div style="
+                    border: 2px solid #aaa;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5;">
+                    @Model.ReferenceNumber
+                </div>
+
+            </div>
+
+
+            <div style="margin-top: 18px;">
+
+                <div style="
+                    font-weight: 600;
+                    margin-bottom: 6px;">
+                    Job Title
+                </div>
+
+                <div style="
+                    border: 2px solid #aaa;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5;">
+                    @Model.JobTitle
+                </div>
+
+            </div>
+
+
+            <div style="margin-top: 18px;">
+
+                <div style="
+                    font-weight: 600;
+                    margin-bottom: 6px;">
+                    Client ID
+                </div>
+
+                <div style="
+                    border: 2px solid #aaa;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5;">
+                    @Model.ClientID
+                </div>
+
+            </div>
+
+
+            <div style="margin-top: 18px;">
+
+                <div style="
+                    font-weight: 600;
+                    margin-bottom: 6px;">
+                    Job Status
+                </div>
+
+                @{
+                    var statusColour = Model.JobStatus switch
+                    {
+                        "In Progress" => "#DFA738",
+                        "Completed" => "#68926D",
+                        "Archived" => "#777777",
+                        _ => "#D46271"
+                    };
+                }
+
+                <span style="
+                    display: inline-block;
+                    background-color: @statusColour;
+                    color: white;
+                    padding: 7px 14px;
+                    border-radius: 20px;
+                    font-size: 14px;
+                    font-weight: 600;">
+                    @Model.JobStatus
+                </span>
+
+            </div>
+
+
+            <div style="margin-top: 18px;">
+
+                <div style="
+                    font-weight: 600;
+                    margin-bottom: 6px;">
+                    Job Date
+                </div>
+
+                <div style="
+                    border: 2px solid #aaa;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5;">
+                    @Model.JobDate.ToString("dd MMMM yyyy, HH:mm")
+                </div>
+
+            </div>
+
+
+            <div style="margin-top: 18px;">
+
+                <div style="
+                    font-weight: 600;
+                    margin-bottom: 6px;">
+                    Due Date
+                </div>
+
+                <div style="
+                    border: 2px solid #aaa;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5;">
+                    @(Model.DueDate.HasValue
+                        ? Model.DueDate.Value.ToString("dd MMMM yyyy")
+                        : "No due date")
+                </div>
+
+            </div>
+
+
+            <div style="margin-top: 18px;">
+
+                <div style="
+                    font-weight: 600;
+                    margin-bottom: 6px;">
+                    Completed At
+                </div>
+
+                <div style="
+                    border: 2px solid #aaa;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5;">
+                    @(Model.CompletedAt.HasValue ? Model.CompletedAt.Value.ToString("dd MMMM yyyy, HH:mm") : "Not completed")
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- JOB DESCRIPTION -->
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.20);
+            padding: 25px;">
+
+            <h2 style="
+                margin: 0;
+                color: #24463A;
+                font-size: 21px;
+                font-weight: 700;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #68926D;">
+                Job Description
+            </h2>
+
+
+            <div style="
+                margin-top: 20px;
+                border: 2px solid #aaa;
+                border-radius: 7px;
+                padding: 15px;
+                background-color: #f5f6f5;
+                min-height: 180px;
+                line-height: 1.6;">
+
+                @(string.IsNullOrWhiteSpace(Model.JobDescription) ? "No job description has been provided." : Model.JobDescription)
+
+            </div>
+
+
+            <div style="
+                margin-top: 25px;
+                border-top: 1px solid #ddd;
+                padding-top: 20px;">
+
+                <h3 style="
+                    margin: 0 0 15px 0;
+                    color: #24463A;
+                    font-size: 18px;
+                    font-weight: 700;">
+                    Portfolio Information
+                </h3>
+
+
+                <div style="
+                    border: 2px solid #aaa;
+                    border-radius: 7px;
+                    padding: 10px;
+                    background-color: #f5f6f5;">
+
+                    @(Model.PortfolioSubmissionID.HasValue ? Model.PortfolioSubmissionID.ToString() : "No portfolio submission linked")
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div style="
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 25px;
+        margin-bottom: 20px;">
+
+        <a asp-action="Index"
+           style="
+            background-color: #68926D;
+            color: white;
+            text-decoration: none;
+            padding: 11px 22px;
+            border-radius: 7px;
+            font-weight: 600;">
+            Back to Job Cards
+        </a>
+
+        <a asp-action="Edit"
+           asp-route-id="@Model.JobCardID"
+           style="
+            background-color: #5A93C8;
+            color: white;
+            text-decoration: none;
+            padding: 11px 22px;
+            border-radius: 7px;
+            font-weight: 600;">
+            Edit Job Card
+        </a>
+
+    </div>
+
+</div>
