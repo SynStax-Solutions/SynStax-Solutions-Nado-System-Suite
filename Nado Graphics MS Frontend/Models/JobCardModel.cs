@@ -2,7 +2,7 @@
 
 namespace Nado_Graphics_MS_Frontend.Models
 {
-    //this is not a final model
+    //This is the model used by the frontend when working with Job Cards. 
     public class JobCardModel
     {
         public int JobCardID { get; set; }
@@ -14,6 +14,10 @@ namespace Nado_Graphics_MS_Frontend.Models
         [Required]
         public int ClientID { get; set; }
 
+        public int? SupplierID { get; set; }
+
+        public string? SupplierName { get; set; }
+
         [Required]
         [MaxLength(150)]
         public string JobTitle { get; set; } = string.Empty;
@@ -24,6 +28,7 @@ namespace Nado_Graphics_MS_Frontend.Models
         [Required]
         [MaxLength(50)]
         public string JobStatus { get; set; } = string.Empty;
+
         [Required]
         [MaxLength(20)]
         public string PaymentStatus { get; set; } = "Pending Payment";

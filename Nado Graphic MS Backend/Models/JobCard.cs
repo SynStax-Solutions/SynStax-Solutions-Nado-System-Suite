@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Nado_Graphics_MS_Backend.Models
 {
@@ -13,7 +14,12 @@ namespace Nado_Graphics_MS_Backend.Models
 
         [Required]
         public int ClientID { get; set; }
+        public int? SupplierID { get; set; }
 
+        public Supplier? Supplier { get; set; }
+
+        [NotMapped]
+        public string? SupplierName => Supplier?.SupplierName;
         [Required]
         [MaxLength(150)]
         public string JobTitle { get; set; } = string.Empty;

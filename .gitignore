@@ -6,6 +6,9 @@
 # dotenv files
 .env
 
+#Upload Folder
+Nado Graphics MS Backend/Uploads/
+Uploads/
 
 # User-specific files
 *.rsuser

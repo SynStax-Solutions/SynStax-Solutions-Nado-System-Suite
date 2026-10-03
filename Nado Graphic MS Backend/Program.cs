@@ -153,6 +153,8 @@ builder.Services.AddScoped<StatementPDFService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ProductCategoryService>();
 
+builder.Services.AddScoped<PortfolioSubmissionService>();
+
 //These are the new services for login and emails.
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<TokenService>();

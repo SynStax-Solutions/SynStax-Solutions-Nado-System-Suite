@@ -25,6 +25,8 @@ namespace Nado_Graphics_MS_Backend.Data
 
         public DbSet<Statement> Statements { get; set; }
 
+        public DbSet<PortfolioSubmission> PortfolioSubmissions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -34,6 +36,10 @@ namespace Nado_Graphics_MS_Backend.Data
             modelBuilder.Entity<Client>().ToTable("Client");
             modelBuilder.Entity<Supplier>().ToTable("Supplier");
             modelBuilder.Entity<JobCard>().ToTable("JobCard");
+            
+            modelBuilder.Entity<JobCard>().HasOne(j => j.Supplier).WithMany().HasForeignKey(j =>
+            j.SupplierID)
+            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Statement>().ToTable("Statement");
 
@@ -115,6 +121,13 @@ namespace Nado_Graphics_MS_Backend.Data
             modelBuilder.Entity<Payment>()
             .Property(p => p.PaymentMethod)
             .HasConversion<string>();
+
+            modelBuilder.Entity<PortfolioSubmission>().ToTable("PortfolioSubmission");
+            modelBuilder.Entity<PortfolioSubmission>()
+                .HasOne<JobCard>()
+                .WithMany()
+                .HasForeignKey(p => p.JobCardID)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

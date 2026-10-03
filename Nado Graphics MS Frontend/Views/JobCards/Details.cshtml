@@ -6,295 +6,162 @@
 
 <div style="width: 100%;">
 
-    <div style="
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 25px;">
-
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:25px;">
         <div>
+            <h1 style="margin:0; font-size:32px; font-weight:700; color:#24463A;">Job Card Details</h1>
 
-            <h1 style="
-                margin: 0;
-                font-size: 32px;
-                font-weight: 700;
-                color: #24463A;">
-                Job Card Details
-            </h1>
-
-            <p style="
-                margin: 5px 0 0 0;
-                color: #555;
-                font-size: 15px;">
+            <p style="margin:5px 0 0 0; color:#555; font-size:15px;">
                 View the details of Job Card @Model.ReferenceNumber.
             </p>
-
         </div>
 
-        <a asp-action="Index"
-           style="
-            background-color: #68926D;
-            color: white;
-            text-decoration: none;
-            padding: 11px 20px;
-            border-radius: 7px;
-            font-weight: 600;">
+        <a asp-action="Index" style="background-color:#68926D; color:white; text-decoration:none; padding:11px 20px; border-radius:7px; font-weight:600;">
             Back to Job Cards
         </a>
-
     </div>
 
+    @if (TempData["Error"] != null)
+    {
+        <div style="padding:12px 15px; margin-bottom:20px; background-color:#D46271; color:white; border-radius:8px;">
+            @TempData["Error"]
+        </div>
+    }
 
-    <div style="
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 25px;">
-
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:25px;">
 
         <!-- JOB INFORMATION -->
-        <div style="
-            background-color: white;
-            border: 2px solid black;
-            border-radius: 14px;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.20);
-            padding: 25px;">
 
-            <h2 style="
-                margin: 0;
-                color: #24463A;
-                font-size: 21px;
-                font-weight: 700;
-                padding-bottom: 10px;
-                border-bottom: 2px solid #68926D;">
+        <div style="background-color:white; border:2px solid black; border-radius:14px; box-shadow:0 6px 14px rgba(0,0,0,0.20); padding:25px;">
+
+            <h2 style="margin:0; color:#24463A; font-size:21px; font-weight:700; padding-bottom:10px; border-bottom:2px solid #68926D;">
                 Job Information
             </h2>
 
+            <div style="margin-top:20px;">
 
-            <div style="margin-top: 20px;">
-
-                <div style="
-                    font-weight: 600;
-                    margin-bottom: 6px;">
-                    Job Card ID
-                </div>
-
-                <div style="
-                    border: 2px solid #aaa;
-                    border-radius: 7px;
-                    padding: 10px;
-                    background-color: #f5f6f5;">
+                <div style="margin-bottom:12px;">
+                    <strong>Job Card ID:</strong>
                     @Model.JobCardID
                 </div>
 
-            </div>
-
-
-            <div style="margin-top: 18px;">
-
-                <div style="
-                    font-weight: 600;
-                    margin-bottom: 6px;">
-                    Reference Number
-                </div>
-
-                <div style="
-                    border: 2px solid #aaa;
-                    border-radius: 7px;
-                    padding: 10px;
-                    background-color: #f5f6f5;">
+                <div style="margin-bottom:12px;">
+                    <strong>Reference Number:</strong>
                     @Model.ReferenceNumber
                 </div>
 
-            </div>
-
-
-            <div style="margin-top: 18px;">
-
-                <div style="
-                    font-weight: 600;
-                    margin-bottom: 6px;">
-                    Job Title
-                </div>
-
-                <div style="
-                    border: 2px solid #aaa;
-                    border-radius: 7px;
-                    padding: 10px;
-                    background-color: #f5f6f5;">
+                <div style="margin-bottom:12px;">
+                    <strong>Job Title:</strong>
                     @Model.JobTitle
                 </div>
 
-            </div>
-
-
-            <div style="margin-top: 18px;">
-
-                <div style="
-                    font-weight: 600;
-                    margin-bottom: 6px;">
-                    Client ID
-                </div>
-
-                <div style="
-                    border: 2px solid #aaa;
-                    border-radius: 7px;
-                    padding: 10px;
-                    background-color: #f5f6f5;">
+                <div style="margin-bottom:12px;">
+                    <strong>Client ID:</strong>
                     @Model.ClientID
                 </div>
 
-            </div>
+                <div style="margin-bottom:12px;">
+                    <strong>Job Status:</strong>
 
-
-            <div style="margin-top: 18px;">
-
-                <div style="
-                    font-weight: 600;
-                    margin-bottom: 6px;">
-                    Job Status
-                </div>
-
-                @{
-                    var statusColour = Model.JobStatus switch
+                    @if (Model.JobStatus == "Not Started")
                     {
-                        "In Progress" => "#DFA738",
-                        "Completed" => "#68926D",
-                        "Archived" => "#777777",
-                        _ => "#D46271"
-                    };
-                }
-
-                <span style="
-                    display: inline-block;
-                    background-color: @statusColour;
-                    color: white;
-                    padding: 7px 14px;
-                    border-radius: 20px;
-                    font-size: 14px;
-                    font-weight: 600;">
-                    @Model.JobStatus
-                </span>
-
-            </div>
-
-
-            <div style="margin-top: 18px;">
-
-                <div style="
-                    font-weight: 600;
-                    margin-bottom: 6px;">
-                    Job Date
+                        <span style="display:inline-block; padding:7px 12px; background-color:#D46271; color:white; border-radius:20px; font-weight:600;">
+                            Not Started
+                        </span>
+                    }
+                    else if (Model.JobStatus == "In Progress")
+                    {
+                        <span style="display:inline-block; padding:7px 12px; background-color:#DFA738; color:white; border-radius:20px; font-weight:600;">
+                            In Progress
+                        </span>
+                    }
+                    else if (Model.JobStatus == "Completed")
+                    {
+                        <span style="display:inline-block; padding:7px 12px; background-color:#68926D; color:white; border-radius:20px; font-weight:600;">
+                            Completed
+                        </span>
+                    }
+                    else
+                    {
+                        <span style="display:inline-block; padding:7px 12px; background-color:#777777; color:white; border-radius:20px; font-weight:600;">
+                            @Model.JobStatus
+                        </span>
+                    }
                 </div>
 
-                <div style="
-                    border: 2px solid #aaa;
-                    border-radius: 7px;
-                    padding: 10px;
-                    background-color: #f5f6f5;">
-                    @Model.JobDate.ToString("dd MMMM yyyy, HH:mm")
+                <div style="margin-bottom:12px;">
+                    <strong>Job Date:</strong>
+                    @Model.JobDate.ToString("dd/MM/yyyy")
                 </div>
 
-            </div>
-
-
-            <div style="margin-top: 18px;">
-
-                <div style="
-                    font-weight: 600;
-                    margin-bottom: 6px;">
-                    Due Date
+                <div style="margin-bottom:12px;">
+                    <strong>Due Date:</strong>
+                    @(Model.DueDate.HasValue ? Model.DueDate.Value.ToString("dd/MM/yyyy") : "Not set")
                 </div>
 
-                <div style="
-                    border: 2px solid #aaa;
-                    border-radius: 7px;
-                    padding: 10px;
-                    background-color: #f5f6f5;">
-                    @(Model.DueDate.HasValue
-                        ? Model.DueDate.Value.ToString("dd MMMM yyyy")
-                        : "No due date")
-                </div>
-
-            </div>
-
-
-            <div style="margin-top: 18px;">
-
-                <div style="
-                    font-weight: 600;
-                    margin-bottom: 6px;">
-                    Completed At
-                </div>
-
-                <div style="
-                    border: 2px solid #aaa;
-                    border-radius: 7px;
-                    padding: 10px;
-                    background-color: #f5f6f5;">
-                    @(Model.CompletedAt.HasValue ? Model.CompletedAt.Value.ToString("dd MMMM yyyy, HH:mm") : "Not completed")
+                <div style="margin-bottom:12px;">
+                    <strong>Completed At:</strong>
+                    @(Model.CompletedAt.HasValue ? Model.CompletedAt.Value.ToString("dd/MM/yyyy") : "Not completed")
                 </div>
 
             </div>
 
         </div>
 
-
         <!-- JOB DESCRIPTION -->
-        <div style="
-            background-color: white;
-            border: 2px solid black;
-            border-radius: 14px;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.20);
-            padding: 25px;">
 
-            <h2 style="
-                margin: 0;
-                color: #24463A;
-                font-size: 21px;
-                font-weight: 700;
-                padding-bottom: 10px;
-                border-bottom: 2px solid #68926D;">
+        <div style="background-color:white; border:2px solid black; border-radius:14px; box-shadow:0 6px 14px rgba(0,0,0,0.20); padding:25px;">
+
+            <h2 style="margin:0; color:#24463A; font-size:21px; font-weight:700; padding-bottom:10px; border-bottom:2px solid #68926D;">
                 Job Description
             </h2>
 
-
-            <div style="
-                margin-top: 20px;
-                border: 2px solid #aaa;
-                border-radius: 7px;
-                padding: 15px;
-                background-color: #f5f6f5;
-                min-height: 180px;
-                line-height: 1.6;">
-
+            <div style="margin-top:20px; padding:15px; background-color:#f5f6f5; border-radius:8px; line-height:1.6;">
                 @(string.IsNullOrWhiteSpace(Model.JobDescription) ? "No job description has been provided." : Model.JobDescription)
-
             </div>
 
+            <div style="margin-top:25px;">
 
-            <div style="
-                margin-top: 25px;
-                border-top: 1px solid #ddd;
-                padding-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin:0; color:#24463A; font-size:18px;">
+                        Portfolio Submissions
+                    </h3>
 
-                <h3 style="
-                    margin: 0 0 15px 0;
-                    color: #24463A;
-                    font-size: 18px;
-                    font-weight: 700;">
-                    Portfolio Information
-                </h3>
-
-
-                <div style="
-                    border: 2px solid #aaa;
-                    border-radius: 7px;
-                    padding: 10px;
-                    background-color: #f5f6f5;">
-
-                    @(Model.PortfolioSubmissionID.HasValue ? Model.PortfolioSubmissionID.ToString() : "No portfolio submission linked")
-
+                    <a asp-controller="Portfolio" asp-action="Create" asp-route-jobCardId="@Model.JobCardID"
+                           style="background-color: #5A93C8; color: white; text-decoration: none; padding: 8px 16px; border-radius: 7px; font-weight: 600; font-size: 13px;">
+                        + Add Submission
+                    </a>
                 </div>
+                @{
+                    var submissions = (List<Nado_Graphics_MS_Frontend.Models.PortfolioSubmissionModel>)ViewBag.PortfolioSubmissions;
+                }
+
+                @if (submissions == null || !submissions.Any())
+                {
+                    <div style="padding:12px; background-color:#f5f6f5; border-radius:8px;">
+                        No portfolio submissions linked to this job card yet.
+                    </div>
+                }
+                else
+                {
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        @foreach (var submission in submissions)
+                        {
+                            <div style="padding:12px; background-color:#f5f6f5; border-radius:8px; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 600; color: #24463A;">@submission.Title</div>
+                                    <div style="font-size: 13px; color: #666;">
+                                        by @submission.SubmittedByName - @submission.DateSubmitted.ToString("dd MMM yyyy")
+                                    </div>
+                                </div>
+                                <a asp-controller="Portfolio" asp-action="Media" asp-route-id="@submission.SubmissionID"
+                                       target="_blank"
+                                       style="background-color: #5A93C8; color: white; text-decoration: none; padding: 8px 14px; border-radius: 7px; font-weight: 600; font-size: 13px;">
+                                    View File
+                                </a>
+                            </div>
+                        }
+                    </div>
+                }
 
             </div>
 
@@ -302,34 +169,78 @@
 
     </div>
 
+    <!-- SUPPLIER -->
 
-    <div style="
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        margin-top: 25px;
-        margin-bottom: 20px;">
+    <div style="margin-top:25px;">
 
-        <a asp-action="Index"
-           style="
-            background-color: #68926D;
-            color: white;
-            text-decoration: none;
-            padding: 11px 22px;
-            border-radius: 7px;
-            font-weight: 600;">
+        <div style="background-color:white; border:2px solid black; border-radius:14px; box-shadow:0 6px 14px rgba(0,0,0,0.20); padding:25px;">
+
+            <h2 style="margin:0; color:#24463A; font-size:21px; font-weight:700; padding-bottom:10px; border-bottom:2px solid #68926D;">
+                Supplier
+            </h2>
+
+            @if (Model.SupplierID.HasValue && !string.IsNullOrWhiteSpace(Model.SupplierName))
+            {
+                <div style="margin-top:20px; padding:15px; background-color:#f5f6f5; border-radius:8px;">
+                    <strong>Assigned Supplier:</strong>
+                    @Model.SupplierName
+                </div>
+            }
+            else
+            {
+                <div style="margin-top:20px; padding:15px; background-color:#fdf4f4; border:1px solid #D46271; border-radius:8px; color:#D46271;">
+                    No supplier has been assigned to this Job Card yet.
+                </div>
+            }
+
+            <form asp-action="AssignSupplier" method="post" style="margin-top:20px;">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="id" value="@Model.JobCardID" />
+
+                <label for="supplierId" style="display:block; font-weight:600; margin-bottom:7px;">
+                    Assign Supplier
+                </label>
+
+                <div style="display:flex; gap:10px; align-items:center;">
+
+                    <select id="supplierId" name="supplierId" required style="flex:1; border:2px solid black; border-radius:7px; padding:10px; background-color:white;">
+
+                        <option value="">
+                            -- Select Supplier --
+                        </option>
+
+                        @if (ViewBag.Suppliers != null)
+                        {
+                            foreach (var supplier in ViewBag.Suppliers)
+                            {
+                                <option value="@supplier.SupplierID" selected="@(Model.SupplierID == supplier.SupplierID)">
+                                    @supplier.SupplierName
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                    <button type="submit" style="background-color:#5A93C8; color:white; border:none; border-radius:7px; padding:10px 18px; font-weight:600;">
+                        Assign Supplier
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:25px; margin-bottom:20px;">       
+        <a asp-action="Index" style="background-color:#68926D; color:white; text-decoration:none; padding:11px 20px; border-radius:7px; font-weight:600;">
             Back to Job Cards
         </a>
 
-        <a asp-action="Edit"
-           asp-route-id="@Model.JobCardID"
-           style="
-            background-color: #5A93C8;
-            color: white;
-            text-decoration: none;
-            padding: 11px 22px;
-            border-radius: 7px;
-            font-weight: 600;">
+        <a asp-action="Edit" asp-route-id="@Model.JobCardID" style="background-color:#5A93C8; color:white; text-decoration:none; padding:11px 20px; border-radius:7px; font-weight:600;">
             Edit Job Card
         </a>
 
