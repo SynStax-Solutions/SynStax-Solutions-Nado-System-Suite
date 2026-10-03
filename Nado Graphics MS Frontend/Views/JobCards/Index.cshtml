@@ -1,0 +1,230 @@
+﻿@model List<Nado_Graphics_MS_Frontend.Models.JobCardModel>
+
+@{
+    ViewData["Title"] = "Job Cards";
+}
+
+<div style="
+    padding: 30px;">
+
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;">
+
+        <h1 style="
+            margin: 0;
+            color: #24463A;">
+            Job Cards
+        </h1>
+
+        <a asp-action="Archived"
+           style="
+            background-color: #777777;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;">
+            Archived Job Cards
+        </a>
+
+    </div>
+
+    <div style="
+        height: 3px;
+        background-color: #68926D;
+        margin: 20px 0;">
+    </div>
+
+    <div style="
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;">
+
+        <input type="text"
+               id="searchInput"
+               placeholder="Search jobs..."
+               style="
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;" />
+
+        <select id="statusFilter"
+                style="
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;">
+
+            <option value="">
+                All Statuses
+            </option>
+
+            <option value="Not Started">
+                Not Started
+            </option>
+
+            <option value="In Progress">
+                In Progress
+            </option>
+
+            <option value="Completed">
+                Completed
+            </option>
+
+            <option value="Archived">
+                Archived
+            </option>
+
+        </select>
+
+    </div>
+
+    <h2 style="
+        color: #24463A;">
+        ALL JOBS
+    </h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div style="
+            padding: 25px;
+            background-color: white;
+            border-radius: 10px;">
+            Accept a quote to automatically create a Job Card.
+        </div>
+    }
+    else
+    {
+        <div id="jobGrid"
+             style="
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;">
+
+            @foreach (var job in Model)
+            {
+                var cardBackground = job.JobStatus switch
+                {
+                    "In Progress" => "#DFA738",
+                    "Completed" => "#68926D",
+                    "Archived" => "#777777",
+                    _ => "#D46271"
+                };
+
+                <div class="job-card"
+                     data-title="@job.JobTitle"
+                     data-reference="@job.ReferenceNumber"
+                     data-status="@job.JobStatus"
+                     style="
+                    padding: 20px;
+                    border-radius: 12px;
+                    border: 2px solid transparent;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+                    color: white;
+                    background-color: @cardBackground;">
+
+                    <h3 style="color: white;">
+                        @job.JobTitle
+                    </h3>
+
+                    <p style="color: white;">
+
+                        <strong style=" color: white;">
+                            Reference:
+                        </strong>
+
+                        @job.ReferenceNumber
+
+                    </p>
+
+                    <p style="color: white;">
+
+                        <strong style=" color: white;">
+                            Status:
+                        </strong>
+
+                        @job.JobStatus
+
+                    </p>
+
+                    <p style="
+                        color: white;">
+
+                        <strong style="color: white;">
+                            Job Date:
+                        </strong>
+
+                        @job.JobDate.ToString("dd/MM/yyyy")
+
+                    </p>
+
+                    @if (job.DueDate.HasValue)
+                    {
+                        <p style="color: white;">
+
+                            <strong style="color: white;">
+                                Due Date:
+                            </strong>
+
+                            @job.DueDate.Value.ToString("dd/MM/yyyy")
+
+                        </p>
+                    }
+
+                    <a asp-action="Details"
+                       asp-route-id="@job.JobCardID"
+                       style="
+                        display: inline-block;
+                        margin-top: 10px;
+                        padding: 8px 14px;
+                        background-color: rgba(255,255,255,0.2);
+                        color: white;
+                        border: 1px solid white;
+                        border-radius: 6px;
+                        text-decoration: none;">
+                        View Job
+                    </a>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>
+
+<script>
+
+    const searchInput = document.getElementById("searchInput");
+    const statusFilter = document.getElementById("statusFilter");
+
+    function filterJobs() {
+
+        const search = searchInput.value.toLowerCase();
+        const status = statusFilter.value;
+
+        document.querySelectorAll(".job-card").forEach(card => {
+
+            const title = card.dataset.title.toLowerCase();
+            const reference = card.dataset.reference.toLowerCase();
+            const cardStatus = card.dataset.status;
+
+            const matchesSearch =
+                title.includes(search) ||
+                reference.includes(search);
+
+            const matchesStatus =
+                status === "" ||
+                cardStatus === status;
+
+            card.style.display =
+                matchesSearch && matchesStatus ? "block" : "none";
+
+        });
+
+    }
+
+    searchInput.addEventListener("input", filterJobs);
+    statusFilter.addEventListener("change", filterJobs);
+
+</script>

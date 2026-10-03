@@ -24,6 +24,9 @@ namespace Nado_Graphics_MS_Frontend.Models
         [Required]
         [MaxLength(50)]
         public string JobStatus { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(20)]
+        public string PaymentStatus { get; set; } = "Pending Payment";
 
         public DateTime JobDate { get; set; }
 

@@ -1,0 +1,223 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.JobCardModel
+
+@{
+    ViewData["Title"] = "Edit Job Card";
+}
+
+<div style="width: 100%;">
+
+    <div style="margin-bottom: 25px;">
+
+        <h1 style="
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            color: #24463A;">
+            Edit Job Card
+        </h1>
+
+        <p style="
+            margin: 5px 0 0 0;
+            color: #555;
+            font-size: 15px;">
+            Update the details of @Model.ReferenceNumber.
+        </p>
+
+    </div>
+
+
+    <div style="
+        background-color: white;
+        border: 2px solid black;
+        border-radius: 14px;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.20);
+        padding: 25px;
+        max-width: 800px;">
+
+        <form asp-action="Edit" method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="JobCardID" />
+            <input type="hidden" asp-for="ReferenceNumber" />
+            <input type="hidden" asp-for="ClientID" />
+            <input type="hidden" asp-for="JobDate" />
+            <input type="hidden" asp-for="PortfolioSubmissionID" />
+
+            <div asp-validation-summary="ModelOnly"
+                 style="
+                color: #D46271;
+                margin-bottom: 15px;">
+            </div>
+
+
+            <div style="margin-bottom: 20px;">
+
+                <label asp-for="JobTitle"
+                       style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px;">
+                    Job Title
+                </label>
+
+                <input asp-for="JobTitle"
+                       class="form-control"
+                       style="
+                border: 2px solid black;
+                border-radius: 7px;
+                padding: 10px;" />
+
+                <span asp-validation-for="JobTitle"
+                      style="color: #D46271;">
+                </span>
+
+            </div>
+
+
+            <div style="margin-bottom: 20px;">
+
+                <label asp-for="JobDescription"
+                       style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px;">
+                    Job Description
+                </label>
+
+                <textarea asp-for="JobDescription"
+                          class="form-control"
+                          rows="5"
+                          style="
+                border: 2px solid black;
+                border-radius: 7px;
+                padding: 10px;"></textarea>
+
+                <span asp-validation-for="JobDescription"
+                      style="color: #D46271;">
+                </span>
+
+            </div>
+
+
+            <div style="margin-bottom: 20px;">
+
+                <label asp-for="JobStatus"
+                       style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px;">
+                    Job Status
+                </label>
+
+                <select asp-for="JobStatus"
+                        class="form-select"
+                        style="
+                    border: 2px solid black;
+                    border-radius: 7px;
+                    padding: 10px;">
+
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Archived">Archived</option>
+
+                </select>
+
+                <span asp-validation-for="JobStatus"
+                      style="color: #D46271;">
+                </span>
+
+            </div>
+
+
+            <div style="margin-bottom: 20px;">
+
+                <label asp-for="DueDate"
+                       style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px;">
+                    Due Date
+                </label>
+
+                <input asp-for="DueDate"
+                       type="date"
+                       class="form-control"
+                       style="
+                border: 2px solid black;
+                border-radius: 7px;
+                padding: 10px;" />
+
+                <span asp-validation-for="DueDate"
+                      style="color: #D46271;">
+                </span>
+
+            </div>
+
+
+            <div style="margin-bottom: 25px;">
+
+                <label asp-for="CompletedAt"
+                       style="
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 7px;">
+                    Completed At
+                </label>
+
+                <input asp-for="CompletedAt"
+                       type="datetime-local"
+                       class="form-control"
+                       style="
+                border: 2px solid black;
+                border-radius: 7px;
+                padding: 10px;" />
+
+                <span asp-validation-for="CompletedAt"
+                      style="color: #D46271;">
+                </span>
+
+            </div>
+
+
+            <div style=" display: flex;
+                justify-content: flex-end;
+                gap: 12px;">
+
+                <a asp-action="Details"
+                   asp-route-id="@Model.JobCardID"
+                   style="
+                    background-color: #D46271;
+                    color: white;
+                    text-decoration: none;
+                    padding: 11px 22px;
+                    border-radius: 7px;
+                    font-weight: 600;">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        style="
+                    background-color: #5A93C8;
+                    color: white;
+                    border: none;
+                    padding: 11px 22px;
+                    border-radius: 7px;
+                    font-weight: 600;">
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

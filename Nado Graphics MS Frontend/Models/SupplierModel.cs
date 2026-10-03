@@ -27,6 +27,7 @@ namespace Nado_Graphics_MS_Frontend.Models
         [Required]
         [MaxLength(300)]
         public string ServiceType { get; set; } = string.Empty;
+        public decimal? ServiceRate { get; set; }
 
         public DateTime CreatedAt { get; set; }
     }

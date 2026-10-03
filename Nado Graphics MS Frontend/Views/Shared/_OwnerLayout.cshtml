@@ -1,1 +1,261 @@
-﻿
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - Nado Graphics
+    </title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+</head>
+
+<body>
+
+    <div style="
+        display: flex;
+        min-height: 100vh;
+        background-color: #f5f6f5;">
+
+        <!-- SIDE NAVIGATION -->
+
+        <div style="
+            width: 240px;
+            min-height: 100vh;
+            background-color: #68926D;
+            padding: 25px 15px;
+            box-sizing: border-box;">
+
+            <div style="color: white;
+                font-size: 24px;
+                font-weight: 700;
+                text-align: center;
+                margin-bottom: 30px;">
+                Owner
+            </div>
+
+            <!-- MAIN NAVIGATION -->
+
+            <div style="
+                display: flex;
+                flex-direction: column;
+                gap: 8px;">
+
+                <a asp-controller="Owner"
+                   asp-action="Dashboard"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Dashboard
+                </a>
+
+                <a asp-controller="Users"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Users
+                </a>
+
+                <a asp-controller="JobCards"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Job Cards
+                </a>
+
+                <a asp-controller="Quotes"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Quotes
+                </a>
+
+                <a asp-controller="Invoices"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Invoices
+                </a>
+
+                <a asp-controller="Statements"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Statements
+                </a>
+
+                <a asp-controller="Payments"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Payment Records
+                </a>
+
+                <a asp-controller="Clients"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Clients
+                </a>
+
+                <a asp-controller="Suppliers"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Suppliers
+                </a>
+
+                <a asp-controller="Products"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Product Catalogue
+                </a>
+
+                <a asp-controller="Portfolio"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Portfolio
+                </a>
+
+            </div>
+
+            <!-- BOTTOM LINKS -->
+
+            <div style="
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid rgba(255,255,255,0.35);
+                display: flex;
+                flex-direction: column;
+                gap: 8px;">
+
+                <a asp-controller="Account"
+                   asp-action="ChangePassword"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Change Password
+                </a>
+
+                <a asp-controller="Account"
+                   asp-action="Logout"
+                   style="
+                        display: block;
+                        padding: 12px 15px;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        font-weight: 600;">
+                    Log Out
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- PAGE CONTENT -->
+
+        <div style="
+            flex: 1;
+            min-width: 0;">
+
+            @RenderBody()
+
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

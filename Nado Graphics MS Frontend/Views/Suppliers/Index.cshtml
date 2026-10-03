@@ -46,6 +46,7 @@
                     <th style="background-color: #68926D; color: white; padding: 14px;">Contact Number</th>
                     <th style="background-color: #68926D; color: white; padding: 14px;">Email Address</th>
                     <th style="background-color: #68926D; color: white; padding: 14px;">Service Type</th>
+                    <th style="background-color: #68926D; color: white; padding: 14px;">Service Rate</th>
                     <th style="background-color: #68926D; color: white; padding: 14px;">Lead Time</th>
                     <th style="background-color: #68926D; color: white; padding: 14px;">Manage Supplier</th>
                 </tr>
@@ -61,6 +62,8 @@
                         <td style="padding: 14px;">@supplier.ContactNumber</td>
                         <td style="padding: 14px;">@supplier.SupplierEmail</td>
                         <td style="padding: 14px;">@supplier.ServiceType</td>
+                         <td style="padding: 14px;">@(supplier.ServiceRate.HasValue ? $"R{supplier.ServiceRate.Value:N2}": "Not set")
+                        </td>
                         <td style="padding: 14px;">@supplier.LeadTime</td>
 
                         <td style="padding: 14px;">

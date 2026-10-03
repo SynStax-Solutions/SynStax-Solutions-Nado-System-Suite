@@ -2,6 +2,8 @@
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Models.QuoteStates;
+using Microsoft.AspNetCore.SignalR;
+using Nado_Graphics_MS_Backend.Hubs;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
@@ -12,14 +14,18 @@ namespace Nado_Graphics_MS_Backend.Services
     {
         private readonly BMSDbContext _context;
         private readonly ReferenceNumberService _referenceNumberService;
-
+        //added the below service declaration
+        private readonly JobCardService _jobCardService;
+        private readonly IHubContext<JobCardHub> _hubContext;
         //The 4 statuses allowed by the Check_Quote_Status constraint.
         private static readonly string[] ValidStatuses = { "Pending", "Accepted", "Rejected", "Expired" };
 
-        public QuoteService(BMSDbContext context, ReferenceNumberService referenceNumberService)
+        public QuoteService(BMSDbContext context, ReferenceNumberService referenceNumberService, JobCardService jobCardService, IHubContext<JobCardHub> hubContext)
         {
             _context = context;
             _referenceNumberService = referenceNumberService;
+            _jobCardService = jobCardService;
+            _hubContext = hubContext;
         }
         //----------------------------------------------------------------------------------
         // Returns every quote, newest first, with their line items
@@ -104,7 +110,7 @@ namespace Nado_Graphics_MS_Backend.Services
                     item.UnitPrice = product.Price;
                 }
                 item.LineTotal = item.Quantity * item.UnitPrice;
- 
+
                 item.LineTotal = item.Quantity * item.UnitPrice;
                 total += item.LineTotal;
             }
@@ -231,8 +237,11 @@ namespace Nado_Graphics_MS_Backend.Services
         //Attempts to move a quote to Accepted using the state pattern.
         public async Task<(bool Success, string? Error)> AcceptQuoteAsync(int id)
         {
+            //This searches the database for the quote.
             var quote = await _context.Quotes.FindAsync(id);
 
+
+            //This checks whether the quote exists.
             if (quote == null)
             {
                 return (false, "Quote not found.");
@@ -240,19 +249,58 @@ namespace Nado_Graphics_MS_Backend.Services
 
             try
             {
+                //This gets the current quote state.
                 var currentState = QuoteStateFactory.GetState(quote);
 
+                //This changes the quote to Accepted.
                 currentState.Accept(quote);
 
-                await _context.SaveChangesAsync();
+                //This creates the Job Card from the accepted quote.
+                var jobCardResult = await _jobCardService.CreateFromAcceptedQuoteAsync(id);
 
+                //This checks whether the Job Card could not be created.
+                if (!jobCardResult.Success)
+                {
+                    return (false, jobCardResult.Error);
+                }
+
+                //This saves both the accepted quote and the new Job Card.
+                await _context.SaveChangesAsync();
+                await _hubContext.Clients.All.SendAsync("JobCardsUpdated");
+                //This returns a successful result.
                 return (true, null);
             }
             catch (InvalidOperationException ex)
             {
                 return (false, ex.Message);
             }
+
         }
+
+        //public async Task<(bool Success, string? Error)> AcceptQuoteAsync(int id)
+        //{
+        //    var quote = await _context.Quotes.FindAsync(id);
+
+        //    if (quote == null)
+        //    {
+        //        return (false, "Quote not found.");
+        //    }
+
+        //    try
+        //    {
+        //        var currentState = QuoteStateFactory.GetState(quote);
+
+        //        currentState.Accept(quote);
+
+        //        await _context.SaveChangesAsync();
+
+        //        return (true, null);
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        return (false, ex.Message);
+        //    }
+        //}
         //----------------------------------------------------------------------------------//
         // Same pattern as AcceptQuoteAsync, but for the Rejected transition.
         public async Task<(bool Success, string? Error)> RejectQuoteAsync(int id, string reason)
