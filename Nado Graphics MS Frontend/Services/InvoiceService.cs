@@ -96,6 +96,18 @@ namespace Nado_Graphics_MS_Frontend.Services
         {
             public string? Message { get; set; }
         }
+
+        public async Task<byte[]?> DownloadInvoicePdfAsync(int invoiceId)
+        {
+            var response = await _httpClient.GetAsync($"invoices/{invoiceId}/pdf");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
     }
 }
 //--------------------------------------------------END OF FILE------------------------------------------------------------//

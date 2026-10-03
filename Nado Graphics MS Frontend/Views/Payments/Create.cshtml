@@ -1,0 +1,109 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.RecordPaymentModel
+
+@{
+    ViewData["Title"] = "Record Payment";
+    var invoice = (Nado_Graphics_MS_Frontend.Models.InvoiceModel)ViewBag.Invoice;
+    var balance = invoice.TotalAmount - invoice.AmountPaid;
+}
+
+<div style="width: 100%; max-width: 900px;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">Record Payment for @invoice.ReferenceNumber</h1>
+        <a asp-controller="Invoices" asp-action="Details" asp-route-id="@invoice.InvoiceID"
+               style="background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+            Back
+        </a>
+    </div>
+
+    <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+        <div style="flex: 1; background-color: white; border-radius: 14px; padding: 18px 22px; box-shadow: 0 5px 14px rgba(0,0,0,0.16);">
+            <div style="color: #555; font-size: 13px;">Invoice Total</div>
+            <div style="font-size: 22px; font-weight: 700; color: #24463A;">R @invoice.TotalAmount.ToString("N2")</div>
+        </div>
+        <div style="flex: 1; background-color: white; border-radius: 14px; padding: 18px 22px; box-shadow: 0 5px 14px rgba(0,0,0,0.16);">
+            <div style="color: #555; font-size: 13px;">Amount Paid</div>
+            <div style="font-size: 22px; font-weight: 700; color: #68926D;">R @invoice.AmountPaid.ToString("N2")</div>
+        </div>
+        <div style="flex: 1; background-color: white; border-radius: 14px; padding: 18px 22px; box-shadow: 0 5px 14px rgba(0,0,0,0.16);">
+            <div style="color: #555; font-size: 13px;">Balance Due</div>
+            <div style="font-size: 22px; font-weight: 700; color: #C85A5A;">R @balance.ToString("N2")</div>
+        </div>
+    </div>
+
+    <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px;">
+
+        <form asp-controller="Payments" asp-action="Create" method="post">
+            <input type="hidden" asp-for="InvoiceID" />
+
+            <div asp-validation-summary="ModelOnly" style="color: #C85A5A; margin-bottom: 15px;"></div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 18px;">
+                <div>
+                    <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Amount (R)</label>
+                    <input asp-for="Amount" id="amountInput" type="number" step="0.01" min="0.01"
+                           max="@balance.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                           style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;" />
+                    <button type="button" id="payFullBtn"
+                            style="background: none; border: none; color: #5A93C8; font-weight: 600; padding: 4px 0; cursor: pointer; font-size: 13px;">
+                        Pay full balance
+                    </button>
+                    <span asp-validation-for="Amount" style="color: #C85A5A; font-size: 13px; display: block;"></span>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Payment Method</label>
+                    <select asp-for="PaymentMethod"
+                            style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;">
+                        <option value="">Select a method...</option>
+                        <option value="Cash">Cash</option>
+                        <option value="EFT">EFT</option>
+                        <option value="Card">Card</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span asp-validation-for="PaymentMethod" style="color: #C85A5A; font-size: 13px;"></span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Transaction Reference</label>
+                <input asp-for="TransactionReference" type="text" maxlength="100"
+                       style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;" />
+                <span asp-validation-for="TransactionReference" style="color: #C85A5A; font-size: 13px;"></span>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Notes</label>
+                <textarea asp-for="Notes" rows="3" maxlength="500"
+                          style="width: 100%; padding: 10px 12px; border: 1px solid #aaa; border-radius: 7px; resize: vertical;"></textarea>
+                <span asp-validation-for="Notes" style="color: #C85A5A; font-size: 13px;"></span>
+            </div>
+
+            <div style="color: #777; font-size: 13px; margin-bottom: 20px;">The payment is dated today when it is saved.</div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <a asp-controller="Invoices" asp-action="Details" asp-route-id="@invoice.InvoiceID"
+                       style="padding: 10px 24px; border-radius: 7px; text-decoration: none; color: #24463A; border: 1px solid #aaa; font-weight: 600;">
+                    Cancel
+                </a>
+                <button type="submit"
+                        style="background-color: #68926D; color: white; border: none; padding: 10px 24px; border-radius: 7px; font-weight: 600; cursor: pointer;">
+                    Record Payment
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.getElementById("payFullBtn").addEventListener("click", function () {
+            document.getElementById("amountInput").value = "@balance.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)";
+        });
+    </script>
+}

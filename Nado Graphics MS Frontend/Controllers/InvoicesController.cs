@@ -207,6 +207,19 @@ namespace Nado_Graphics_MS_Frontend.Controllers
             ViewBag.Clients = await _clientService.GetClientsAsync();
             ViewBag.Products = await _productService.GetProductsAsync();
         }
+
+        public async Task<IActionResult> DownloadPdf(int id)
+        {
+            var pdf = await _invoiceService.DownloadInvoicePdfAsync(id);
+
+            if (pdf == null)
+            {
+                TempData["Error"] = "The invoice PDF could not be generated.";
+                return RedirectToAction("Index");
+            }
+
+            return File(pdf, "application/pdf", $"Invoice-{id}.pdf");
+        }
     }
 }
 //--------------------------------------------------END OF FILE------------------------------------------------------------//

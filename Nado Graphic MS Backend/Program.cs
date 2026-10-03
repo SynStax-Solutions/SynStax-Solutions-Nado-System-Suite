@@ -145,6 +145,7 @@ builder.Services.Configure<CompanyInfoOptions>(builder.Configuration.GetSection(
 builder.Services.AddScoped<ReferenceNumberService>();
 
 builder.Services.AddScoped<InvoiceService>();
+builder.Services.AddScoped<InvoicePDFService>();
 
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ProductCategoryService>();

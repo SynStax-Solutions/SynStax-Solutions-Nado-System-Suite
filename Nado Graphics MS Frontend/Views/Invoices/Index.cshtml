@@ -98,6 +98,11 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
+                                    <a class="dropdown-item" asp-controller="Invoices" asp-action="DownloadPdf" asp-route-id="@invoice.InvoiceID">
+                                        Download PDF
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" asp-controller="Invoices" asp-action="Details" asp-route-id="@invoice.InvoiceID">
                                         View
                                     </a>

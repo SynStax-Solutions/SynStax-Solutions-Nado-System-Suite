@@ -16,13 +16,15 @@ namespace Nado_Graphics_MS_Backend.Controllers
     {
         // The constructor initializes the InvoicesController with an instance of InvoiceService, enabling it to perform operations on invoices.
         private readonly InvoiceService _invoiceService;
+        private readonly InvoicePDFService _invoicePdfService;
 
-        public InvoicesController(InvoiceService invoiceService)
+        public InvoicesController(InvoiceService invoiceService, InvoicePDFService invoicePDFService)
         {
             _invoiceService = invoiceService;
+            _invoicePdfService = invoicePDFService;
         }
         //--------------------------------------------------------------------------------------------------------------
-        //----------------------------------------------------
+        
         // The GetInvoices method retrieves a list of all invoices from the database and returns them in the response.
         // The GetInvoice method retrieves a specific invoice by its ID and returns it in the response. If the invoice is not found,
         // it returns a 404 Not Found response.
@@ -31,6 +33,21 @@ namespace Nado_Graphics_MS_Backend.Controllers
         {
             var invoices = await _invoiceService.GetInvoicesAsync();
             return Ok(invoices);
+        }
+
+        //-------------------------------------------------------------------------
+        [HttpGet("{id}/pdf")]
+        public async Task<IActionResult> DownloadPdf(int id)
+        {
+            var salesRepName = User.FindFirst(AppClaims.Name)?.Value ?? "Nado Graphics";
+            var pdf = await _invoicePdfService.GenerateInvoicePdfAsync(id, salesRepName);
+
+            if (pdf == null)
+            {
+                return NotFound();
+            }
+
+            return File(pdf, "application/pdf", $"Invoice-{id}.pdf");
         }
         //--------------------------------------------------------------------------------------------------------------
         [HttpGet("{id}")]
