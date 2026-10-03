@@ -170,6 +170,45 @@ quoteId)
             //The QuoteService saves both the accepted quote and job card together. 
             return (true, null);
         }
+
+        //----------------------------------------------------------------------------------//
+        //This creates a job card for a newly created invoice.
+        //It does not save - InvoiceService saves the invoice and job card together.
+        //If the invoice came from a quote, the job card already exists, so nothing is added.
+        public async Task CreateFromInvoiceAsync(Invoice invoice, string clientName, string? description)
+        {
+            //An invoice made from a quote shares the quote's reference number, so this
+            //matches the job card the accepted quote already created.
+            var jobReference = $"{invoice.ReferenceNumber}-JOB";
+
+            if (await _context.JobCards.AnyAsync(j => j.ReferenceNumber == jobReference))
+            {
+                return;
+            }
+
+            //The job description column is limited to 500 characters.
+            if (description != null && description.Length > 500)
+            {
+                description = description.Substring(0, 497) + "...";
+            }
+
+            _context.JobCards.Add(new JobCard
+            {
+                ReferenceNumber = jobReference,
+                ClientID = invoice.ClientID,
+                JobTitle = $"Job for {clientName}",
+                JobDescription = description ?? invoice.Notes,
+                JobStatus = "Not Started",
+                PaymentStatus = "Pending Payment",
+                JobDate = DateTime.Now
+            });
+        }
+        //----------------------------------------------------------------------------------//
+        //This tells any open Job Card pages to refresh.
+        public async Task NotifyJobCardsUpdatedAsync()
+        {
+            await _hubContext.Clients.All.SendAsync("JobCardsUpdated");
+        }
         //----------------------------------------------------------------------------------// 
 
         //This updates an existing job card. 

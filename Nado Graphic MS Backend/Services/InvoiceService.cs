@@ -11,12 +11,14 @@ namespace Nado_Graphics_MS_Backend.Services
     {
         private readonly BMSDbContext _context;
         private readonly ReferenceNumberService _referenceNumberService;
+        private readonly JobCardService _jobCardService;
 
 
-        public InvoiceService(BMSDbContext context, ReferenceNumberService referenceNumberService)
+        public InvoiceService(BMSDbContext context, ReferenceNumberService referenceNumberService, JobCardService jobCardService)
         {
             _context = context;
             _referenceNumberService = referenceNumberService;
+            _jobCardService = jobCardService;
         }
 
 
@@ -60,6 +62,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
             decimal total = 0;
             var items = new List<InvoiceItem>();
+            var descriptionParts = new List<string>();
 
             foreach (var item in request.InvoiceItems)
             {
@@ -87,6 +90,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 });
 
                 total += lineTotal;
+                descriptionParts.Add($"{product.ProductName} x {item.Quantity}");
             }
 
             var invoice = new Invoice
@@ -104,7 +108,11 @@ namespace Nado_Graphics_MS_Backend.Services
             };
 
             _context.Invoices.Add(invoice);
+
+            await _jobCardService.CreateFromInvoiceAsync(invoice, $"{client.FirstName} {client.LastName}", string.Join(", ", descriptionParts));
+
             await _context.SaveChangesAsync();
+            await _jobCardService.NotifyJobCardsUpdatedAsync();
 
             return (true, null, invoice);
         }
@@ -147,6 +155,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
             decimal total = 0;
             var items = new List<InvoiceItem>();
+            var descriptionParts = new List<string>();
 
             // Iterate through each quote item to validate the product, quantity, and price. Calculate the total amount for the invoice.
             // If any validation fails, return an error message.
@@ -176,6 +185,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 });
 
                 total += lineTotal;
+                descriptionParts.Add($"{product.ProductName} x {item.Quantity}");
             }
 
             // Create a new invoice based on the quote and its items. Set the invoice date, due date, client ID, reference number,
@@ -195,7 +205,11 @@ namespace Nado_Graphics_MS_Backend.Services
             };
 
             _context.Invoices.Add(invoice);
+            await _jobCardService.CreateFromInvoiceAsync(invoice, $"{client.FirstName} {client.LastName}", string.Join(", ", descriptionParts));
+
             await _context.SaveChangesAsync();
+            await _jobCardService.NotifyJobCardsUpdatedAsync();
+
 
             return (true, null, invoice);
         }
