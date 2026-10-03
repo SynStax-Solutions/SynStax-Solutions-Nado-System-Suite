@@ -13,8 +13,11 @@ namespace Nado_Graphics_MS_Backend.Models
         [Key]
         public int InvoiceID { get; set; }
         //-------------------------------------
-        [Required]
-        public int QuoteID { get; set; }
+
+        //Nullable - an invoice doesn't need a linked quote. When it does,
+        //CreateInvoiceFromQuoteAsync sets this; CreateInvoiceManuallyAsync leaves it null.
+        public int? QuoteID { get; set; }
+
         //-------------------------------------
         [MaxLength(50)]
         [Required]

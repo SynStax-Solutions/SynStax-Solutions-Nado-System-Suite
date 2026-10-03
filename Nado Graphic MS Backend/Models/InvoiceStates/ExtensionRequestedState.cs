@@ -5,8 +5,8 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
 {
     public class ExtensionRequestedState: IInvoiceState
     {
-        [Required, MaxLength(500)]
-        public string Reason { get; set; } = string.Empty;
+        
+        public string Reason { get; }
 
         public ExtensionRequestedState(string reason)
         {
@@ -15,26 +15,26 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
 
         public IInvoiceState Paid(Invoice invoice)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.Paid.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.Paid.ToDbString();
             return new PaidInvoiceState();
         }
 
         public IInvoiceState PartiallyPaid(Invoice invoice)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.PartiallyPaid.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.PartiallyPaid.ToDbString();
             return new PartiallyPaidInvoiceState();
         }
 
         public IInvoiceState Overdue(Invoice invoice, string reason)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.Overdue.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.Overdue.ToDbString();
             invoice.Notes = reason;
             return new OverdueInvoiceState(reason);
         }
 
         public IInvoiceState Cancelled(Invoice invoice, string reason)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.Cancelled.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.Cancelled.ToDbString();
             invoice.Notes = reason;
             return new CancelledInvoiceState(reason);
         }

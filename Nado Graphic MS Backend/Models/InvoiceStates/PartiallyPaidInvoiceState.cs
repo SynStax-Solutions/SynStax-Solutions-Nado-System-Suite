@@ -12,7 +12,7 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
         public IInvoiceState Paid(Invoice invoice)
         {
             
-            invoice.InvoiceStatus = States.InvoiceStatus.Paid.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.Paid.ToDbString();
 
             return new PaidInvoiceState();
         }
@@ -22,7 +22,7 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
         // such as installment plans or partial payments, which are common in business transactions.
         public IInvoiceState PartiallyPaid(Invoice invoice)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.PartiallyPaid.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.PartiallyPaid.ToDbString();
 
             return new PartiallyPaidInvoiceState();
         }
@@ -33,7 +33,7 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
         // the invoice is still past its due date.
         public IInvoiceState Overdue(Invoice invoice, string reason)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.Overdue.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.Overdue.ToDbString();
             invoice.Notes = reason;
 
             return new OverdueInvoiceState(reason);
@@ -44,7 +44,7 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
         // The reason why partially paid invoices can be marked as cancelled is to reflect the reality that the invoice is no longer valid or has been voided.
         public IInvoiceState Cancelled(Invoice invoice, string reason)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.Cancelled.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.Cancelled.ToDbString();
             invoice.Notes = reason;
 
             return new CancelledInvoiceState(reason);
@@ -54,7 +54,7 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
         // The reason why partially paid invoices can request an extension is to reflect the reality that the invoice's due date has been extended.
         public IInvoiceState ExtensionRequested(Invoice invoice, string reason)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.ExtensionRequested.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.ExtensionRequested.ToDbString();
             invoice.Notes = reason;
             return new ExtensionRequestedState(reason);
         }

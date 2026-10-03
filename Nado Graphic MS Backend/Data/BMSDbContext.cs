@@ -17,7 +17,7 @@ namespace Nado_Graphics_MS_Backend.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<QuoteItem> QuoteItems { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
-        public DbSet<InvoiceItem> invoiceItems { get; set; }
+        public DbSet<InvoiceItem> InvoiceItems { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Payment> Payments { get; set; }
 
@@ -73,11 +73,14 @@ namespace Nado_Graphics_MS_Backend.Data
             modelBuilder.Entity<Invoice>()
                 .HasOne<Client>()
                 .WithMany()
-                .HasForeignKey(i => i.ClientID);
+                .HasForeignKey(i => i.ClientID)
+                .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Invoice>()
                 .HasOne<Quote>()
                 .WithMany()
-                .HasForeignKey(i => i.QuoteID);
+                .HasForeignKey(i => i.QuoteID)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Invoice>()
                 .HasIndex(q => q.ReferenceNumber)
                 .IsUnique();
@@ -93,7 +96,23 @@ namespace Nado_Graphics_MS_Backend.Data
                 .WithMany()
                 .HasForeignKey(qi => qi.ProductID)
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            
+            modelBuilder.Entity<Payment>().ToTable("Payment");
+            modelBuilder.Entity<Payment>()
+                .HasOne<Invoice>()
+                .WithMany()
+                .HasForeignKey(p => p.InvoiceID)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Payment>()
+                .HasOne<Client>()
+                .WithMany()
+                .HasForeignKey(p => p.ClientID)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Payment>()
+            .Property(p => p.PaymentMethod)
+            .HasConversion<string>();
 
         }
     }

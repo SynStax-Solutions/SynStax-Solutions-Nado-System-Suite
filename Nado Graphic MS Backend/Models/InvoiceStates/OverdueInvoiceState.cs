@@ -13,7 +13,7 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
         // Being overdue does not prevent an invoice from being paid, so this method updates the invoice status to Paid and returns a new PaidInvoiceState.
         public IInvoiceState Paid(Invoice invoice)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.Paid.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.Paid.ToDbString();
 
             return new PaidInvoiceState();
         }
@@ -21,7 +21,7 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
         // and returns a new PartiallyPaidInvoiceState.
         public IInvoiceState PartiallyPaid(Invoice invoice)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.PartiallyPaid.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.PartiallyPaid.ToDbString();
 
             return new PartiallyPaidInvoiceState();
         }
@@ -34,7 +34,7 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
         // the invoice status to Cancelled and returns a new CancelledInvoiceState.
         public IInvoiceState Cancelled(Invoice invoice, string reason)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.Cancelled.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.Cancelled.ToDbString();
             invoice.Notes = reason;
 
             return new CancelledInvoiceState(reason);
@@ -42,7 +42,7 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
         // Being overdue does not prevent an invoice from requesting an extension, so this method updates
         public IInvoiceState ExtensionRequested(Invoice invoice, string reason)
         {
-            invoice.InvoiceStatus = States.InvoiceStatus.ExtensionRequested.ToString();
+            invoice.InvoiceStatus = States.InvoiceStatus.ExtensionRequested.ToDbString();
             invoice.Notes = reason;
 
             return new ExtensionRequestedState(reason);

@@ -38,5 +38,19 @@ namespace Nado_Graphics_MS_Backend.Models
             ExtensionRequested
         }
     }
+
+    //InvoiceStatus.ToString() doesn't match the CHECK constraint for "Partially Paid"
+    //and "Extension Requested" (no space vs a space) - this is the single source of
+    //truth for converting a status enum to the exact string the database expects.
+    //Use this everywhere instead of calling .ToString() directly on InvoiceStatus.
+    public static class InvoiceStatusExtensions
+    {
+        public static string ToDbString(this States.InvoiceStatus status) => status switch
+        {
+            States.InvoiceStatus.PartiallyPaid => "Partially Paid",
+            States.InvoiceStatus.ExtensionRequested => "Extension Requested",
+            _ => status.ToString()
+        };
+    }
 }
 //--------------------------------------------------END OF FILE------------------------------------------------------------

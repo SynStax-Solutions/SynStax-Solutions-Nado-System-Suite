@@ -6,6 +6,7 @@ using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Security;
 using Nado_Graphics_MS_Backend.Services;
 using QuestPDF.Infrastructure;
+using System.Text.Json.Serialization;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +15,10 @@ var builder = WebApplication.CreateBuilder(args);
 QuestPDF.Settings.License = LicenseType.Community;
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters
+    .Add(new JsonStringEnumConverter())); ;
+
 
 builder.Services.AddDbContext<BMSDbContext>(options =>
     options.UseSqlServer(
@@ -110,6 +114,7 @@ builder.Services.AddScoped<QuotePDFService>();
 builder.Services.Configure<CompanyInfoOptions>(builder.Configuration.GetSection("CompanyInfo"));
 builder.Services.AddScoped<ReferenceNumberService>();
 
+builder.Services.AddScoped<InvoiceService>();
 
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ProductCategoryService>();
