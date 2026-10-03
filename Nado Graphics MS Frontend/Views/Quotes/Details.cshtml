@@ -163,6 +163,18 @@
             </form>
         }
 
+        @if (Model.QuoteStatus == "Accepted")
+        {
+            <form asp-controller="Invoices" asp-action="CreateFromQuote" method="post" style="display: inline;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="quoteId" value="@Model.QuoteID" />
+                <button type="submit"
+                        style="background-color: #24463A; color: white; border: none; padding: 10px 20px; border-radius: 7px; font-weight: 600; cursor: pointer;">
+                    Create Invoice
+                </button>
+            </form>
+        }
+
     </div>
 
 </div>
