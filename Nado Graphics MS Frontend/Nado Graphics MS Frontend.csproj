@@ -10,6 +10,7 @@
   <ItemGroup>
     <Folder Include="Views\JobCards\" />
     <Folder Include="Views\Managers\" />
+    <Folder Include="Views\Orders\" />
   </ItemGroup>
 
   <ItemGroup>
