@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Nado Graphic MS Backend/Nado Graphic MS Backend.csproj" />
   <Project Path="Nado Graphics MS Frontend/Nado Graphics MS Frontend.csproj" />
+  <Project Path="Nado_Graphics_MS_Backend.Tests/Nado_Graphics_MS_Backend.Tests.csproj" Id="88555117-53f6-44e9-ae49-e6f8d5ea681f" />
 </Solution>
