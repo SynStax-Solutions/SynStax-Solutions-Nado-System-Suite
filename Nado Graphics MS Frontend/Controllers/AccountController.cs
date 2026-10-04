@@ -21,6 +21,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
         {
             _authService = authService;
         }
+
         //----------------------------------------------------------------------------------//
         //This shows the login page.
         [HttpGet]
@@ -35,6 +36,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
 
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
+
         //----------------------------------------------------------------------------------//
         //This runs when the login form is submitted.
         [HttpPost]
@@ -78,6 +80,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
                 new AuthenticationProperties
                 {
                     IsPersistent = false,
+
                     //The cookie expires at the same time as the token.
                     ExpiresUtc = DateTime.SpecifyKind(user.ExpiresAt, DateTimeKind.Utc)
                 });
@@ -92,6 +95,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
             //Otherwise they go to their dashboard.
             return RedirectToDashboard(user.UserRole);
         }
+
         //----------------------------------------------------------------------------------//
         //This logs the user out by removing the cookie.
         [HttpPost]
@@ -102,6 +106,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction(nameof(Login));
         }
+
         //----------------------------------------------------------------------------------//
         //This page shows when a user opens a page their role can't access.
         [HttpGet]
@@ -110,6 +115,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
         {
             return View();
         }
+
         //----------------------------------------------------------------------------------//
         //This opens when the user clicks the link in their email.
         //It shows a button first, because some email apps open links automatically
@@ -120,6 +126,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
         {
             return View(new VerifyEmailViewModel { Token = token ?? string.Empty });
         }
+
         //----------------------------------------------------------------------------------//
         //This runs when the user clicks the verify button.
         [HttpPost]
@@ -133,9 +140,9 @@ namespace Nado_Graphics_MS_Frontend.Controllers
             //This shows the result on the page.
             model.Success = success;
             model.Message = message;
-
             return View(model);
         }
+
         //This shows the change password page. Any logged-in user can open it.
         [HttpGet]
         [Authorize]
@@ -143,6 +150,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
         {
             return View();
         }
+
         //----------------------------------------------------------------------------------//
         //This runs when the change password form is submitted.
         [HttpPost]
@@ -171,10 +179,88 @@ namespace Nado_Graphics_MS_Frontend.Controllers
 
             //This message is shown on the login page.
             TempData["Success"] = message;
-
             return RedirectToAction(nameof(Login));
         }
+
         //----------------------------------------------------------------------------------//
+        //This shows the forgot password page. Anyone can open it.
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View(new ForgotPasswordViewModel());
+        }
+
+        //----------------------------------------------------------------------------------//
+        //This runs when the forgot password form is submitted.
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            //This checks the form was filled in properly.
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            //This asks the API to send the reset email.
+            var (success, message) = await _authService.ForgotPasswordAsync(model.Email);
+
+            //If the server could not be reached, the error is shown on the page.
+            if (!success)
+            {
+                ModelState.AddModelError("", message);
+                return View(model);
+            }
+
+            //The same message is shown whether or not the email has an account.
+            TempData["Success"] = message;
+            return RedirectToAction(nameof(Login));
+        }
+
+        //----------------------------------------------------------------------------------//
+        //This opens when the user clicks the link in their reset email.
+        //It only shows the form. Nothing changes until the form is submitted,
+        //so email apps that open links to scan them can't use up the link.
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string? token)
+        {
+            return View(new ResetPasswordViewModel { Token = token ?? string.Empty });
+        }
+
+        //----------------------------------------------------------------------------------//
+        //This runs when the reset password form is submitted.
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            //This checks the form was filled in properly (e.g. both passwords match).
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            //This sends the token and new password to the API.
+            var (success, message) = await _authService.ResetPasswordAsync(model.Token, model.NewPassword);
+
+            //If it failed (e.g. expired link), the error is shown on the page.
+            if (!success)
+            {
+                ModelState.AddModelError("", message);
+                return View(new ResetPasswordViewModel { Token = model.Token });
+            }
+
+            //If the user was logged in on this browser, they are logged out.
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            //This message is shown on the login page.
+            TempData["Success"] = message;
+            return RedirectToAction(nameof(Login));
+        }
+
         //----------------------------------------------------------------------------------//
         //This sends the user to the right dashboard for their role.
         private IActionResult RedirectToDashboard(string? role)
@@ -184,13 +270,11 @@ namespace Nado_Graphics_MS_Frontend.Controllers
         }
     }
 }
+
 /*
  * References:
-
 Microsoft (n.d.) Use cookie authentication without ASP.NET Core Identity. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie
-
 Microsoft (n.d.) Prevent Cross-Site Request Forgery (XSRF/CSRF) attacks in ASP.NET Core. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery
-
 Microsoft (n.d.) Prevent open redirect attacks in ASP.NET Core. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/security/preventing-open-redirects
  */
 // ------------------------- END OF FILE ------------------------- //

@@ -12,14 +12,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 QuestPDF.Settings.License = LicenseType.Community;
 
 // Add services to the container.
-
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.Converters
-    .Add(new JsonStringEnumConverter())); ;
+        .Add(new JsonStringEnumConverter())); ;
+
 builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
@@ -29,11 +28,12 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "http://localhost:5067",
                 "https://localhost:7227")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
+
 builder.Services.AddDbContext<BMSDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -41,7 +41,6 @@ builder.Services.AddDbContext<BMSDbContext>(options =>
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("bearer", new Microsoft.OpenApi.OpenApiSecurityScheme
@@ -57,12 +56,22 @@ builder.Services.AddSwaggerGen(options =>
         [new Microsoft.OpenApi.OpenApiSecuritySchemeReference("bearer", document)] = []
     });
 });
+
 //---------------- JWT authentication ----------------//
+
 //This gets the secret key used to sign tokens. It must be at least 32 characters.
 var jwtKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrWhiteSpace(jwtKey) || Encoding.UTF8.GetByteCount(jwtKey) < 32)
 {
     throw new InvalidOperationException("Jwt:Key in appsettings.json must be at least 32 characters long.");
+}
+
+//This makes sure email links point to the real website in production, not to localhost.
+var frontendBaseUrl = builder.Configuration["App:FrontendBaseUrl"];
+if (!builder.Environment.IsDevelopment() &&
+    (string.IsNullOrWhiteSpace(frontendBaseUrl) || frontendBaseUrl.Contains("localhost", StringComparison.OrdinalIgnoreCase)))
+{
+    throw new InvalidOperationException("App:FrontendBaseUrl must be set to the real website address in production.");
 }
 
 //This sets up the API to check the JWT on every request.
@@ -143,16 +152,12 @@ builder.Services.AddScoped<QuoteService>();
 builder.Services.AddScoped<QuotePDFService>();
 builder.Services.Configure<CompanyInfoOptions>(builder.Configuration.GetSection("CompanyInfo"));
 builder.Services.AddScoped<ReferenceNumberService>();
-
 builder.Services.AddScoped<InvoiceService>();
 builder.Services.AddScoped<InvoicePDFService>();
-
 builder.Services.AddScoped<StatementService>();
 builder.Services.AddScoped<StatementPDFService>();
-
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ProductCategoryService>();
-
 builder.Services.AddScoped<PortfolioSubmissionService>();
 
 //These are the new services for login and emails.
@@ -174,8 +179,11 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<EnquiryService>();
 
+//This makes the anti-forgery cookie HTTPS-only too.
+builder.Services.AddAntiforgery(options => options.Cookie.SecurePolicy = CookieSecurePolicy.Always);
 
 var app = builder.Build();
+
 //This creates the Owner account if it does not already exist.
 //////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////
@@ -208,17 +216,18 @@ using (var scope = app.Services.CreateScope())
             };
 
             db.Users.Add(owner);
-
             await db.SaveChangesAsync();
         }
     }
 }
+
 //---------------- First Owner account ----------------//
 //There is no sign-up page, so if there is no Manager in the database yet,
 //one is created using the "SeedOwner" details in appsettings.json.
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BMSDbContext>();
+
     var seedEmail = builder.Configuration["SeedOwner:Email"];
     var seedPassword = builder.Configuration["SeedOwner:Password"];
 
@@ -238,6 +247,7 @@ using (var scope = app.Services.CreateScope())
             CreatedAt = DateTime.Now
         });
         await db.SaveChangesAsync();
+
         app.Logger.LogWarning("Created the first Owner/Manager account: {Email}", seedEmail);
     }
 }
@@ -249,6 +259,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseCors("Frontend");
 
 //This checks who the user is, then what they are allowed to do. The order matters.
@@ -257,4 +268,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<JobCardHub>("/jobCardHub");
+
 app.Run();

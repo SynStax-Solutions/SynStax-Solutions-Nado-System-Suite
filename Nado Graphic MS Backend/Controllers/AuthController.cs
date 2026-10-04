@@ -25,6 +25,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             _authService = authService;
             _userService = userService;
         }
+
         //----------------------------------------------------------------------------------//
         //Handles POST requests sent to /api/Auth/login.
         [HttpPost("login")]
@@ -43,6 +44,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             //Returning the token and user details with an HTTP 200 OK response.
             return Ok(response);
         }
+
         //----------------------------------------------------------------------------------//
         //Handles POST requests sent to /api/Auth/verify-email.
         [HttpPost("verify-email")]
@@ -61,13 +63,40 @@ namespace Nado_Graphics_MS_Backend.Controllers
             //Returning an HTTP 200 OK response.
             return Ok(new { message = result.Message });
         }
+
+        //----------------------------------------------------------------------------------//
+        //Handles POST requests sent to /api/Auth/forgot-password.
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
+        {
+            //This always returns the same message, whether the email has an account or not.
+            var result = await _userService.ForgotPasswordAsync(request.Email);
+            return Ok(new { message = result.Message });
+        }
+
+        //----------------------------------------------------------------------------------//
+        //Handles POST requests sent to /api/Auth/reset-password.
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        {
+            //Sending the token and new password to the UserService.
+            var result = await _userService.ResetPasswordAsync(request.Token, request.NewPassword);
+
+            //Checking if the reset failed (wrong, used or expired link).
+            if (!result.Success)
+            {
+                return BadRequest(new { message = result.Message });
+            }
+
+            //Returning an HTTP 200 OK response.
+            return Ok(new { message = result.Message });
+        }
     }
 }
+
 /* References
 Microsoft (n.d.) Create web APIs with ASP.NET Core. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/web-api/
-
 Microsoft (n.d.) AllowAnonymousAttribute Class. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.allowanonymousattribute
-
 Fielding, R., Nottingham, M. and Reschke, J. (2022) RFC 9110: HTTP Semantics. Internet Engineering Task Force. Available at: https://www.rfc-editor.org/rfc/rfc9110
  */
-//--------------------------------------------------<>\\<>End of Program<>//<>------------------------------------------------------------//
+//--------------------------------------------------<>\\<>End of Program<>//<>--------------------------------------------------//

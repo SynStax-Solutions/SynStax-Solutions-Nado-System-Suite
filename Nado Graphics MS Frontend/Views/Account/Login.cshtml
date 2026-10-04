@@ -1,5 +1,4 @@
 ﻿@model LoginViewModel
-
 @{
     ViewData["Title"] = "Log In";
 }
@@ -7,7 +6,6 @@
 @* This is the login page. There is no sign-up link because only the Owner or Admin can create accounts. *@
 <div class="row justify-content-center mt-5">
     <div class="col-md-6 col-lg-5">
-
         <div style="background-color: white; border: 2px solid black; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);">
 
             <div style="background-color: #68926D; color: white; padding: 18px 25px;">
@@ -21,6 +19,7 @@
                 {
                     <div class="alert alert-success">@TempData["Success"]</div>
                 }
+
                 <form asp-action="Login" method="post">
 
                     @* This remembers which page the user was trying to open. *@
@@ -45,17 +44,19 @@
                             style="background-color: #68926D; color: white; border: none; padding: 10px 20px; border-radius: 7px;">
                         Log In
                     </button>
-
                 </form>
+
+                @* This link lets users who forgot their password get a reset email. *@
+                <div class="text-center mt-3">
+                    <a asp-action="ForgotPassword" style="color: #24463A; font-size: 14px;">Forgot your password?</a>
+                </div>
 
                 <p class="text-muted mt-3 mb-0" style="font-size: 14px;">
                     Accounts are created by the business owner or an administrator.
                     If you don't have an account, please ask them to create one for you.
                 </p>
-
             </div>
         </div>
-
     </div>
 </div>
 

@@ -34,7 +34,10 @@ builder.Services
         //These are the cookie settings.
         options.Cookie.Name = "NadoGraphics.Auth";
         options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+
+        //The cookie is only ever sent over HTTPS, so it can't be read on an insecure connection.
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.SlidingExpiration = false;
     });
@@ -54,6 +57,7 @@ builder.Services.AddScoped<InvoiceService>();
 builder.Services.AddScoped<ProductCategoryService>();
 builder.Services.AddScoped<StatementService>();
 builder.Services.AddScoped<PortfolioService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -65,12 +69,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseRouting();
 
 //This checks who the user is, then what they are allowed to do. The order matters.
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 //If a page crashes because the API said the user is no longer logged in,
 //the user is sent to the login page instead of an error page.
@@ -92,6 +96,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();
