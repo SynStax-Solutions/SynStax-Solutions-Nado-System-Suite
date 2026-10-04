@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Job Card Details";
+    var isDesigner = User.IsInRole(Nado_Graphics_MS_Frontend.Security.AppRoles.Designer);
 }
 
 <div style="width: 100%;">
@@ -103,6 +104,27 @@
                     @(Model.CompletedAt.HasValue ? Model.CompletedAt.Value.ToString("dd/MM/yyyy") : "Not completed")
                 </div>
 
+                @if (isDesigner)
+                {
+                    <form asp-action="UpdateStatus" method="post"
+                          style="display:flex; gap:10px; align-items:center; margin-top:20px; padding-top:20px; border-top:1px solid #ddd;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.JobCardID" />
+
+                        <select name="status"
+                                style="flex:1; border:2px solid black; border-radius:7px; padding:10px; background-color:white;">
+                            <option value="Not Started" selected="@(Model.JobStatus == "Not Started")">Not Started</option>
+                            <option value="In Progress" selected="@(Model.JobStatus == "In Progress")">In Progress</option>
+                            <option value="Completed" selected="@(Model.JobStatus == "Completed")">Completed</option>
+                        </select>
+
+                        <button type="submit"
+                                style="background-color:#5A93C8; color:white; border:none; border-radius:7px; padding:10px 18px; font-weight:600;">
+                            Update Status
+                        </button>
+                    </form>
+                }
+
             </div>
 
         </div>
@@ -193,6 +215,9 @@
                 </div>
             }
 
+
+             @if (!isDesigner)
+            {
             <form asp-action="AssignSupplier" method="post" style="margin-top:20px;">
 
                 @Html.AntiForgeryToken()
@@ -230,7 +255,7 @@
                 </div>
 
             </form>
-
+            }
         </div>
 
     </div>
@@ -240,10 +265,12 @@
             Back to Job Cards
         </a>
 
+        @if (!isDesigner)
+        {
         <a asp-action="Edit" asp-route-id="@Model.JobCardID" style="background-color:#5A93C8; color:white; text-decoration:none; padding:11px 20px; border-radius:7px; font-weight:600;">
             Edit Job Card
         </a>
-
+        }
     </div>
 
 </div>

@@ -68,6 +68,22 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             return Ok(enquiry);
         }
+
+        //---------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
+        [HttpPut("{id}/read")]
+        [Authorize(Roles = AppRoles.ManagerOrAdmin)]
+        public async Task<IActionResult> MarkAsRead(int id)
+        {
+            var success = await _enquiryService.MarkAsReadAsync(id);
+
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
     }
 }
 //--------------------------------------------------END OF FILE------------------------------------------------------------

@@ -1,0 +1,183 @@
+﻿@model List<Nado_Graphics_MS_Frontend.Models.EnquiryModel>
+
+@{
+    ViewData["Title"] = "Enquiries";
+    var backController = User.IsInRole(Nado_Graphics_MS_Frontend.Security.AppRoles.Manager) ? "Owner" : "Admins";
+    var unreadCount = Model.Count(e => !e.IsRead);
+}
+
+<div style="width: 100%;">
+
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;">
+
+        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">
+            Enquiries
+            @if (unreadCount > 0)
+            {
+                <span style="
+                    background-color: #D46271;
+                    color: white;
+                    padding: 4px 12px;
+                    border-radius: 15px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    margin-left: 10px;
+                    vertical-align: middle;">
+                    @unreadCount new
+                </span>
+            }
+        </h1>
+
+        <a asp-controller="@backController"
+               asp-action="Dashboard"
+               style="
+            background-color: #68926D;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 7px;
+            font-weight: 600;">
+            Back
+        </a>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
+
+        <input type="text"
+               id="enquirySearch"
+               placeholder="Search by name, email or service..."
+               style="
+        flex: 1;
+        height: 44px;
+        padding: 8px 15px;
+        border: 1px solid #aaa;
+        border-radius: 7px;
+        font-size: 15px;
+        outline: none;" />
+
+        <select id="statusFilter"
+                style="
+            min-width: 180px;
+            height: 44px;
+            padding: 8px 12px;
+            border: 1px solid #aaa;
+            border-radius: 7px;
+            background-color: white;
+            font-size: 15px;">
+            <option value="">All Enquiries</option>
+            <option value="unread">Unread</option>
+            <option value="read">Read</option>
+        </select>
+    </div>
+
+    <div style="
+        background-color: white;
+        border-radius: 14px;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+        overflow: hidden;">
+
+        <div style="
+            display: grid;
+            grid-template-columns: 160px 1.2fr 1.5fr 1.1fr 90px 110px;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: #68926D;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;">
+            <div>Received</div>
+            <div>Name</div>
+            <div>Email</div>
+            <div>Service</div>
+            <div>Status</div>
+            <div style="text-align: center;">Manage</div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div style="padding: 55px 20px; text-align: center; color: #666;">
+                <h3 style="margin-top: 12px; color: #24463A;">No Enquiries Found</h3>
+                <p style="margin-bottom: 0;">No enquiries have been received yet.</p>
+            </div>
+        }
+        else
+        {
+            foreach (var e in Model)
+            {
+                <div class="enquiry-row"
+                     data-search="@($"{e.Name} {e.Email} {e.Service}".ToLower())"
+                     data-status="@(e.IsRead ? "read" : "unread")"
+                     style="
+                    display: grid;
+                    grid-template-columns: 160px 1.2fr 1.5fr 1.1fr 90px 110px;
+                    align-items: center;
+                    padding: 16px 20px;
+                    border-bottom: 1px solid #d9d9d9;
+                    font-size: 14px;
+                    background-color: @(e.IsRead ? "white" : "#FFFBEF");">
+
+                    <div>@e.SubmittedAt.ToString("dd/MM/yyyy HH:mm")</div>
+
+                    <div style="color: #24463A; font-weight: @(e.IsRead ? "500" : "700");">
+                        @e.Name
+                    </div>
+
+                    <div style="word-break: break-word;">@e.Email</div>
+
+                    <div>@(e.Service ?? "-")</div>
+
+                    <div>
+                        @if (e.IsRead)
+                        {
+                            <span style="background-color: #68926D; color: white; padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: 600;">Read</span>
+                        }
+                        else
+                        {
+                            <span style="background-color: #DFA738; color: white; padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: 600;">New</span>
+                        }
+                    </div>
+
+                    <div style="display: flex; justify-content: center;">
+                        <a asp-action="Details"
+                               asp-route-id="@e.EnquiryID"
+                               style="
+                            background-color: #5A93C8;
+                            color: white;
+                            text-decoration: none;
+                            padding: 7px 16px;
+                            border-radius: 7px;
+                            font-weight: 600;">
+                            View
+                        </a>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const searchInput = document.getElementById("enquirySearch");
+        const statusFilter = document.getElementById("statusFilter");
+        const rows = document.querySelectorAll(".enquiry-row");
+
+        function filterEnquiries() {
+            const search = searchInput.value.toLowerCase().trim();
+            const status = statusFilter.value;
+
+            rows.forEach(function (row) {
+                const matchesSearch = row.dataset.search.includes(search);
+                const matchesStatus = status === "" || row.dataset.status === status;
+                row.style.display = (matchesSearch && matchesStatus) ? "grid" : "none";
+            });
+        }
+
+        searchInput.addEventListener("input", filterEnquiries);
+        statusFilter.addEventListener("change", filterEnquiries);
+    </script>
+}

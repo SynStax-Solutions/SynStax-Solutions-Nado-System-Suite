@@ -1,0 +1,151 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.EnquiryModel
+
+@{
+    ViewData["Title"] = "Enquiry";
+}
+
+<div style="max-width: 900px; margin: 0 auto;">
+
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;">
+
+        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">
+            Enquiry Details
+        </h1>
+
+        <a asp-action="Index"
+               style="
+            background-color: #68926D;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 7px;
+            font-weight: 600;">
+            Back
+        </a>
+    </div>
+
+    <div style="
+        background-color: white;
+        border-radius: 14px;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+        overflow: hidden;">
+
+        <!-- Header strip -->
+        <div style="
+            background-color: #68926D;
+            color: white;
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;">
+
+            <div>
+                <div style="font-size: 22px; font-weight: 700;">@Model.Name</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-top: 3px;">
+                    Received @Model.SubmittedAt.ToString("dd MMMM yyyy 'at' HH:mm")
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Service))
+            {
+                <span style="
+                    background-color: white;
+                    color: #24463A;
+                    padding: 6px 14px;
+                    border-radius: 15px;
+                    font-size: 13px;
+                    font-weight: 700;">
+                    @Model.Service
+                </span>
+            }
+        </div>
+
+        <div style="padding: 28px;">
+
+            <!-- Contact details -->
+            <div style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                margin-bottom: 28px;">
+
+                <div>
+                    <div style="font-size: 12px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 4px;">Email</div>
+                    <a href="mailto:@Model.Email" style="color: #5A93C8; font-weight: 600; text-decoration: none; word-break: break-word;">
+                        @Model.Email
+                    </a>
+                </div>
+
+                <div>
+                    <div style="font-size: 12px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 4px;">Phone</div>
+                    @if (!string.IsNullOrWhiteSpace(Model.Phone))
+                    {
+                        <a href="tel:@Model.Phone" style="color: #5A93C8; font-weight: 600; text-decoration: none;">@Model.Phone</a>
+                    }
+                    else
+                    {
+                        <span style="color: #777;">Not provided</span>
+                    }
+                </div>
+            </div>
+
+            <!-- Message -->
+            <div style="font-size: 12px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 8px;">Message</div>
+            <div style="
+                background-color: #F5F7F5;
+                border-left: 4px solid #68926D;
+                border-radius: 7px;
+                padding: 18px 20px;
+                color: #333;
+                line-height: 1.6;
+                white-space: pre-wrap;
+                word-break: break-word;">
+                @Model.Message
+            </div>
+
+            <!-- Consent -->
+            <div style="margin-top: 22px; font-size: 13px; color: #666;">
+                @if (Model.ConsentGiven)
+                {
+                    <span>Consent to be contacted given@(Model.ConsentGivenAt.HasValue ? " on " + Model.ConsentGivenAt.Value.ToString("dd/MM/yyyy HH:mm") : "").</span>
+                }
+                else
+                {
+                    <span>No consent record stored for this enquiry.</span>
+                }
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 12px; margin-top: 28px;">
+                <a href="mailto:@Model.Email?subject=Re: Your enquiry to Nado Graphics"
+                       style="
+                    background-color: #5A93C8;
+                    color: white;
+                    text-decoration: none;
+                    padding: 10px 22px;
+                    border-radius: 7px;
+                    font-weight: 600;">
+                    Reply by Email
+                </a>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Phone))
+                {
+                    <a href="tel:@Model.Phone"
+                           style="
+                        background-color: #DFA738;
+                        color: white;
+                        text-decoration: none;
+                        padding: 10px 22px;
+                        border-radius: 7px;
+                        font-weight: 600;">
+                        Call
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

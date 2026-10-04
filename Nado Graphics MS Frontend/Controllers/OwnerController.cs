@@ -14,19 +14,22 @@ namespace Nado_Graphics_MS_Frontend.Controllers
         private readonly UserService _userService;
         private readonly ClientService _clientService;
         private readonly SupplierService _supplierService;
+        private readonly EnquiryService _enquiryService;
 
         public OwnerController(
             JobCardService jobCardService,
             QuoteService quoteService,
             UserService userService,
             ClientService clientService,
-            SupplierService supplierService)
+            SupplierService supplierService,
+            EnquiryService enquiryService)
         {
             _jobCardService = jobCardService;
             _quoteService = quoteService;
             _userService = userService;
             _clientService = clientService;
             _supplierService = supplierService;
+            _enquiryService = enquiryService;
         }
 
         //This shows the Owner dashboard. 
@@ -37,12 +40,14 @@ namespace Nado_Graphics_MS_Frontend.Controllers
             var users = await _userService.GetUsersAsync();
             var clients = await _clientService.GetClientsAsync();
             var suppliers = await _supplierService.GetSuppliersAsync();
+            var enquiries = await _enquiryService.GetEnquiriesAsync();
 
             ViewBag.JobCards = jobCards;
             ViewBag.RecentQuotes = quotes.Take(5).ToList();
             ViewBag.Users = users;
             ViewBag.Clients = clients;
             ViewBag.Suppliers = suppliers;
+            ViewBag.Enquiries = enquiries;
 
             return View();
         }

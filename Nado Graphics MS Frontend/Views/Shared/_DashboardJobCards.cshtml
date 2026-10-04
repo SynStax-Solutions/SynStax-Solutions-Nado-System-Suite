@@ -1,7 +1,6 @@
 ﻿@model List<Nado_Graphics_MS_Frontend.Models.JobCardModel>
 
-<div style="
-    margin-top: 25px;">
+<div>
 
     <div style="
         display: flex;
@@ -11,7 +10,8 @@
 
         <h2 style="
             margin: 0;
-            color: #24463A;">
+            color: #24463A;
+            font-size: 22px;">
             Job Cards
         </h2>
 
@@ -37,9 +37,10 @@
     }
     else
     {
+        <div style="max-height: 520px; overflow-y: auto; padding-right: 4px;">
         <div style="
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
             gap: 20px;">
 
             @foreach (var job in Model)
@@ -124,7 +125,7 @@
 
                 </div>
             }
-
+            </div>
         </div>
     }
 

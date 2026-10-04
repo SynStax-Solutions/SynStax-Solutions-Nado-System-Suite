@@ -216,18 +216,25 @@
                     Change Password
                 </a>
 
-                <a asp-controller="Account"
-                   asp-action="Logout"
-                   style="
+                <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit"
+                            style="
                         display: block;
+                        width: 100%;
                         padding: 12px 15px;
                         color: white;
+                        background: none;
+                        border: none;
+                        text-align: left;
                         text-decoration: none;
                         border-radius: 7px;
                         font-size: 15px;
-                        font-weight: 600;">
-                    Log Out
-                </a>
+                        font-weight: 600;
+                        cursor: pointer;">
+                        Log Out
+                    </button>
+                </form>
 
             </div>
 

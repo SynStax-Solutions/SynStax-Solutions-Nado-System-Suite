@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Dashboard";
+    var enquiries = (ViewBag.Enquiries as List<EnquiryModel>) ?? new List<EnquiryModel>();
+    var unreadCount = enquiries.Count(e => !e.IsRead);
+    
 }
 
 <div style="
@@ -32,18 +35,136 @@
 
     </div>
 
-    <!-- JOB CARDS -->
-
+    <!-- JOB CARDS AND ENQUIRIES -->
     <div style="
-        background-color: white;
-        border: 2px solid black;
-        border-radius: 14px;
-        padding: 25px;
-        margin-bottom: 30px;
-        box-shadow: 0 6px 14px rgba(0,0,0,0.15);">
+        display: grid;
+        grid-template-columns: 2.2fr 1fr;
+        gap: 30px;
+        align-items: start;
+        margin-bottom: 30px;">
 
-        @await Html.PartialAsync("_DashboardJobCards", (List<Nado_Graphics_MS_Frontend.Models.JobCardModel>)ViewBag.JobCards)
+        <!-- JOB CARDS -->
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            min-width: 0;">
 
+            @await Html.PartialAsync("_DashboardJobCards", (List<Nado_Graphics_MS_Frontend.Models.JobCardModel>)ViewBag.JobCards)
+
+        </div>
+
+        <!-- ENQUIRIES -->
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            min-width: 0;">
+
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;">
+
+                <h2 style="margin: 0; color: #24463A; font-size: 22px;">
+                    Enquiries
+                </h2>
+
+                @if (unreadCount > 0)
+                {
+                    <span style="
+                        background-color: #D46271;
+                        color: white;
+                        padding: 4px 10px;
+                        border-radius: 15px;
+                        font-size: 13px;
+                        font-weight: 600;">
+                        @unreadCount new
+                    </span>
+                }
+            </div>
+
+            @if (!enquiries.Any())
+            {
+                <div style="padding: 25px 0; text-align: center; color: #777;">
+                    No enquiries have been received yet.
+                </div>
+            }
+            else
+            {
+                foreach (var enquiry in enquiries.Take(5))
+                {
+                    <a asp-controller="Enquiries"
+                           asp-action="Details"
+                           asp-route-id="@enquiry.EnquiryID"
+                           style="text-decoration: none; color: inherit; display: block;">
+
+                        <div style="
+                            padding: 12px 0;
+                            border-bottom: 1px solid #ddd;
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 10px;">
+
+                            <div style="
+                                width: 9px;
+                                height: 9px;
+                                border-radius: 50%;
+                                margin-top: 6px;
+                                flex-shrink: 0;
+                                background-color: @(enquiry.IsRead ? "transparent" : "#DFA738");">
+                            </div>
+
+                            <div style="min-width: 0; flex: 1;">
+                                <div style="
+                                    display: flex;
+                                    justify-content: space-between;
+                                    gap: 10px;">
+                                    <span style="
+                                        color: #24463A;
+                                        font-weight: @(enquiry.IsRead ? "500" : "700");
+                                        white-space: nowrap;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;">
+                                        @enquiry.Name
+                                    </span>
+                                    <span style="color: #777; font-size: 12px; white-space: nowrap;">
+                                        @enquiry.SubmittedAt.ToString("dd/MM/yyyy")
+                                    </span>
+                                </div>
+
+                                <div style="
+                                    color: #555;
+                                    font-size: 13px;
+                                    margin-top: 3px;
+                                    white-space: nowrap;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;">
+                                    @(string.IsNullOrWhiteSpace(enquiry.Service) ? "" : enquiry.Service + " - ")@enquiry.Message
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+            }
+
+            <div style="margin-top: 18px; text-align: right;">
+                <a asp-controller="Enquiries"
+                       asp-action="Index"
+                       style="
+                    color: #5A93C8;
+                    text-decoration: underline;
+                    font-weight: 600;
+                    font-size: 14px;">
+                    Show All Enquiries &rarr;
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- LOWER DASHBOARD -->
@@ -280,7 +401,7 @@
 
         </div>
 
-    </div>
+    </div>    
 
 </div>
 

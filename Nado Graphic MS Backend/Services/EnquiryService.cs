@@ -43,6 +43,11 @@ namespace Nado_Graphics_MS_Backend.Services
                 return false;
             }
 
+            if (!request.ConsentGiven)
+            {
+                return false;
+            }
+
             if (!IsValidEmail(request.Email))
             {
                 return false;
@@ -65,6 +70,8 @@ namespace Nado_Graphics_MS_Backend.Services
                 Service = request.Service?.Trim(),
                 Message = request.Message.Trim(),
                 SubmittedAt = DateTime.Now,
+                ConsentGiven = request.ConsentGiven,
+                ConsentGivenAt = request.ConsentGiven ? DateTime.Now : null,
                 IsRead = false
             };
 
@@ -95,6 +102,26 @@ namespace Nado_Graphics_MS_Backend.Services
                 {
                     // Intentionally swallowed, the enquiry is already saved either way.
                 }
+            }
+
+            return true;
+        }
+        //----------------------------------------------------------------------------------
+        //Marks an enquiry as read when the PA/Manager opens it in the BMS.
+        //Returns false if the enquiry doesn't exist.
+        public async Task<bool> MarkAsReadAsync(int id)
+        {
+            var enquiry = await _context.Enquiries.FindAsync(id);
+
+            if (enquiry == null)
+            {
+                return false;
+            }
+
+            if (!enquiry.IsRead)
+            {
+                enquiry.IsRead = true;
+                await _context.SaveChangesAsync();
             }
 
             return true;

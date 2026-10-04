@@ -1,23 +1,37 @@
 ﻿@{
     ViewData["Title"] = "Designer Dashboard";
+    
 }
 
-@* This is the Graphic Designer dashboard. Any logged-in user can open it. *@
-<div class="container mt-5">
+<div style="padding: 35px 45px; max-width: 1400px; margin: 0 auto;">
 
-    <h1>Designer Dashboard</h1>
-    <p class="text-muted">Welcome, @User.Identity?.Name.</p>
-
-    <div class="row mt-4 g-3">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Job Cards</h5>
-                    <p class="card-text">Your assigned jobs will appear here.</p>
-                    @* TODO: add a link to JobCards/Index once the Job Card pages are built. *@
-                </div>
-            </div>
-        </div>
+    <div style="text-align: center; margin-bottom: 35px;">
+        <h1 style="margin: 0; color: #24463A; font-size: 32px; font-weight: 700;">
+            Designer Dashboard
+        </h1>
+        <div style="width: 80px; height: 3px; background-color: #68926D; margin: 12px auto 0;"></div>
+        <p style="color: #777; margin: 15px 0 0;">Welcome, @User.Identity?.Name.</p>
     </div>
 
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px;">
+
+        <div style="background-color: white; border: 2px solid black; border-radius: 14px; padding: 25px; box-shadow: 0 6px 14px rgba(0,0,0,0.15);">
+            <h2 style="margin: 0 0 8px 0; color: #24463A; font-size: 22px;">Job Cards</h2>
+            <p style="color: #555;">View the jobs assigned to you.</p>
+            <a asp-controller="JobCards" asp-action="Index"
+                   style="display: inline-block; background-color: #5A93C8; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+                View Job Cards
+            </a>
+        </div>
+
+        <div style="background-color: white; border: 2px solid black; border-radius: 14px; padding: 25px; box-shadow: 0 6px 14px rgba(0,0,0,0.15);">
+            <h2 style="margin: 0 0 8px 0; color: #24463A; font-size: 22px;">Portfolio</h2>
+            <p style="color: #555;">Submit finished work for the portfolio.</p>
+            <a asp-controller="Portfolio" asp-action="Index"
+                   style="display: inline-block; background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+                Open Portfolio
+            </a>
+        </div>
+
+    </div>
 </div>

@@ -1,5 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Admin Dashboard";
+    var enquiries = (ViewBag.Enquiries as List<Nado_Graphics_MS_Frontend.Models.EnquiryModel>) ?? new();
+        
 }
 
 @* This is the PA/Admin dashboard. Graphic Designers can't open it. *@
@@ -25,6 +27,22 @@
                     <h5 class="card-title">Clients</h5>
                     <p class="card-text">View and manage clients.</p>
                     <a asp-controller="Clients" asp-action="Index" class="btn btn-primary">Clients</a>
+                </div>
+            </div>
+        </div>
+       
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Enquiries
+                        @if (enquiries.Any(e => !e.IsRead))
+                        {
+                            <span class="badge bg-danger">@enquiries.Count(e => !e.IsRead) new</span>
+                        }
+                    </h5>
+                    <p class="card-text">View enquiries from the website.</p>
+                    <a asp-controller="Enquiries" asp-action="Index" class="btn btn-primary">Enquiries</a>
                 </div>
             </div>
         </div>

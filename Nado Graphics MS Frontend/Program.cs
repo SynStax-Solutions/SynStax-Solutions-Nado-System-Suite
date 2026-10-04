@@ -57,6 +57,7 @@ builder.Services.AddScoped<InvoiceService>();
 builder.Services.AddScoped<ProductCategoryService>();
 builder.Services.AddScoped<StatementService>();
 builder.Services.AddScoped<PortfolioService>();
+builder.Services.AddScoped<EnquiryService>();
 
 var app = builder.Build();
 
