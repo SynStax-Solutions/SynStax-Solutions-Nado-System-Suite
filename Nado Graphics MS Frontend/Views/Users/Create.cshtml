@@ -1,0 +1,105 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.ViewUserModel
+
+@{
+    ViewData["Title"] = "Create User";
+}
+<div class="container mt-5">
+
+    <h1>Create User</h1>
+
+    <p class="text-muted">
+        Create a new staff account. The new user must verify their email before they can log in.
+    </p>
+
+    <form asp-action="Create" method="post">
+
+        @* This shows errors from the API, e.g. "Email already exists". *@
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger mb-3">
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="FirstName" class="form-label">
+                First Name
+            </label>
+
+            <input asp-for="FirstName"
+                   class="form-control" />
+
+            <span asp-validation-for="FirstName"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="LastName" class="form-label">
+                Last Name
+            </label>
+
+            <input asp-for="LastName"
+                   class="form-control" />
+
+            <span asp-validation-for="LastName"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">
+                Email
+            </label>
+
+            <input asp-for="Email"
+                   class="form-control" />
+
+            <span asp-validation-for="Email"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label">
+                Password
+            </label>
+
+            <input asp-for="Password"
+                   class="form-control" autocomplete="new-password" />
+            <small class="text-muted">8 to 64 characters. The user will get a verification email before they can log in.</small>
+            <span asp-validation-for="Password"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="UserRole" class="form-label">
+                User Role
+            </label>
+
+            <select asp-for="UserRole" class="form-select">
+                <option value="">-- Select Role --</option>
+                @* This only shows the roles the logged-in user is allowed to create.
+                   e.g. a PA/Admin will only see Graphic Designer. *@
+                @foreach (var r in AppRoles.AssignableBy(User.FindFirst(ClaimTypes.Role)?.Value))
+                {
+                    <option value="@r">@(r == AppRoles.Manager ? "Manager (Owner)" : r)</option>
+                }
+            </select>
+
+            <span asp-validation-for="UserRole"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <button type="submit"
+                class="btn btn-success">
+            Create User
+        </button>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Cancel
+        </a>
+
+    </form>
+
+</div>

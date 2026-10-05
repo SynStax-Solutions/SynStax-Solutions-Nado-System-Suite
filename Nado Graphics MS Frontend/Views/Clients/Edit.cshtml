@@ -1,0 +1,448 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.ClientModel
+
+@{
+ViewData["Title"] = "Edit Client";
+}
+
+<div style="width: 100%;">
+
+<div style="margin-bottom: 25px;">
+
+    <h1 style="
+        margin: 0;
+        font-size: 32px;
+        font-weight: 700;
+        color: #24463A; ">
+        Edit Client
+    </h1>
+
+    <p style="
+        margin: 5px 0 0 0;
+        color: #555;
+        font-size: 15px; ">
+        Edit the details of @Model.FirstName @Model.LastName.
+    </p>
+
+</div>
+
+<form asp-action="Edit" method="post">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="ClientID" />
+
+    <input type="hidden" asp-for="PasswordHash" />
+
+    <div asp-validation-summary="ModelOnly"
+         style="
+            color: #D46271;
+            margin-bottom: 15px; ">
+    </div>
+
+
+    <div style="
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px; ">
+
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.20);
+            padding: 25px; ">
+
+            <h2 style="
+                margin: 0;
+                color: #24463A;
+                font-size: 21px;
+                font-weight: 700;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #68926D; ">
+                Personal Information
+            </h2>
+
+            <div style="margin-top: 20px;">
+
+                <label asp-for="FirstName"
+                       style="
+                            display: block;
+                            font-weight: 600;
+                            margin-bottom: 7px;">
+                    First Name <span style="color: #D46271;">*</span>
+                </label>
+
+                <input asp-for="FirstName"
+                       class="form-control"
+                       placeholder="Enter first name"
+                       style="
+                            border: 2px solid black;
+                            border-radius: 7px;
+                            padding: 10px; "/>
+
+                <span asp-validation-for="FirstName"
+                      style="color: #D46271;">
+                </span>
+
+            </div>
+
+
+            <div style="margin-top: 18px;">
+
+                <label asp-for="LastName"
+                       style="
+                            display: block;
+                            font-weight: 600;
+                            margin-bottom: 7px;">
+                    Surname <span style="color: #D46271;">*</span>
+                </label>
+
+                <input asp-for="LastName"
+                       class="form-control"
+                       placeholder="Enter surname"
+                       style="
+                            border: 2px solid black;
+                            border-radius: 7px;
+                            padding: 10px; "/>
+
+                <span asp-validation-for="LastName"
+                      style="color: #D46271;">
+                </span>
+
+            </div>
+
+            <div style="margin-top: 18px;">
+
+                <label asp-for="ClientType"
+                       style="
+                            display: block;
+                            font-weight: 600;
+                            margin-bottom: 7px; ">
+                    Client Type
+                </label>
+
+                <select asp-for="ClientType"
+                        class="form-select"
+                        style="
+                            border: 2px solid black;
+                            border-radius: 7px;
+                            padding: 10px;">
+
+                    <option value="Individual">
+                        Individual
+                    </option>
+
+                    <option value="Business">
+                        Business
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.20);
+            padding: 25px;">
+
+            <h2 style="
+                margin: 0;
+                color: #24463A;
+                font-size: 21px;
+                font-weight: 700;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #68926D;">
+                Contact Information
+            </h2>
+
+            <div style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin-top: 20px; ">
+                <div>
+
+                    <label asp-for="Email"
+                           style="
+                                display: block;
+                                font-weight: 600;
+                                margin-bottom: 7px; ">
+                        Email Address
+                        <span style="color: #D46271;">*</span>
+                    </label>
+
+                    <input asp-for="Email"
+                           type="email"
+                           class="form-control"
+                           placeholder="Email address"
+                           style="
+                                border: 2px solid black;
+                                border-radius: 7px;
+                                padding: 10px; "/>
+
+                    <span asp-validation-for="Email"
+                          style="color: #D46271;">
+                    </span>
+
+                </div>
+
+                <div>
+
+                    <label asp-for="PhoneNumber"
+                           style="
+                                display: block;
+                                font-weight: 600;
+                                margin-bottom: 7px; ">
+                        Phone Number
+                        <span style="color: #D46271;">*</span>
+                    </label>
+
+                    <input asp-for="PhoneNumber"
+                           class="form-control"
+                           placeholder="Phone number"
+                           style="
+                                border: 2px solid black;
+                                border-radius: 7px;
+                                padding: 10px; "/>
+
+                    <span asp-validation-for="PhoneNumber"
+                          style="color: #D46271;">
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div style="margin-top: 18px;">
+
+                <label asp-for="AlternativeNumber"
+                       style="
+                            display: block;
+                            font-weight: 600;
+                            margin-bottom: 7px; ">
+                    Alternative Number
+                </label>
+
+                <input asp-for="AlternativeNumber"
+                       class="form-control"
+                       placeholder="Alternative phone number"
+                       style="
+                            border: 2px solid black;
+                            border-radius: 7px;
+                            padding: 10px; "/>
+
+            </div>
+
+        </div>
+
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.20);
+            padding: 25px; ">
+
+            <h2 style="
+                margin: 0;
+                color: #24463A;
+                font-size: 21px;
+                font-weight: 700;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #68926D; ">
+                Address
+            </h2>
+
+
+            <div style="margin-top: 20px;">
+
+                <label asp-for="StreetAddress"
+                       style="
+                            display: block;
+                            font-weight: 600;
+                            margin-bottom: 7px; ">
+                    Street Address
+                </label>
+
+                <input asp-for="StreetAddress"
+                       class="form-control"
+                       placeholder="Enter street address"
+                       style="
+                            border: 2px solid black;
+                            border-radius: 7px;
+                            padding: 10px; "/>
+
+            </div>
+
+            <div style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin-top: 18px;">
+
+                <div>
+
+                    <label asp-for="City"
+                           style="
+                                display: block;
+                                font-weight: 600;
+                                margin-bottom: 7px;">
+                        City
+                    </label>
+
+                    <input asp-for="City"
+                           class="form-control"
+                           placeholder="City"
+                           style="
+                                border: 2px solid black;
+                                border-radius: 7px;
+                                padding: 10px;"/>
+
+                </div>
+
+
+                <div>
+
+                    <label asp-for="PostalCode"
+                           style="
+                                display: block;
+                                font-weight: 600;
+                                margin-bottom: 7px;">
+                        Postal Code
+                    </label>
+
+                    <input asp-for="PostalCode"
+                           class="form-control"
+                           placeholder="Postal code"
+                           style="
+                                border: 2px solid black;
+                                border-radius: 7px;
+                                padding: 10px; "/>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.20);
+            padding: 25px;">
+
+            <h2 style="
+                margin: 0;
+                color: #24463A;
+                font-size: 21px;
+                font-weight: 700;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #68926D;">
+                Organisation
+            </h2>
+
+
+<div style="margin-top: 20px;">
+
+    <label asp-for="OrganisationID"
+           style="
+                display: block;
+                font-weight: 600;
+                margin-bottom: 7px;
+           ">
+        Select Organisation
+    </label>
+
+    <select asp-for="OrganisationID"
+            class="form-select"
+            style="
+                border: 2px solid black;
+                border-radius: 7px;
+                padding: 10px;
+            ">
+
+        <option value="">
+            -- No Organisation --
+        </option>
+
+        @foreach (var organisation in ViewBag.Organisations)
+        {
+            <option value="@organisation.OrganisationID">
+                @organisation.OrganisationName
+            </option>
+        }
+
+    </select>
+
+</div>
+
+            <div style="
+                margin-top: 20px;">
+
+                <a asp-controller="Organisations"
+                   asp-action="Create"
+                   style="
+                        display: inline-block;
+                        background-color: #68926D;
+                        color: white;
+                        text-decoration: none;
+                        padding: 10px 16px;
+                        border-radius: 7px;
+                        font-weight: 600; ">
+                    <i class="bi bi-building-add"></i>
+                    Add New Organisation
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div style="
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 25px;
+        margin-bottom: 20px; ">
+
+        <a asp-action="Details"
+           asp-route-id="@Model.ClientID"
+           style="
+                background-color: #D46271;
+                color: white;
+                text-decoration: none;
+                padding: 11px 22px;
+                border-radius: 7px;
+                font-weight: 600; ">
+            <i class="bi bi-x-lg"></i>
+            Cancel
+        </a>
+
+        <button type="submit"
+                style="
+                    background-color: #5A93C8;
+                    color: white;
+                    border: none;
+                    padding: 11px 22px;
+                    border-radius: 7px;
+                    font-weight: 600; ">
+            <i class="bi bi-check-lg"></i>
+            Save Changes
+        </button>
+
+    </div>
+
+</form>
+
+</div>
+
+@section Scripts {
+@{
+await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
+

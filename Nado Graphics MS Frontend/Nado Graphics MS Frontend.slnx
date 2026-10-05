@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="../Nado Graphic MS Frontend/Nado Graphic MS Backend.csproj" />
+  <Project Path="../Nado Graphics MS Library/Nado Graphics MS Library.csproj" />
+  <Project Path="Nado Graphics MS Frontend.csproj" />
+</Solution>

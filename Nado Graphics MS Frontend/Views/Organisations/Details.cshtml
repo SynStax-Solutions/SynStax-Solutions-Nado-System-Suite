@@ -1,0 +1,213 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.OrganisationModel
+
+@{
+    ViewData["Title"] = "Organisation Details";
+}
+
+<div class="container-fluid">
+
+    <div style="margin-bottom: 25px;">
+
+        <h1 style="
+            color: #24463A;
+            font-weight: 600;
+            margin-bottom: 5px; ">
+            Organisation Details
+        </h1>
+
+        <p style="
+            color: #6c757d;
+            margin-bottom: 0; ">
+            View the information for this organisation.
+        </p>
+
+    </div>
+
+
+    <div style="
+        background-color: white;
+        border: 2px solid black;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.30); ">
+
+        <div style="
+            background-color: #68926D;
+            color: white;
+            padding: 18px 25px; ">
+
+            <h4 style="
+                margin: 0;
+                font-weight: 600; ">
+                <i class="bi bi-building"></i>
+                @Model.OrganisationName
+            </h4>
+
+        </div>
+
+
+        <div style="padding: 25px;">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-4">
+
+                    <div style="
+                        color: #6c757d;
+                        font-size: 13px;
+                        font-weight: 600;
+                        margin-bottom: 5px; ">
+                        ORGANISATION ID
+                    </div>
+
+                    <div style="
+                        font-size: 17px;
+                        color: #212529; ">
+                        @Model.OrganisationID
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 mb-4">
+
+                    <div style="
+                        color: #6c757d;
+                        font-size: 13px;
+                        font-weight: 600;
+                        margin-bottom: 5px; ">
+                        REGISTRATION NUMBER
+                    </div>
+
+                    <div style="
+                        font-size: 17px;
+                        color: #212529; ">
+                        @(string.IsNullOrEmpty(Model.RegistrationNumber) ? "—" : Model.RegistrationNumber)
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 mb-4">
+
+                    <div style="
+                        color: #6c757d;
+                        font-size: 13px;
+                        font-weight: 600;
+                        margin-bottom: 5px; ">
+                        EMAIL ADDRESS
+                    </div>
+
+                    <div style="
+                        font-size: 17px;
+                        color: #212529; ">
+                        @(string.IsNullOrEmpty(Model.Email) ? "—" : Model.Email)
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 mb-4">
+
+                    <div style="
+                        color: #6c757d;
+                        font-size: 13px;
+                        font-weight: 600;
+                        margin-bottom: 5px; ">
+                        PHONE NUMBER
+                    </div>
+
+                    <div style="
+                        font-size: 17px;
+                        color: #212529; ">
+                        @(string.IsNullOrEmpty(Model.Phone)  ? "—" : Model.Phone)
+                    </div>
+
+                </div>
+
+
+                <div class="col-12 mb-4">
+
+                    <div style="
+                        color: #6c757d;
+                        font-size: 13px;
+                        font-weight: 600;
+                        margin-bottom: 5px; ">
+                        BILLING ADDRESS
+                    </div>
+
+                    <div style="
+                        font-size: 17px;
+                        color: #212529; ">
+                        @(string.IsNullOrEmpty(Model.BillingAddress) ? "—" : Model.BillingAddress)
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 mb-4">
+
+                    <div style="
+                        color: #6c757d;
+                        font-size: 13px;
+                        font-weight: 600;
+                        margin-bottom: 5px; ">
+                        CREATED
+                    </div>
+
+                    <div style="
+                        font-size: 17px;
+                        color: #212529; ">
+                        @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <hr style="
+                margin-top: 5px;
+                margin-bottom: 20px;
+                border: 0;
+                border-top: 1px solid #d9dfda; "/>
+
+
+            <div style="
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap; ">
+
+                <a asp-action="Index"
+                   class="btn"
+                   style="
+                       background-color: #68926D;
+                       color: white;
+                       border: none;
+                       padding: 10px 18px;
+                       border-radius: 7px;
+                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+                    Back to Organisations
+                </a>
+
+
+                <a asp-action="Edit"
+                   asp-route-id="@Model.OrganisationID"
+                   class="btn"
+                   style="
+                       background-color: #5A93C8;
+                       color: white;
+                       border: none;
+                       padding: 10px 18px;
+                       border-radius: 7px;
+                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+                    Edit Organisation
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
