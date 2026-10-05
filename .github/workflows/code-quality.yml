@@ -1,0 +1,71 @@
+name: Code Quality & Dependency Check
+
+on:
+  push:
+    branches-ignore:
+      - 'feature/portfolio-website'
+    paths-ignore:
+      - 'nado-graphics-website/**'
+  pull_request:
+    branches-ignore:
+      - 'feature/portfolio-website'
+    paths-ignore:
+      - 'nado-graphics-website/**'
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOLUTION: SynStax-Solutions-Nado-System-Suite.slnx
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  format-check:
+    if: github.head_ref != 'feature/portfolio-website'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore "$SOLUTION"
+
+      - name: Verify formatting
+        run: dotnet format "$SOLUTION" --verify-no-changes --no-restore --verbosity diagnostic
+
+  build-warnings:
+    if: github.head_ref != 'feature/portfolio-website'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build with warnings as errors
+        run: dotnet build "$SOLUTION" --configuration Release -warnaserror
+        continue-on-error: true   # remove once existing warnings are cleaned up
+
+  vulnerable-packages:
+    if: github.head_ref != 'feature/portfolio-website'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore "$SOLUTION"
+
+      - name: Check for vulnerable NuGet packages
+        run: |
+          dotnet list "$SOLUTION" package --vulnerable --include-transitive 2>&1 | tee vulnerable.txt
+          if grep -q "has the following vulnerable packages" vulnerable.txt; then
+            echo "::error::Vulnerable packages found"
+            exit 1
+          fi
