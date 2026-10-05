@@ -1,0 +1,46 @@
+name: CodeQL Security Scan
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+  schedule:
+    - cron: '0 3 * * 1'   # Mondays 03:00 UTC
+
+env:
+  SOLUTION: SynStax-Solutions-Nado-System-Suite.slnx
+
+jobs:
+  analyze:
+    # Never scan PRs coming from the ignored branch
+    if: github.head_ref != 'feature/portfolio-website'
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+
+      - name: Build
+        run: dotnet build "$SOLUTION" --configuration Release
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:csharp'
