@@ -294,5 +294,9 @@ Both workflows ignore the `nado-graphics-website` folder and the `feature/portfo
 ## Presentation Video
 
 YouTube Link: Insert Link here
-
+Youtube URLs:
+// Unverified account: maximum 15 minutes per video
+1. Portfolio Website YouTube Demo: https://youtu.be/3p0sxSJpWpI
+2. Management System YouTube Demo: https://youtu.be/SgdxLigqML0
+3. PowerPoint code presentation: https://youtu.be/aQgATDpqNwM and https://youtu.be/0Vt9G6KCFe0
 ---
