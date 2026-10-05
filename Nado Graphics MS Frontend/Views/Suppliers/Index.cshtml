@@ -1,0 +1,134 @@
+﻿@model List<Nado_Graphics_MS_Frontend.Models.SupplierModel>
+
+@{
+    ViewData["Title"] = "Manage Suppliers";
+}
+
+@* This page shows a list of all suppliers. *@
+<div class="container mt-5">
+
+    <h1>Manage Suppliers</h1>
+
+    <p class="text-muted">
+        View, edit and delete suppliers.
+    </p>
+
+    @* This shows an error message, e.g. if a supplier couldn't be deleted. *@
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <a asp-controller="Suppliers"
+       asp-action="Create"
+       class="btn btn-success mb-3">
+        Create Supplier
+    </a>
+
+    @* This shows a message if there are no suppliers yet. *@
+    @if (!Model.Any())
+    {
+        <p class="text-muted">No suppliers have been added yet.</p>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped"
+               style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.30);">
+
+            <thead>
+                <tr>
+                    <th style="background-color: #68926D; color: white; padding: 14px;">Supplier Name</th>
+                    <th style="background-color: #68926D; color: white; padding: 14px;">Contact Number</th>
+                    <th style="background-color: #68926D; color: white; padding: 14px;">Email Address</th>
+                    <th style="background-color: #68926D; color: white; padding: 14px;">Service Type</th>
+                    <th style="background-color: #68926D; color: white; padding: 14px;">Service Rate</th>
+                    <th style="background-color: #68926D; color: white; padding: 14px;">Lead Time</th>
+                    <th style="background-color: #68926D; color: white; padding: 14px;">Manage Supplier</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @* This loops through every supplier and makes one row for each. *@
+                @foreach (var supplier in Model)
+                {
+                    <tr>
+                        <td style="padding: 14px;">@supplier.SupplierName</td>
+                        <td style="padding: 14px;">@supplier.ContactNumber</td>
+                        <td style="padding: 14px;">@supplier.SupplierEmail</td>
+                        <td style="padding: 14px;">@supplier.ServiceType</td>
+                         <td style="padding: 14px;">@(supplier.ServiceRate.HasValue ? $"R{supplier.ServiceRate.Value:N2}": "Not set")
+                        </td>
+                        <td style="padding: 14px;">@supplier.LeadTime</td>
+
+                        <td style="padding: 14px;">
+
+                            <div class="dropdown">
+
+                                <button class="btn dropdown-toggle"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        style="
+                                    background-color: #68926D;
+                                    color: white;
+                                    border: none;
+                                    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20); ">
+                                    Manage
+                                </button>
+
+                                <ul class="dropdown-menu">
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="Suppliers"
+                                           asp-action="Details"
+                                           asp-route-id="@supplier.SupplierID">
+                                            View
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="Suppliers"
+                                           asp-action="Edit"
+                                           asp-route-id="@supplier.SupplierID">
+                                            Edit
+                                        </a>
+                                    </li>
+
+                                    @* Delete is a form (POST) so it can't be triggered by just opening a link. *@
+                                    <li>
+                                        <form asp-controller="Suppliers"
+                                              asp-action="Delete"
+                                              asp-route-id="@supplier.SupplierID"
+                                              method="post">
+
+                                            <button type="submit"
+                                                    class="dropdown-item"
+                                                    onclick="return confirm('Are you sure you want to delete this supplier?');">
+                                                Delete
+                                            </button>
+
+                                        </form>
+                                    </li>
+
+                                </ul>
+
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    }
+
+</div>

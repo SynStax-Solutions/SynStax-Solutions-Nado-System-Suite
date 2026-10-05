@@ -1,0 +1,409 @@
+﻿@using Nado_Graphics_MS_Frontend.Models
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var enquiries = (ViewBag.Enquiries as List<EnquiryModel>) ?? new List<EnquiryModel>();
+    var unreadCount = enquiries.Count(e => !e.IsRead);
+    
+}
+
+<div style="
+    padding: 35px 45px;
+    max-width: 1400px;
+    margin: 0 auto;">
+
+    <!-- DASHBOARD HEADING -->
+
+    <div style="
+        text-align: center;
+        margin-bottom: 35px;">
+
+        <h1 style="
+            margin: 0;
+            color: #24463A;
+            font-size: 32px;
+            font-weight: 700;">
+            Dashboard
+        </h1>
+
+        <div style="
+            width: 80px;
+            height: 3px;
+            background-color: #68926D;
+            margin: 12px auto 0;">
+        </div>
+
+    </div>
+
+    <!-- JOB CARDS AND ENQUIRIES -->
+    <div style="
+        display: grid;
+        grid-template-columns: 2.2fr 1fr;
+        gap: 30px;
+        align-items: start;
+        margin-bottom: 30px;">
+
+        <!-- JOB CARDS -->
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            min-width: 0;">
+
+            @await Html.PartialAsync("_DashboardJobCards", (List<Nado_Graphics_MS_Frontend.Models.JobCardModel>)ViewBag.JobCards)
+
+        </div>
+
+        <!-- ENQUIRIES -->
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            min-width: 0;">
+
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;">
+
+                <h2 style="margin: 0; color: #24463A; font-size: 22px;">
+                    Enquiries
+                </h2>
+
+                @if (unreadCount > 0)
+                {
+                    <span style="
+                        background-color: #D46271;
+                        color: white;
+                        padding: 4px 10px;
+                        border-radius: 15px;
+                        font-size: 13px;
+                        font-weight: 600;">
+                        @unreadCount new
+                    </span>
+                }
+            </div>
+
+            @if (!enquiries.Any())
+            {
+                <div style="padding: 25px 0; text-align: center; color: #777;">
+                    No enquiries have been received yet.
+                </div>
+            }
+            else
+            {
+                foreach (var enquiry in enquiries.Take(5))
+                {
+                    <a asp-controller="Enquiries"
+                           asp-action="Details"
+                           asp-route-id="@enquiry.EnquiryID"
+                           style="text-decoration: none; color: inherit; display: block;">
+
+                        <div style="
+                            padding: 12px 0;
+                            border-bottom: 1px solid #ddd;
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 10px;">
+
+                            <div style="
+                                width: 9px;
+                                height: 9px;
+                                border-radius: 50%;
+                                margin-top: 6px;
+                                flex-shrink: 0;
+                                background-color: @(enquiry.IsRead ? "transparent" : "#DFA738");">
+                            </div>
+
+                            <div style="min-width: 0; flex: 1;">
+                                <div style="
+                                    display: flex;
+                                    justify-content: space-between;
+                                    gap: 10px;">
+                                    <span style="
+                                        color: #24463A;
+                                        font-weight: @(enquiry.IsRead ? "500" : "700");
+                                        white-space: nowrap;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;">
+                                        @enquiry.Name
+                                    </span>
+                                    <span style="color: #777; font-size: 12px; white-space: nowrap;">
+                                        @enquiry.SubmittedAt.ToString("dd/MM/yyyy")
+                                    </span>
+                                </div>
+
+                                <div style="
+                                    color: #555;
+                                    font-size: 13px;
+                                    margin-top: 3px;
+                                    white-space: nowrap;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;">
+                                    @(string.IsNullOrWhiteSpace(enquiry.Service) ? "" : enquiry.Service + " - ")@enquiry.Message
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+            }
+
+            <div style="margin-top: 18px; text-align: right;">
+                <a asp-controller="Enquiries"
+                       asp-action="Index"
+                       style="
+                    color: #5A93C8;
+                    text-decoration: underline;
+                    font-weight: 600;
+                    font-size: 14px;">
+                    Show All Enquiries &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOWER DASHBOARD -->
+
+    <div style="
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 30px;
+        align-items: start;">
+
+        <!-- RECENT QUOTES -->
+
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);">
+
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;">
+
+                <h2 style="
+                    margin: 0;
+                    color: #24463A;
+                    font-size: 22px;">
+                    Recent Quotes
+                </h2>
+
+                <a asp-controller="Quotes"
+                   asp-action="Index"
+                   style="
+                        color: #5A93C8;
+                        text-decoration: none;
+                        font-weight: 600;">
+                    View All
+                </a>
+
+            </div>
+
+            @if (ViewBag.RecentQuotes == null ||
+                 ViewBag.RecentQuotes.Count == 0)
+            {
+                <div style="
+                    padding: 25px;
+                    text-align: center;
+                    color: #777;">
+                    No quotes have been created yet.
+                </div>
+            }
+            else
+            {
+                foreach (var quote in ViewBag.RecentQuotes)
+                {
+                    <div style="
+                        padding: 15px 0;
+                        border-bottom: 1px solid #ddd;">
+
+                        <div style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            gap: 15px;">
+
+                            <div>
+
+                                <div style="
+                                    color: #24463A;
+                                    font-weight: 700;
+                                    margin-bottom: 5px;">
+                                    @quote.ReferenceNumber
+                                </div>
+
+                                <div style="
+                                    color: #555;
+                                    font-size: 14px;">
+                                    @quote.QuoteDate.ToString("dd/MM/yyyy")
+                                </div>
+
+                            </div>
+
+                            <div>
+
+                                @if (quote.QuoteStatus == "Accepted")
+                                {
+                                    <span style="
+                                        background-color: #68926D;
+                                        color: white;
+                                        padding: 6px 11px;
+                                        border-radius: 15px;
+                                        font-size: 13px;
+                                        font-weight: 600;">
+                                        Accepted
+                                    </span>
+                                }
+                                else if (quote.QuoteStatus == "Rejected")
+                                {
+                                    <span style="
+                                        background-color: #D46271;
+                                        color: white;
+                                        padding: 6px 11px;
+                                        border-radius: 15px;
+                                        font-size: 13px;
+                                        font-weight: 600;">
+                                        Rejected
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="
+                                        background-color: #DFA738;
+                                        color: white;
+                                        padding: 6px 11px;
+                                        border-radius: 15px;
+                                        font-size: 13px;
+                                        font-weight: 600;">
+                                        @quote.QuoteStatus
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+            }
+
+        </div>
+
+        <!-- MANAGEMENT -->
+
+        <div style="
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);">
+
+            <h2 style="
+                margin: 0 0 20px 0;
+                color: #24463A;
+                font-size: 22px;">
+                Management
+            </h2>
+
+            <div style="
+                display: flex;
+                flex-direction: column;
+                gap: 15px;">
+
+                <!-- USERS -->
+
+                <a asp-controller="Users"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 18px;
+                        background-color: #68926D;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 9px;">
+
+                    <div style="
+                        font-size: 18px;
+                        font-weight: 700;">
+                        Users
+                    </div>
+
+                    <div style="
+                        margin-top: 5px;
+                        font-size: 14px;">
+                        @ViewBag.Users.Count users
+                    </div>
+
+                </a>
+
+                <!-- CLIENTS -->
+
+                <a asp-controller="Clients"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 18px;
+                        background-color: #5A93C8;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 9px;">
+
+                    <div style="
+                        font-size: 18px;
+                        font-weight: 700;">
+                        Clients
+                    </div>
+
+                    <div style="
+                        margin-top: 5px;
+                        font-size: 14px;">
+                        @ViewBag.Clients.Count clients
+                    </div>
+
+                </a>
+
+                <!-- SUPPLIERS -->
+
+                <a asp-controller="Suppliers"
+                   asp-action="Index"
+                   style="
+                        display: block;
+                        padding: 18px;
+                        background-color: #DFA738;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 9px;">
+
+                    <div style="
+                        font-size: 18px;
+                        font-weight: 700;">
+                        Suppliers
+                    </div>
+
+                    <div style="
+                        margin-top: 5px;
+                        font-size: 14px;">
+                        @ViewBag.Suppliers.Count suppliers
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>    
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/10.0.0/signalr.min.js"></script>
+<script src="~/js/jobcards-live.js"></script>

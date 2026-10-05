@@ -1,0 +1,261 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.EditUserModel
+
+@{
+    ViewData["Title"] = "Edit User";
+
+    //This gets the logged-in user's role.
+    var currentRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+    //This checks if the user is editing their own account.
+    var isSelf = User.FindFirst(ClaimTypes.NameIdentifier)?.Value == Model.UserID.ToString();
+}
+
+<div class="container mt-4">
+
+    <div style="margin-bottom: 25px;">
+
+        <h1 style="
+            color: #24463A;
+            font-weight: 600;
+            margin-bottom: 5px;">
+            Edit User
+        </h1>
+
+        <p style="
+            color: #6c757d;
+            margin-bottom: 0;">
+            Update the user's account information.
+        </p>
+
+    </div>
+
+    <div style="
+        background-color: white;
+        border: 2px solid black;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);">
+
+        <div style="
+            background-color: #68926D;
+            color: white;
+            padding: 18px 25px;">
+
+            <h4 style="
+                margin: 0;
+                font-weight: 600;">
+                Account Information
+            </h4>
+
+        </div>
+
+        <div style="padding: 25px;">
+
+            <form asp-action="Edit" method="post">
+
+                <input asp-for="UserID" type="hidden" />
+
+                @* This shows errors from the API. *@
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label asp-for="FirstName"
+                           class="form-label"
+                           style="
+                        font-weight: 600;
+                        color: #24463A;">
+                        First Name
+                    </label>
+
+                    <input asp-for="FirstName"
+                           class="form-control"
+                           style="
+                    border: 1px solid #adb5bd;
+                    border-radius: 7px;
+                    padding: 10px 12px;" />
+
+                    <span asp-validation-for="FirstName"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label asp-for="LastName"
+                           class="form-label"
+                           style="
+                        font-weight: 600;
+                        color: #24463A;">
+                        Last Name
+                    </label>
+
+                    <input asp-for="LastName"
+                           class="form-control"
+                           style="
+                    border: 1px solid #adb5bd;
+                    border-radius: 7px;
+                    padding: 10px 12px;" />
+
+                    <span asp-validation-for="LastName"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <label asp-for="Email"
+                           class="form-label"
+                           style="
+                        font-weight: 600;
+                        color: #24463A;">
+                        Email Address
+                    </label>
+
+                    <input asp-for="Email"
+                           class="form-control"
+                           style="
+                    border: 1px solid #adb5bd;
+                    border-radius: 7px;
+                    padding: 10px 12px;" />
+
+                    <span asp-validation-for="Email"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label asp-for="UserRole"
+                           class="form-label"
+                           style="
+                        font-weight: 600;
+                        color: #24463A;">
+                        User Role
+                    </label>
+
+                    @if (isSelf)
+                    {
+                        @* You can't change your own role, so it's shown but can't be edited. *@
+                        <input asp-for="UserRole" type="hidden" />
+                        <input class="form-control" value="@Model.UserRole" disabled />
+                    }
+                    else
+                    {
+                        <select asp-for="UserRole"
+                                class="form-select"
+                                style="
+                            border: 1px solid #adb5bd;
+                            border-radius: 7px;
+                            padding: 10px 12px;">
+                            @* This only shows the roles the logged-in user is allowed to give out. *@
+                            @foreach (var r in AppRoles.AssignableBy(currentRole))
+                            {
+                                <option value="@r">@(r == AppRoles.Manager ? "Manager (Owner)" : r)</option>
+                            }
+                        </select>
+                    }
+
+                    <span asp-validation-for="UserRole"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                @if (isSelf)
+                {
+                    @* You can't deactivate your own account, so the checkbox is hidden. *@
+                    <input type="hidden" name="IsActive" value="true" />
+                }
+                else
+                {
+                    <div style="
+                        background-color: #f5f7f5;
+                        border: 1px solid #d9dfda;
+                        border-radius: 8px;
+                        padding: 15px;
+                        margin-bottom: 25px;">
+
+                        <div class="form-check">
+
+                            <input asp-for="IsActive"
+                                   class="form-check-input" />
+
+                            <label asp-for="IsActive"
+                                   class="form-check-label"
+                                   style="
+                                font-weight: 600;
+                                color: #24463A;">
+                                Account Active
+                            </label>
+
+                        </div>
+
+                        <small style="
+                            color: #6c757d;
+                            margin-left: 24px;">
+                            Enable this option if the user should be able to access their account.
+                        </small>
+
+                    </div>
+                }
+
+
+                <hr style="
+                margin-top: 5px;
+                margin-bottom: 20px;
+                border: 0;
+                border-top: 1px solid #d9dfda;" />
+
+                <div style="
+                    display: flex;
+                    gap: 10px;
+                    flex-wrap: wrap;">
+
+                    <button type="submit"
+                            class="btn"
+                            style="
+                        background-color: #68926D;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 7px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+
+                        Save Changes
+
+                    </button>
+
+
+                    <a asp-action="Index"
+                       class="btn"
+                       style="
+                        background-color: #D46271;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 7px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,139 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.ProductModel
+
+@{
+    ViewData["Title"] = "Edit Product";
+    var categoriesList = (List<Nado_Graphics_MS_Frontend.Models.ProductCategoryModel>)ViewBag.Categories;
+}
+
+<div style="width: 100%; max-width: 700px;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">Edit Product</h1>
+        <a asp-controller="Products" asp-action="Index"
+               style="background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+            Back
+        </a>
+    </div>
+
+    <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px;">
+
+        <form asp-controller="Products" asp-action="Edit" method="post" id="productForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ProductID" />
+
+            <div asp-validation-summary="ModelOnly" style="color: #C85A5A; margin-bottom: 15px;"></div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Category</label>
+                <div style="display: flex; gap: 10px;">
+                    <select asp-for="ProductCategoryID" id="categorySelect"
+                            style="flex: 1; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;">
+                        <option value="">Select a category...</option>
+                        @foreach (var category in categoriesList)
+                        {
+                            <option value="@category.ProductCategoryID">@category.CategoryName</option>
+                        }
+                    </select>
+                    <button type="button" id="quickAddCategoryBtn"
+                            style="background-color: #5A93C8; color: white; border: none; padding: 0 16px; border-radius: 7px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                        + New
+                    </button>
+                </div>
+
+                <div id="newCategoryPanel" style="display: none; margin-top: 10px; padding: 14px; background-color: #F4F6F5; border: 1px solid #ddd; border-radius: 7px;">
+                    <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px; font-size: 13px;">New Category Name</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="newCategoryInput" placeholder="Enter category name"
+                               style="flex: 1; height: 40px; padding: 6px 10px; border: 1px solid #aaa; border-radius: 7px;" />
+                        <button type="button" id="saveNewCategoryBtn"
+                                style="background-color: #68926D; color: white; border: none; padding: 0 16px; border-radius: 7px; font-weight: 600; cursor: pointer;">
+                            Add
+                        </button>
+                        <button type="button" id="cancelNewCategoryBtn"
+                                style="background-color: white; color: #24463A; border: 1px solid #aaa; padding: 0 16px; border-radius: 7px; font-weight: 600; cursor: pointer;">
+                            Cancel
+                        </button>
+                    </div>
+                    <div id="newCategoryError" style="display: none; color: #C85A5A; font-size: 13px; margin-top: 6px;"></div>
+                </div>
+
+                <span asp-validation-for="ProductCategoryID" style="color: #C85A5A; font-size: 13px;"></span>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Product Name</label>
+                <input asp-for="ProductName" style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;" />
+                <span asp-validation-for="ProductName" style="color: #C85A5A; font-size: 13px;"></span>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Description</label>
+                <textarea asp-for="Description" rows="3" style="width: 100%; padding: 10px 12px; border: 1px solid #aaa; border-radius: 7px; resize: vertical;"></textarea>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Price (R)</label>
+                <input asp-for="Price" type="number" step="0.01" min="0" style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;" />
+                <span asp-validation-for="Price" style="color: #C85A5A; font-size: 13px;"></span>
+            </div>
+
+            <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+                <input asp-for="IsActive" type="checkbox" style="width: 18px; height: 18px;" />
+                <label asp-for="IsActive" style="font-weight: 600; color: #24463A;">Active</label>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <a asp-controller="Products" asp-action="Index"
+                       style="padding: 10px 24px; border-radius: 7px; text-decoration: none; color: #24463A; border: 1px solid #aaa; font-weight: 600;">
+                    Cancel
+                </a>
+                <button type="submit"
+                        style="background-color: #68926D; color: white; border: none; padding: 10px 24px; border-radius: 7px; font-weight: 600; cursor: pointer;">
+                    Save Changes
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.getElementById("categorySelect").value = "@Model.ProductCategoryID";
+
+        document.getElementById("quickAddCategoryBtn").addEventListener("click", async function () {
+            const categoryName = prompt("New category name:");
+            if (!categoryName || !categoryName.trim()) return;
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            try {
+                const response = await fetch("/Products/QuickAddCategory", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "RequestVerificationToken": token },
+                    body: JSON.stringify({ categoryName: categoryName.trim() })
+                });
+
+                if (!response.ok) {
+                    alert("Unable to add that category - it may already exist.");
+                    return;
+                }
+
+                const created = await response.json();
+                const select = document.getElementById("categorySelect");
+                const option = document.createElement("option");
+                option.value = created.productCategoryID;
+                option.textContent = created.categoryName;
+                option.selected = true;
+                select.appendChild(option);
+            } catch (error) {
+                alert("Something went wrong adding the category.");
+            }
+        });
+    </script>
+}

@@ -1,0 +1,378 @@
+﻿@model List<Nado_Graphics_MS_Frontend.Models.ClientModel>
+
+@{
+    ViewData["Title"] = "Clients";
+}
+
+<div style="width: 100%;">
+
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;">
+
+        <h1 style="
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            color: #24463A;">
+            Clients
+        </h1>
+
+        <a asp-controller="Owner"
+           asp-action="Dashboard"
+           style="
+                background-color: #68926D;
+                color: white;
+                text-decoration: none;
+                padding: 10px 20px;
+                border-radius: 7px;
+                font-weight: 600; ">
+            Back
+        </a>
+
+    </div>
+
+    <div style="
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;">
+
+        <div style="
+            position: relative;
+            flex: 1;">
+
+            <input type="text"
+                   id="clientSearch"
+                   placeholder="Search for a client..."
+                   style="
+                        width: 100%;
+                        height: 44px;
+                        padding: 8px 15px 8px 42px;
+                        border: 1px solid #aaa;
+                        border-radius: 7px;
+                        font-size: 15px;
+                        outline: none;"/>
+
+        </div>
+
+        <div style="
+            position: relative;
+            min-width: 230px;">
+
+            <select id="organisationFilter"
+                    style="
+                        width: 100%;
+                        height: 44px;
+                        padding: 8px 12px 8px 40px;
+                        border: 1px solid #aaa;
+                        border-radius: 7px;
+                        background-color: white;
+                        font-size: 15px;">
+
+                <option value="">
+                    All Organisations
+                </option>
+
+                @if (Model != null)
+                {
+                    var organisations = Model
+                        .Where(c => !string.IsNullOrWhiteSpace(c.OrganisationName))
+                        .Select(c => c.OrganisationName)
+                        .Distinct()
+                        .OrderBy(o => o);
+
+                    foreach (var organisation in organisations)
+                    {
+                        <option value="@organisation">
+                            @organisation
+                        </option>
+                    }
+                }
+
+            </select>
+
+        </div>
+
+
+        <a asp-controller="Clients"
+           asp-action="Create"
+           style="
+                height: 44px;
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                background-color: #5A93C8;
+                color: white;
+                text-decoration: none;
+                padding: 0 20px;
+                border-radius: 7px;
+                font-weight: 600;
+                white-space: nowrap;">
+            Create Client
+        </a>
+
+    </div>
+
+    <div style="
+        background-color: white;
+        border-radius: 14px;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+        overflow: hidden;">
+
+        <div style="
+            display: grid;
+            grid-template-columns: 100px 1.3fr 1.2fr 1.5fr 1.1fr 140px;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: #68926D;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;">
+
+            <div>
+                Client ID
+            </div>
+
+            <div>
+                Client Name
+            </div>
+
+            <div>
+                Organisation
+            </div>
+
+            <div>
+                Email
+            </div>
+
+            <div>
+                Phone Number
+            </div>
+
+            <div style="
+                text-align: center;">
+                Manage
+            </div>
+
+        </div>
+
+
+        @if (Model == null || !Model.Any())
+        {
+            <div style="
+                padding: 55px 20px;
+                text-align: center;
+                color: #666;">
+
+                <h3 style="
+                    margin-top: 12px;
+                    color: #24463A;">
+                    No Clients Found
+                </h3>
+
+                <p style="margin-bottom: 0;">
+                    There are currently no clients registered.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            foreach (var client in Model)
+            {
+                <div class="client-row"
+                     data-client-name="@($"{client.FirstName} {client.LastName}")"
+                     data-client-email="@client.Email"
+                     data-client-phone="@client.PhoneNumber"
+                     data-client-id="@client.ClientID"
+                     data-organisation="@client.OrganisationName"
+                     style="
+                        display: grid;
+                        grid-template-columns: 100px 1.3fr 1.2fr 1.5fr 1.1fr 140px;
+                        align-items: center;
+                        padding: 16px 20px;
+                        border-bottom: 1px solid #d9d9d9;
+                        font-size: 14px;">
+
+                    <!-- Client ID -->
+                    <div>
+                        @client.ClientID
+                    </div>
+
+
+                    <!-- Client Name -->
+                    <div style="
+                        font-weight: 600;
+                        color: #24463A;">
+                        @client.FirstName @client.LastName
+                    </div>
+
+
+                    <!-- Organisation -->
+                    <div>
+                        @(client.OrganisationName ?? "No Organisation")
+                    </div>
+
+
+                    <!-- Email -->
+                    <div style="
+                        word-break: break-word;">
+                        @client.Email
+                    </div>
+
+
+                    <!-- Phone -->
+                    <div>
+                        @client.PhoneNumber
+                    </div>
+
+
+                    <!-- Manage -->
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;">
+
+                        <div class="dropdown">
+
+                            <button class="btn dropdown-toggle"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    style="
+                                        background-color: #68926D;
+                                        color: white;
+                                        border: none;
+                                        border-radius: 7px;
+                                        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20);">
+                                Manage
+                            </button>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="Clients"
+                                       asp-action="Details"
+                                       asp-route-id="@client.ClientID">
+                                        View
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="Clients"
+                                       asp-action="Edit"
+                                       asp-route-id="@client.ClientID">
+                                        Edit
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <form asp-controller="Clients"
+                                          asp-action="Delete"
+                                          asp-route-id="@client.ClientID"
+                                          method="post">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit"
+                                                class="dropdown-item"
+                                                onclick="return confirm('Are you sure you want to delete this client?');">
+                                            Delete
+                                        </button>
+
+                                    </form>
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+        }
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        const searchInput = document.getElementById("clientSearch");
+
+        const organisationFilter = document.getElementById("organisationFilter");
+
+        const clientRows = document.querySelectorAll(".client-row");
+
+
+        function filterClients() {
+
+            const searchValue = searchInput.value.toLowerCase().trim();
+
+            const organisationValue = organisationFilter.value.toLowerCase().trim();
+
+
+            clientRows.forEach(function (row) {
+
+                const clientName = row.dataset.clientName.toLowerCase();
+
+                const clientEmail = row.dataset.clientEmail.toLowerCase();
+
+                const clientPhone = row.dataset.clientPhone.toLowerCase();
+
+                const clientId = row.dataset.clientId.toLowerCase();
+
+                const organisation = (row.dataset.organisation || "").toLowerCase();
+
+
+                const matchesSearch =
+                    clientName.includes(searchValue) ||
+                    clientEmail.includes(searchValue) ||
+                    clientPhone.includes(searchValue) ||
+                    clientId.includes(searchValue);
+
+
+                const matchesOrganisation =
+                    organisationValue === "" ||
+                    organisation === organisationValue;
+
+
+                if (matchesSearch && matchesOrganisation) {
+
+                    row.style.display = "grid";
+
+                }
+                else {
+
+                    row.style.display = "none";
+
+                }
+
+            });
+
+        }
+
+
+        searchInput.addEventListener(
+            "input",
+            filterClients
+        );
+
+
+        organisationFilter.addEventListener(
+            "change",
+            filterClients
+        );
+
+    </script>
+
+}

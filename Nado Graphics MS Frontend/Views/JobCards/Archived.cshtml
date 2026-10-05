@@ -1,0 +1,131 @@
+﻿@model List<Nado_Graphics_MS_Frontend.Models.JobCardModel>
+
+@{
+    ViewData["Title"] = "Archived Job Cards";
+}
+
+<div style="
+    padding: 30px;">
+
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;">
+
+        <h1 style="
+            margin: 0;
+            color: #24463A;">
+            Archived Job Cards
+        </h1>
+
+        <a asp-action="Index"
+           style="
+            background-color: #68926D;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;">
+            Back to Job Cards
+        </a>
+
+    </div>
+
+    <div style="
+        height: 3px;
+        background-color: #68926D;
+        margin: 20px 0;">
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div style="
+            padding: 25px;
+            background-color: white;
+            border-radius: 10px;">
+            There are no archived Job Cards.
+        </div>
+    }
+    else
+    {
+        <div style="
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;">
+
+            @foreach (var job in Model)
+            {
+                <div style="
+                    padding: 20px;
+                    background-color: #777777;
+                    border-radius: 12px;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+                    color: white;">
+
+                    <h3 style="color: white;">
+                        @job.JobTitle
+                    </h3>
+
+                    <p style="color: white;">
+
+                        <strong style="color: white;">
+                            Reference:
+                        </strong>
+
+                        @job.ReferenceNumber
+
+                    </p>
+
+                    <p style="color: white;">
+
+                        <strong style="color: white;">
+                            Status:
+                        </strong>
+
+                        Archived
+
+                    </p>
+
+                    <p style="color: white;">
+
+                        <strong style="color: white;">
+                            Job Date:
+                        </strong>
+
+                        @job.JobDate.ToString("dd/MM/yyyy")
+
+                    </p>
+
+                    @if (job.CompletedAt.HasValue)
+                    {
+                        <p style="color: white;">
+
+                            <strong style="color: white;">
+                                Completed:
+                            </strong>
+
+                            @job.CompletedAt.Value.ToString("dd/MM/yyyy")
+
+                        </p>
+                    }
+
+                    <a asp-action="Details"
+                       asp-route-id="@job.JobCardID"
+                       style="
+                        display: inline-block;
+                        margin-top: 10px;
+                        padding: 8px 14px;
+                        background-color: rgba(255,255,255,0.2);
+                        color: white;
+                        border: 1px solid white;
+                        border-radius: 6px;
+                        text-decoration: none;">
+                        View Job
+                    </a>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

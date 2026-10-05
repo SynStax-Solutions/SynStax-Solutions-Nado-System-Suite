@@ -1,0 +1,201 @@
+﻿@model List<Nado_Graphics_MS_Frontend.Models.ViewUserModel>
+
+@{
+    ViewData["Title"] = "Manage Users";
+
+    //This gets the logged-in user's role and ID so we know which buttons to show.
+    var currentRole = User.FindFirst(ClaimTypes.Role)?.Value;
+    var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+}
+
+<div class="container mt-5">
+
+    <h1>Manage Users</h1>
+
+    <p class="text-muted">
+        Manage staff accounts. You can only edit or delete accounts with a lower role than yours.
+    </p>
+
+    @* These show the green or red message after creating, editing or deleting. *@
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <a asp-controller="Users"
+       asp-action="Create"
+       class="btn btn-success mb-3">
+        Create User
+    </a>
+
+    <table class="table table-bordered table-striped"
+           style="
+        background-color: white;
+        border: 2px solid black;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.30);">
+
+        <thead>
+            <tr>
+                <th style="
+                    background-color: #68926D;
+                    color: white;
+                    padding: 14px; ">
+                    User Name
+                </th>
+
+                <th style="
+                    background-color: #68926D;
+                    color: white;
+                    padding: 14px; ">
+                    Email Address
+                </th>
+
+                <th style="
+                    background-color: #68926D;
+                    color: white;
+                    padding: 14px; ">
+                    User Role
+                </th>
+
+                <th style="
+                    background-color: #68926D;
+                    color: white;
+                    padding: 14px; ">
+                    Account Status
+                </th>
+
+                <th style="
+                    background-color: #68926D;
+                    color: white;
+                    padding: 14px; ">
+                    Manage Account
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td style="padding: 14px;">
+                        @user.FirstName @user.LastName
+                    </td>
+
+                    <td style="padding: 14px;">
+                        @user.Email
+                    </td>
+
+                    <td style="padding: 14px;">
+                        @user.UserRole
+                    </td>
+
+                    <td style="padding: 14px;">
+                        @(user.IsActive ? "Active" : "Inactive")
+                        @* This badge shows if the user hasn't verified their email yet. *@
+                        @if (!user.EmailVerified)
+                        {
+                            <br /><span class="badge bg-warning text-dark">Email not verified</span>
+                        }
+                    </td>
+
+                    <td style="padding: 14px;">
+
+                        <div class="dropdown">
+
+                            <button class="btn dropdown-toggle"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    style="
+                                background-color: #68926D;
+                                color: white;
+                                border: none;
+                                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20); ">
+                                Manage
+                            </button>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="Users"
+                                       asp-action="Details"
+                                       asp-route-id="@user.UserID">
+                                        View
+                                    </a>
+                                </li>
+
+                                @* This checks if this row is the logged-in user, and if they can manage this user. *@
+                                @{
+                                    var isSelf = currentUserId == user.UserID.ToString();
+                                    var canManage = AppRoles.CanManage(currentRole, user.UserRole);
+                                }
+
+                                @* Edit only shows for yourself or users with a lower role. *@
+                                @if (isSelf || canManage)
+                                {
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="Users"
+                                           asp-action="Edit"
+                                           asp-route-id="@user.UserID">
+                                            Edit
+                                        </a>
+                                    </li>
+                                }
+
+                                @* Resend only shows if the email isn't verified yet. *@
+                                @if (!user.EmailVerified && (isSelf || canManage))
+                                {
+                                    <li>
+                                        <form asp-controller="Users"
+                                              asp-action="ResendVerification"
+                                              asp-route-id="@user.UserID"
+                                              method="post">
+                                            <button type="submit" class="dropdown-item">
+                                                Resend verification
+                                            </button>
+                                        </form>
+                                    </li>
+                                }
+
+                                @* Delete doesn't show for yourself or for users with a higher/equal role. *@
+                                @if (!isSelf && canManage)
+                                {
+
+                                    <li>
+                                        <form asp-controller="Users"
+                                              asp-action="Delete"
+                                              asp-route-id="@user.UserID"
+                                              method="post">
+
+                                            <button type="submit"
+                                                    class="dropdown-item"
+                                                    onclick="return confirm('Are you sure you want to delete this user?');">
+                                                Delete
+                                            </button>
+
+                                        </form>
+                                    </li>
+
+                                }
+                            </ul>
+
+                        </div>
+
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

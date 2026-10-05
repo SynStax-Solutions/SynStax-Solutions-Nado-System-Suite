@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Nado Graphics</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+
+    <div style="display: flex; min-height: 100vh; background-color: #f5f6f5;">
+
+        <!-- SIDE NAVIGATION -->
+        <div style="
+            width: 240px;
+            min-height: 100vh;
+            background-color: #68926D;
+            padding: 25px 15px;
+            box-sizing: border-box;">
+
+            <a asp-controller="Designers" asp-action="Dashboard" style="display: block; margin-bottom: 8px;">
+                <img src="~/images/nadoms-logo-white.png"
+                     alt="NadoMS"
+                     style="height: 40px; width: auto; display: block;" />
+            </a>
+
+            <div style="
+                color: rgba(255,255,255,0.8);
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin: 0 0 30px 4px;">
+                Designer
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+
+                <a asp-controller="Designers" asp-action="Dashboard"
+                       style="display: block; padding: 12px 15px; color: white; text-decoration: none; border-radius: 7px; font-size: 15px; font-weight: 600;">
+                    Dashboard
+                </a>
+
+                <a asp-controller="JobCards" asp-action="Index"
+                       style="display: block; padding: 12px 15px; color: white; text-decoration: none; border-radius: 7px; font-size: 15px; font-weight: 600;">
+                    Job Cards
+                </a>
+
+                <a asp-controller="Portfolio" asp-action="Index"
+                       style="display: block; padding: 12px 15px; color: white; text-decoration: none; border-radius: 7px; font-size: 15px; font-weight: 600;">
+                    Portfolio
+                </a>
+
+            </div>
+
+            <div style="
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid rgba(255,255,255,0.35);
+                display: flex;
+                flex-direction: column;
+                gap: 8px;">
+
+                <a asp-controller="Account" asp-action="ChangePassword"
+                       style="display: block; padding: 12px 15px; color: white; text-decoration: none; border-radius: 7px; font-size: 15px; font-weight: 600;">
+                    Change Password
+                </a>
+
+                <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit"
+                            style="display: block; width: 100%; padding: 12px 15px; color: white; background: none; border: none; text-align: left; border-radius: 7px; font-size: 15px; font-weight: 600; cursor: pointer;">
+                        Log Out
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- PAGE CONTENT -->
+        <div style="flex: 1; min-width: 0;">
+            @RenderBody()
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

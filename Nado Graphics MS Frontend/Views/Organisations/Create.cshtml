@@ -1,0 +1,230 @@
+﻿@model Nado_Graphics_MS_Frontend.Models.OrganisationModel
+
+@{
+    ViewData["Title"] = "Create Organisation";
+}
+
+<div class="container-fluid">
+
+    <div style="margin-bottom: 25px;">
+
+        <h1 style="
+            color: #24463A;
+            font-weight: 600;
+            margin-bottom: 5px; ">
+            Create Organisation
+        </h1>
+
+        <p style="
+            color: #6c757d;
+            margin-bottom: 0; ">
+            Add a new organisation to the system.
+        </p>
+
+    </div>
+
+
+    <div style="
+        background-color: white;
+        border: 2px solid black;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.30); ">
+
+        <div style="
+            background-color: #68926D;
+            color: white;
+            padding: 18px 25px; ">
+            <h4 style="
+                margin: 0;
+                font-weight: 600; ">
+                Organisation Information
+            </h4>
+        </div>
+
+
+        <div style="padding: 25px;">
+
+            <form asp-action="Create" method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label asp-for="OrganisationName"
+                           class="form-label"
+                           style="
+                               font-weight: 600;
+                               color: #24463A; ">
+                        Organisation Name
+                    </label>
+
+                    <input asp-for="OrganisationName"
+                           class="form-control"
+                           placeholder="Enter organisation name"
+                           style="
+                               border: 1px solid #adb5bd;
+                               border-radius: 7px;
+                               padding: 10px 12px; "/>
+
+                    <span asp-validation-for="OrganisationName"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label asp-for="RegistrationNumber"
+                           class="form-label"
+                           style="
+                               font-weight: 600;
+                               color: #24463A; ">
+                        Registration Number
+                    </label>
+
+                    <input asp-for="RegistrationNumber"
+                           class="form-control"
+                           placeholder="Enter registration number"
+                           style="
+                               border: 1px solid #adb5bd;
+                               border-radius: 7px;
+                               padding: 10px 12px; "/>
+
+                    <span asp-validation-for="RegistrationNumber"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label asp-for="Email"
+                           class="form-label"
+                           style="
+                               font-weight: 600;
+                               color: #24463A;">
+                        Email Address
+                    </label>
+
+                    <input asp-for="Email"
+                           type="email"
+                           class="form-control"
+                           placeholder="Enter email address"
+                           style="
+                               border: 1px solid #adb5bd;
+                               border-radius: 7px;
+                               padding: 10px 12px;"/>
+
+                    <span asp-validation-for="Email"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label asp-for="Phone"
+                           class="form-label"
+                           style="
+                               font-weight: 600;
+                               color: #24463A;">
+                        Phone Number
+                    </label>
+
+                    <input asp-for="Phone"
+                           class="form-control"
+                           placeholder="Enter phone number"
+                           style="
+                               border: 1px solid #adb5bd;
+                               border-radius: 7px;
+                               padding: 10px 12px;"/>
+
+                    <span asp-validation-for="Phone"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label asp-for="BillingAddress"
+                           class="form-label"
+                           style="
+                               font-weight: 600;
+                               color: #24463A;">
+                        Billing Address
+                    </label>
+
+                    <textarea asp-for="BillingAddress"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Enter billing address"
+                              style="
+                                  border: 1px solid #adb5bd;
+                                  border-radius: 7px;
+                                  padding: 10px 12px;">
+                    </textarea>
+
+                    <span asp-validation-for="BillingAddress"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <hr style="
+                    margin-top: 5px;
+                    margin-bottom: 20px;
+                    border: 0;
+                    border-top: 1px solid #d9dfda; "/>
+
+
+                <div style="
+                    display: flex;
+                    gap: 10px;
+                    flex-wrap: wrap;">
+
+                    <button type="submit"
+                            class="btn"
+                            style="
+                                background-color: #68926D;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                border-radius: 7px;
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20);">
+                        <i class="bi bi-check-lg"></i>
+                        Create Organisation
+                    </button>
+
+
+                    <a asp-action="Index"
+                       class="btn"
+                       style="
+                           background-color: #D46271;
+                           color: white;
+                           border: none;
+                           padding: 10px 20px;
+                           border-radius: 7px;
+                           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+                        <i class="bi bi-x-lg"></i>
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
