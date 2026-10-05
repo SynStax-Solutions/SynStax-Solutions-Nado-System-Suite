@@ -46,18 +46,14 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<JobCard?> GetJobCardAsync(int id)
         {
             //This searches the database for the selected job card. 
-            return await _context.JobCards
-                .Include(j => j.Supplier)
-                .FirstOrDefaultAsync(j => j.JobCardID == id);
+            return await _context.JobCards.Include(j => j.Supplier).FirstOrDefaultAsync(j => j.JobCardID == id);
         }
         //----------------------------------------------------------------------------------// 
 
         //This gets all suppliers so a supplier can be assigned to a Job Card. 
         public async Task<List<Supplier>> GetSuppliersAsync()
         {
-            return await _context.Suppliers
-                .OrderBy(s => s.SupplierName)
-                .ToListAsync();
+            return await _context.Suppliers.OrderBy(s => s.SupplierName).ToListAsync();
         }
         //----------------------------------------------------------------------------------// 
 
@@ -75,8 +71,7 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             //This searches for the selected Supplier. 
-            var supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(s => s.SupplierID == supplierId);
+            var supplier = await _context.Suppliers.FirstOrDefaultAsync(s => s.SupplierID == supplierId);
 
             //This checks whether the Supplier exists. 
             if (supplier == null)
@@ -97,13 +92,10 @@ namespace Nado_Graphics_MS_Backend.Services
         //----------------------------------------------------------------------------------// 
 
         //This creates a job card automatically from an accepted quote. 
-        public async Task<(bool Success, string? Error)> CreateFromAcceptedQuoteAsync(int
-quoteId)
+        public async Task<(bool Success, string? Error)> CreateFromAcceptedQuoteAsync(int quoteId)
         {
             //This gets the accepted quote together with its items. 
-            var quote = await _context.Quotes
-                .Include(q => q.QuoteItems)
-                .FirstOrDefaultAsync(q => q.QuoteID == quoteId);
+            var quote = await _context.Quotes.Include(q => q.QuoteItems).FirstOrDefaultAsync(q => q.QuoteID == quoteId);
 
             //This checks whether the quote exists. 
             if (quote == null)
@@ -121,8 +113,7 @@ quoteId)
             var jobReference = $"{quote.ReferenceNumber}-JOB";
 
             //This checks whether this accepted quote already created a job card. 
-            var existingJobCard = await _context.JobCards
-                .FirstOrDefaultAsync(j => j.ReferenceNumber == jobReference);
+            var existingJobCard = await _context.JobCards.FirstOrDefaultAsync(j => j.ReferenceNumber == jobReference);
 
             //This prevents duplicate job cards from being created. 
             if (existingJobCard != null)
@@ -143,13 +134,9 @@ quoteId)
             var jobTitle = $"Job for {client.FirstName} {client.LastName}";
 
             //This builds the job description from the products on the quote. 
-            var productNames = quote.QuoteItems
-                .Select(i => $"Product ID {i.ProductID} x {i.Quantity}")
-                .ToList();
+            var productNames = quote.QuoteItems.Select(i => $"Product ID {i.ProductID} x {i.Quantity}").ToList();
 
-            var jobDescription = productNames.Count > 0
-                ? string.Join(", ", productNames)
-                : quote.Notes;
+            var jobDescription = productNames.Count > 0 ? string.Join(", ", productNames) : quote.Notes;
 
             //This creates the new job card. 
             var jobCard = new JobCard
@@ -221,8 +208,7 @@ quoteId)
             }
 
             //This searches for the existing job card. 
-            var existingJobCard = await _context.JobCards
-                .FirstOrDefaultAsync(j => j.JobCardID == id);
+            var existingJobCard = await _context.JobCards.FirstOrDefaultAsync(j => j.JobCardID == id);
 
             //This checks whether the job card exists. 
             if (existingJobCard == null)
@@ -239,12 +225,10 @@ quoteId)
             existingJobCard.DueDate = jobCard.DueDate;
             existingJobCard.CompletedAt = jobCard.CompletedAt;
             existingJobCard.PortfolioSubmissionID = jobCard.PortfolioSubmissionID;
-
-            //////////// 
+ 
             //The supplier is assigned separately through AssignSupplierAsync. 
             //This stops the normal Job Card edit from accidentally changing the assigned Supplier. 
-            //////////// 
-
+        
             //This saves the updated job card. 
             await _context.SaveChangesAsync();
 
@@ -270,8 +254,7 @@ quoteId)
                 return false;
             }
 
-            var jobCard = await _context.JobCards
-                .FirstOrDefaultAsync(j => j.JobCardID == id);
+            var jobCard = await _context.JobCards.FirstOrDefaultAsync(j => j.JobCardID == id);
 
             if (jobCard == null)
             {

@@ -122,8 +122,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
         [HttpPut("{id}/payment-status")]
         [Authorize(Roles = AppRoles.ManagerOrAdmin)]
-        public async Task<IActionResult> UpdatePaymentStatus(int id, [FromBody] string
-paymentStatus)
+        public async Task<IActionResult> UpdatePaymentStatus(int id, [FromBody] string paymentStatus)
         {
             var success = await _jobCardService.UpdatePaymentStatusAsync(id, paymentStatus);
 
