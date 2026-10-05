@@ -300,3 +300,8 @@ Youtube URLs:
 2. Management System YouTube Demo: https://youtu.be/SgdxLigqML0
 3. PowerPoint code presentation: https://youtu.be/aQgATDpqNwM and https://youtu.be/0Vt9G6KCFe0
 ---
+## Team Member Meeting Attendance
+
+100% presence for all members for all in person and online meetings
+
+---
