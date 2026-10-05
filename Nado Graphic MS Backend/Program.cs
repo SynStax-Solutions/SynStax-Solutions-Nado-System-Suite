@@ -15,19 +15,21 @@ var builder = WebApplication.CreateBuilder(args);
 QuestPDF.Settings.License = LicenseType.Community;
 
 // Add services to the container.
-builder.Services.AddControllers()
-    .AddJsonOptions(o => o.JsonSerializerOptions.Converters
-        .Add(new JsonStringEnumConverter())); ;
+builder.Services.AddControllers().AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddSignalR();
+
+//---------------- CORS for the BMS frontend ----------------//
+//CHANGED FOR DEPLOYMENT: the frontend addresses now come from appsettings
+//("Cors:FrontendOrigins") instead of being typed here, so the laptop uses
+//localhost and the live site uses https://nadographicsbms.runasp.net.
+var frontendOrigins = builder.Configuration.GetSection("Cors:FrontendOrigins").Get<string[]>() ?? Array.Empty<string>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:5067",
-                "https://localhost:7227")
+        policy.WithOrigins(frontendOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -38,8 +40,6 @@ builder.Services.AddDbContext<BMSDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -165,6 +165,8 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AuthService>();
 
+//---------------- CORS for the public portfolio website ----------------//
+//Lets the contact form on nadographics.com send enquiries ("Cors:AllowedOrigins").
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
 
 builder.Services.AddCors(options =>
@@ -184,46 +186,10 @@ builder.Services.AddAntiforgery(options => options.Cookie.SecurePolicy = CookieS
 
 var app = builder.Build();
 
-//This creates the Owner account if it does not already exist.
-//////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<BMSDbContext>();
-
-    var ownerEmail = builder.Configuration["SeedOwner:Email"];
-    var ownerPassword = builder.Configuration["SeedOwner:Password"];
-
-    if (!string.IsNullOrWhiteSpace(ownerEmail) &&
-        !string.IsNullOrWhiteSpace(ownerPassword))
-    {
-        ownerEmail = ownerEmail.Trim().ToLowerInvariant();
-
-        var ownerExists = await db.Users.AnyAsync(u => u.Email == ownerEmail);
-
-        if (!ownerExists)
-        {
-            var owner = new User
-            {
-                FirstName = builder.Configuration["SeedOwner:FirstName"] ?? "Owner",
-                LastName = builder.Configuration["SeedOwner:LastName"] ?? "Account",
-                Email = ownerEmail,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(ownerPassword),
-                UserRole = AppRoles.Manager,
-                IsActive = true,
-                EmailVerified = true,
-                CreatedAt = DateTime.Now
-            };
-
-            db.Users.Add(owner);
-            await db.SaveChangesAsync();
-        }
-    }
-}
-
 //---------------- First Owner account ----------------//
+//CHANGED FOR DEPLOYMENT: the duplicate Owner-seeding block was removed; this one is kept.
 //There is no sign-up page, so if there is no Manager in the database yet,
-//one is created using the "SeedOwner" details in appsettings.json.
+//one is created using the "SeedOwner" details in appsettings.
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BMSDbContext>();
