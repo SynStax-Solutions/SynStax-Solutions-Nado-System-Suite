@@ -73,7 +73,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest(new { message = error });
+                return this.ApiBadRequest(error);
             }
 
             return CreatedAtAction(nameof(GetInvoice), new { id = invoice!.InvoiceID }, invoice);
@@ -89,7 +89,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest(new { message = error });
+                return this.ApiBadRequest(error);
             }
 
             return CreatedAtAction(nameof(GetInvoice), new { id = invoice!.InvoiceID }, invoice);
@@ -104,7 +104,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest();
+                return this.ApiBadRequest("The request could not be completed.");
             }
 
             return NoContent();
@@ -133,7 +133,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest(new { message = error });
+                return this.ApiBadRequest(error);
             }
 
             return NoContent();
@@ -152,7 +152,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest(new { message = error });
+                return this.ApiBadRequest(error);
             }
 
             return NoContent();
@@ -165,7 +165,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest(new { message = error });
+                return this.ApiBadRequest(error);
             }
 
             return NoContent();
