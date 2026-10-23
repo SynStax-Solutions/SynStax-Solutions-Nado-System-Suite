@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Security;
 using Nado_Graphics_MS_Backend.Services;
@@ -22,13 +23,14 @@ namespace Nado_Graphics_MS_Backend.Controllers
         //site is allowed to call, and only this one carries the CORS policy.
         [HttpPost]
         [EnableCors("PublicSite")]
+        [EnableRateLimiting("public-form")]
         [AllowAnonymous]
         public async Task<IActionResult> SubmitEnquiry(EnquiryRequest request)
         {
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(new { message = "Unable to submit enquiry." });
+                return this.ApiBadRequest("Unable to submit enquiry.");
             }
 
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
@@ -39,7 +41,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             {
                 //doesn't reveal whether it was validation,
                 //rate limiting, or something else, so it can't be used to probe the system.
-                return BadRequest(new { message = "Unable to submit enquiry." });
+                return this.ApiBadRequest("Unable to submit enquiry.");
             }
 
             return Ok(new { message = "Enquiry received." });
@@ -69,7 +71,6 @@ namespace Nado_Graphics_MS_Backend.Controllers
             return Ok(enquiry);
         }
 
-        //---------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------
         [HttpPut("{id}/read")]
         [Authorize(Roles = AppRoles.ManagerOrAdmin)]
