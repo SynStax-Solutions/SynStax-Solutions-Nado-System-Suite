@@ -66,7 +66,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             if (!success)
             {
                 //Returning an HTTP 400 Bad Request response.
-                return BadRequest();
+                return this.ApiBadRequest("The request could not be completed.");
             }
 
             //Returning the newly created client with an HTTP 201 Created response.
@@ -86,7 +86,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             if (!success)
             {
                 //Returning an HTTP 400 Bad Request response.
-                return BadRequest();
+                return this.ApiBadRequest("The request could not be completed.");
             }
 
             //Returning an HTTP 204 No Content response.
