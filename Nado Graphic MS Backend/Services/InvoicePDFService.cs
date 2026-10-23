@@ -1,23 +1,31 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Nado_Graphics_MS_Backend.Data;
+﻿using Microsoft.Extensions.Options;
 using Nado_Graphics_MS_Backend.Models;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using Nado_Graphics_MS_Backend.Repositories;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
     // Holds the logic for generating the invoice PDF. Mirrors QuotePDFService so both documents look the same.
     public class InvoicePDFService
     {
-        private readonly BMSDbContext _context;
+        private readonly IInvoiceRepository _invoices;
+        private readonly IRepository<Client> _clients;
+        private readonly IProductRepository _products;
         private readonly CompanyInfoOptions _companyInfo;
         private readonly IWebHostEnvironment _environment;
 
-        public InvoicePDFService(BMSDbContext context, IOptions<CompanyInfoOptions> companyInfo, IWebHostEnvironment environment)
+        public InvoicePDFService(
+            IInvoiceRepository invoices,
+            IRepository<Client> clients,
+            IProductRepository products,
+            IOptions<CompanyInfoOptions> companyInfo,
+            IWebHostEnvironment environment)
         {
-            _context = context;
+            _invoices = invoices;
+            _clients = clients;
+            _products = products;
             _companyInfo = companyInfo.Value;
             _environment = environment;
         }
@@ -25,16 +33,13 @@ namespace Nado_Graphics_MS_Backend.Services
         //salesRepName comes from the logged-in user who clicks to download.
         public async Task<byte[]?> GenerateInvoicePdfAsync(int invoiceId, string salesRepName)
         {
-            var invoice = await _context.Invoices
-                .Include(i => i.InvoiceItems)
-                .FirstOrDefaultAsync(i => i.InvoiceID == invoiceId);
-
+            var invoice = await _invoices.GetWithItemsAsync(invoiceId);
             if (invoice == null)
             {
                 return null;
             }
 
-            var client = await _context.Clients.FindAsync(invoice.ClientID);
+            var client = await _clients.GetByIdAsync(invoice.ClientID);
 
             if (client == null)
             {
@@ -42,9 +47,7 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             var productIds = invoice.InvoiceItems.Select(i => i.ProductID).Distinct().ToList();
-            var products = await _context.Products
-                .Where(p => productIds.Contains(p.ProductID))
-                .ToDictionaryAsync(p => p.ProductID, p => p.ProductName);
+            var products = await _products.GetNamesByIdsAsync(productIds);
 
             //The invoice already tracks how much has been paid.
             var amountPaid = invoice.AmountPaid;
