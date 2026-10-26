@@ -9,41 +9,41 @@
     <div style="margin-bottom: 25px;">
 
         <h1 style="
-            color: #24463A;
+            color: var(--black, #171717) !important;
             font-weight: 600;
-            margin-bottom: 5px; ">
+            margin-bottom: 5px;">
             Edit Organisation
         </h1>
 
         <p style="
-            color: #6c757d;
-            margin-bottom: 0; ">
+            color: var(--grey, #777777) !important;
+            margin-bottom: 0;">
             Update the organisation's information.
         </p>
 
     </div>
 
-
     <div style="
-        background-color: white;
-        border: 2px solid black;
+        background-color: var(--white, #FFFFFF) !important;
+        color: var(--black, #171717) !important;
+        border: 2px solid var(--black, #171717) !important;
         border-radius: 14px;
         overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.30); ">
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.30);">
 
         <div style="
-            background-color: #68926D;
-            color: white;
-            padding: 18px 25px; ">
+            background-color: var(--black, #171717) !important;
+            color: var(--white, #FFFFFF) !important;
+            padding: 18px 25px;">
 
             <h4 style="
                 margin: 0;
-                font-weight: 600; ">
+                font-weight: 600;
+                color: var(--white, #FFFFFF) !important;">
                 Organisation Information
             </h4>
 
         </div>
-
 
         <div style="padding: 25px;">
 
@@ -52,65 +52,63 @@
                 <input asp-for="OrganisationID" type="hidden" />
 
                 <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
+                     class="text-danger mb-3"
+                     style="color: var(--danger, #B54747) !important;">
                 </div>
-
 
                 <div class="mb-4">
 
                     <label asp-for="OrganisationName"
                            class="form-label"
-                           style="
-                               font-weight: 600;
-                               color: #24463A; ">
+                           style="font-weight: 600; color: var(--black, #171717) !important;">
                         Organisation Name
                     </label>
 
                     <input asp-for="OrganisationName"
                            class="form-control"
                            style="
-                               border: 1px solid #adb5bd;
+                               border: 1px solid var(--grey, #777777) !important;
                                border-radius: 7px;
-                               padding: 10px 12px; " />
+                               padding: 10px 12px;
+                               background-color: var(--white, #FFFFFF) !important;
+                               color: var(--black, #171717) !important;" />
 
                     <span asp-validation-for="OrganisationName"
-                          class="text-danger">
+                          class="text-danger"
+                          style="color: var(--danger, #B54747) !important;">
                     </span>
 
                 </div>
-
 
                 <div class="mb-4">
 
                     <label asp-for="RegistrationNumber"
                            class="form-label"
-                           style="
-                               font-weight: 600;
-                               color: #24463A; ">
+                           style="font-weight: 600; color: var(--black, #171717) !important;">
                         Registration Number
                     </label>
 
                     <input asp-for="RegistrationNumber"
                            class="form-control"
                            style="
-                               border: 1px solid #adb5bd;
+                               border: 1px solid var(--grey, #777777) !important;
                                border-radius: 7px;
-                               padding: 10px 12px; "/>
+                               padding: 10px 12px;
+                               background-color: var(--white, #FFFFFF) !important;
+                               color: var(--black, #171717) !important;" />
 
                     <span asp-validation-for="RegistrationNumber"
-                          class="text-danger">
+                          class="text-danger"
+                          style="color: var(--danger, #B54747) !important;">
                     </span>
 
                 </div>
-
 
                 <div class="mb-4">
 
                     <label asp-for="Email"
                            class="form-label"
-                           style="
-                               font-weight: 600;
-                               color: #24463A; ">
+                           style="font-weight: 600; color: var(--black, #171717) !important;">
                         Email Address
                     </label>
 
@@ -118,48 +116,48 @@
                            type="email"
                            class="form-control"
                            style="
-                               border: 1px solid #adb5bd;
+                               border: 1px solid var(--grey, #777777) !important;
                                border-radius: 7px;
-                               padding: 10px 12px; "/>
+                               padding: 10px 12px;
+                               background-color: var(--white, #FFFFFF) !important;
+                               color: var(--black, #171717) !important;" />
 
                     <span asp-validation-for="Email"
-                          class="text-danger">
+                          class="text-danger"
+                          style="color: var(--danger, #B54747) !important;">
                     </span>
 
                 </div>
-
 
                 <div class="mb-4">
 
                     <label asp-for="Phone"
                            class="form-label"
-                           style="
-                               font-weight: 600;
-                               color: #24463A; ">
+                           style="font-weight: 600; color: var(--black, #171717) !important;">
                         Phone Number
                     </label>
 
                     <input asp-for="Phone"
                            class="form-control"
                            style="
-                               border: 1px solid #adb5bd;
+                               border: 1px solid var(--grey, #777777) !important;
                                border-radius: 7px;
-                               padding: 10px 12px; "/>
+                               padding: 10px 12px;
+                               background-color: var(--white, #FFFFFF) !important;
+                               color: var(--black, #171717) !important;" />
 
                     <span asp-validation-for="Phone"
-                          class="text-danger">
+                          class="text-danger"
+                          style="color: var(--danger, #B54747) !important;">
                     </span>
 
                 </div>
-
 
                 <div class="mb-4">
 
                     <label asp-for="BillingAddress"
                            class="form-label"
-                           style="
-                               font-weight: 600;
-                               color: #24463A; ">
+                           style="font-weight: 600; color: var(--black, #171717) !important;">
                         Billing Address
                     </label>
 
@@ -167,52 +165,51 @@
                               class="form-control"
                               rows="3"
                               style="
-                                  border: 1px solid #adb5bd;
+                                  border: 1px solid var(--grey, #777777) !important;
                                   border-radius: 7px;
-                                  padding: 10px 12px; ">
-                    </textarea>
+                                  padding: 10px 12px;
+                                  background-color: var(--white, #FFFFFF) !important;
+                                  color: var(--black, #171717) !important;"></textarea>
 
                     <span asp-validation-for="BillingAddress"
-                          class="text-danger">
+                          class="text-danger"
+                          style="color: var(--danger, #B54747) !important;">
                     </span>
 
                 </div>
-
 
                 <hr style="
                     margin-top: 5px;
                     margin-bottom: 20px;
                     border: 0;
-                    border-top: 1px solid #d9dfda; "/>
+                    border-top: 1px solid var(--light-grey, #E5E5E5) !important;" />
 
-
-                <div style="
-                    display: flex;
-                    gap: 10px;
-                    flex-wrap: wrap; ">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
 
                     <button type="submit"
                             class="btn"
                             style="
-                                background-color: #68926D;
-                                color: white;
-                                border: none;
+                                background-color: var(--primary, #D4A72C) !important;
+                                color: var(--black, #171717) !important;
+                                border: none !important;
                                 padding: 10px 20px;
                                 border-radius: 7px;
-                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+                                font-weight: 600;
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20);">
                         Save Changes
                     </button>
-
 
                     <a asp-action="Index"
                        class="btn"
                        style="
-                           background-color: #D46271;
-                           color: white;
-                           border: none;
+                           background-color: var(--dark-grey, #343434) !important;
+                           color: var(--white, #FFFFFF) !important;
+                           border: none !important;
                            padding: 10px 20px;
                            border-radius: 7px;
-                           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+                           font-weight: 600;
+                           text-decoration: none !important;
+                           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20);">
                         Cancel
                     </a>
 

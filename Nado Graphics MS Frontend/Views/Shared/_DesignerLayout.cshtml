@@ -1,93 +1,218 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
     <title>@ViewData["Title"] - Nado Graphics</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <style>
+        body {
+            margin: 0;
+            background-color: #F5F5F5;
+            color: #171717;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .designer-layout {
+            display: flex;
+            min-height: 100vh;
+            background-color: #F5F5F5;
+        }
+
+        .designer-sidebar {
+            width: 240px;
+            min-width: 240px;
+            min-height: 100vh;
+            background-color: #171717;
+            padding: 25px 15px;
+            box-sizing: border-box;
+            border-right: 3px solid #D4A72C;
+        }
+
+        .designer-logo {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .designer-logo img {
+            display: block;
+            height: 40px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .designer-sidebar-label {
+            color: #D4A72C;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 0 0 30px 4px;
+        }
+
+        .designer-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .designer-nav-link {
+            display: block;
+            padding: 12px 15px;
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .designer-nav-link:hover {
+            background-color: #D4A72C;
+            color: #171717;
+            text-decoration: none;
+        }
+
+        .designer-bottom-links {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #777777;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .designer-logout-form {
+            margin: 0;
+        }
+
+        .designer-logout-button {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            color: #FFFFFF;
+            background: none;
+            border: none;
+            text-align: left;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .designer-logout-button:hover {
+            background-color: #D4A72C;
+            color: #171717;
+        }
+
+        .designer-main {
+            flex: 1;
+            min-width: 0;
+        }
+    </style>
+
 </head>
+
 <body>
 
-    <div style="display: flex; min-height: 100vh; background-color: #f5f6f5;">
+    <div class="designer-layout">
 
         <!-- SIDE NAVIGATION -->
-        <div style="
-            width: 240px;
-            min-height: 100vh;
-            background-color: #68926D;
-            padding: 25px 15px;
-            box-sizing: border-box;">
 
-            <a asp-controller="Designers" asp-action="Dashboard" style="display: block; margin-bottom: 8px;">
+        <div class="designer-sidebar">
+
+            <a asp-controller="Designers"
+               asp-action="Dashboard"
+               class="designer-logo">
+
                 <img src="~/images/nadoms-logo-white.png"
-                     alt="NadoMS"
-                     style="height: 40px; width: auto; display: block;" />
+                     alt="NadoMS" />
+
             </a>
 
-            <div style="
-                color: rgba(255,255,255,0.8);
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                margin: 0 0 30px 4px;">
+            <div class="designer-sidebar-label">
                 Designer
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="designer-navigation">
 
-                <a asp-controller="Designers" asp-action="Dashboard"
-                       style="display: block; padding: 12px 15px; color: white; text-decoration: none; border-radius: 7px; font-size: 15px; font-weight: 600;">
+                <a asp-controller="Designers"
+                   asp-action="Dashboard"
+                   class="designer-nav-link">
                     Dashboard
                 </a>
 
-                <a asp-controller="JobCards" asp-action="Index"
-                       style="display: block; padding: 12px 15px; color: white; text-decoration: none; border-radius: 7px; font-size: 15px; font-weight: 600;">
+                <a asp-controller="JobCards"
+                   asp-action="Index"
+                   class="designer-nav-link">
                     Job Cards
                 </a>
 
-                <a asp-controller="Portfolio" asp-action="Index"
-                       style="display: block; padding: 12px 15px; color: white; text-decoration: none; border-radius: 7px; font-size: 15px; font-weight: 600;">
+                <a asp-controller="Portfolio"
+                   asp-action="Index"
+                   class="designer-nav-link">
                     Portfolio
                 </a>
 
             </div>
 
-            <div style="
-                margin-top: 30px;
-                padding-top: 20px;
-                border-top: 1px solid rgba(255,255,255,0.35);
-                display: flex;
-                flex-direction: column;
-                gap: 8px;">
+            <div class="designer-bottom-links">
 
-                <a asp-controller="Account" asp-action="ChangePassword"
-                       style="display: block; padding: 12px 15px; color: white; text-decoration: none; border-radius: 7px; font-size: 15px; font-weight: 600;">
+                <a asp-controller="Account"
+                   asp-action="ChangePassword"
+                   class="designer-nav-link">
                     Change Password
                 </a>
 
-                <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                <form asp-controller="Account"
+                      asp-action="Logout"
+                      method="post"
+                      class="designer-logout-form">
+
                     @Html.AntiForgeryToken()
-                    <button type="submit"
-                            style="display: block; width: 100%; padding: 12px 15px; color: white; background: none; border: none; text-align: left; border-radius: 7px; font-size: 15px; font-weight: 600; cursor: pointer;">
+
+                    <button type="submit" class="designer-logout-button">
                         Log Out
                     </button>
+
                 </form>
 
             </div>
+
         </div>
 
         <!-- PAGE CONTENT -->
-        <div style="flex: 1; min-width: 0;">
+
+        <div class="designer-main">
+
             @RenderBody()
+
         </div>
 
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>

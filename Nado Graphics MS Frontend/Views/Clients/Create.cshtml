@@ -1,4 +1,5 @@
-﻿@model Nado_Graphics_MS_Frontend.Models.ClientModel
+﻿
+@model Nado_Graphics_MS_Frontend.Models.ClientModel
 
 @{
 ViewData["Title"] = "New Client";
@@ -12,13 +13,13 @@ ViewData["Title"] = "New Client";
         margin: 0;
         font-size: 32px;
         font-weight: 700;
-        color: #24463A; ">
+        color: var(--black, #171717); ">
         New Client
     </h1>
 
     <p style="
         margin: 5px 0 0 0;
-        color: #555;
+        color: var(--grey, #777777);
         font-size: 15px; ">
         Create a new client account.
     </p>
@@ -33,7 +34,7 @@ ViewData["Title"] = "New Client";
 
     <div asp-validation-summary="ModelOnly"
          style="
-            color: #D46271;
+            color: var(--danger, #B54747);
             margin-bottom: 15px; ">
     </div>
 
@@ -43,19 +44,19 @@ ViewData["Title"] = "New Client";
         gap: 25px; ">
 
         <div style="
-            background-color: white;
-            border: 2px solid black;
+            background-color: var(--white, white);
+            border: 2px solid var(--black, black);
             border-radius: 14px;
             box-shadow: 0 6px 14px rgba(0,0,0,0.20);
             padding: 25px; ">
 
             <h2 style="
                 margin: 0;
-                color: #24463A;
+                color: var(--black, #171717);
                 font-size: 21px;
                 font-weight: 700;
                 padding-bottom: 10px;
-                border-bottom: 2px solid #68926D; ">
+                border-bottom: 2px solid var(--primary, #D4A72C); ">
                 Personal Information
             </h2>
 
@@ -66,19 +67,19 @@ ViewData["Title"] = "New Client";
                             display: block;
                             font-weight: 600;
                             margin-bottom: 7px; ">
-                    First Name <span style="color: #D46271;">*</span>
+                    First Name <span style="color: var(--danger, #B54747);">*</span>
                 </label>
 
                 <input asp-for="FirstName"
                        class="form-control"
                        placeholder="Enter first name"
                        style="
-                            border: 2px solid black;
+                            border: 2px solid var(--black, black);
                             border-radius: 7px;
                             padding: 10px; "/>
 
                 <span asp-validation-for="FirstName"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747);">
                 </span>
 
             </div>
@@ -90,19 +91,19 @@ ViewData["Title"] = "New Client";
                             display: block;
                             font-weight: 600;
                             margin-bottom: 7px; ">
-                    Surname <span style="color: #D46271;">*</span>
+                    Surname <span style="color: var(--danger, #B54747);">*</span>
                 </label>
 
                 <input asp-for="LastName"
                        class="form-control"
                        placeholder="Enter surname"
                        style="
-                            border: 2px solid black;
+                            border: 2px solid var(--black, black);
                             border-radius: 7px;
                             padding: 10px; "/>
 
                 <span asp-validation-for="LastName"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747);">
                 </span>
 
             </div>
@@ -120,7 +121,7 @@ ViewData["Title"] = "New Client";
                 <select asp-for="ClientType"
                         class="form-select"
                         style="
-                            border: 2px solid black;
+                            border: 2px solid var(--black, black);
                             border-radius: 7px;
                             padding: 10px;">
 
@@ -134,19 +135,19 @@ ViewData["Title"] = "New Client";
         </div>
 
         <div style="
-            background-color: white;
-            border: 2px solid black;
+            background-color: var(--white, white);
+            border: 2px solid var(--black, black);
             border-radius: 14px;
             box-shadow: 0 6px 14px rgba(0,0,0,0.20);
             padding: 25px;">
 
             <h2 style="
                 margin: 0;
-                color: #24463A;
+                color: var(--black, #171717);
                 font-size: 21px;
                 font-weight: 700;
                 padding-bottom: 10px;
-                border-bottom: 2px solid #68926D; ">
+                border-bottom: 2px solid var(--primary, #D4A72C); ">
                 Contact Information
             </h2>
 
@@ -163,7 +164,7 @@ ViewData["Title"] = "New Client";
                                 display: block;
                                 font-weight: 600;
                                 margin-bottom: 7px; ">
-                        Email Address <span style="color: #D46271;">*</span>
+                        Email Address <span style="color: var(--danger, #B54747);">*</span>
                     </label>
 
                     <input asp-for="Email"
@@ -171,12 +172,12 @@ ViewData["Title"] = "New Client";
                            class="form-control"
                            placeholder="Email address"
                            style="
-                                border: 2px solid black;
+                                border: 2px solid var(--black, black);
                                 border-radius: 7px;
                                 padding: 10px; "/>
 
                     <span asp-validation-for="Email"
-                          style="color: #D46271;">
+                          style="color: var(--danger, #B54747);">
                     </span>
 
                 </div>
@@ -188,19 +189,19 @@ ViewData["Title"] = "New Client";
                                 display: block;
                                 font-weight: 600;
                                 margin-bottom: 7px; ">
-                        Phone Number <span style="color: #D46271;">*</span>
+                        Phone Number <span style="color: var(--danger, #B54747);">*</span>
                     </label>
 
                     <input asp-for="PhoneNumber"
                            class="form-control"
                            placeholder="Phone number"
                            style="
-                                border: 2px solid black;
+                                border: 2px solid var(--black, black);
                                 border-radius: 7px;
                                 padding: 10px; "/>
 
                     <span asp-validation-for="PhoneNumber"
-                          style="color: #D46271;">
+                          style="color: var(--danger, #B54747);">
                     </span>
 
                 </div>
@@ -221,7 +222,7 @@ ViewData["Title"] = "New Client";
                        class="form-control"
                        placeholder="Alternative phone number"
                        style="
-                            border: 2px solid black;
+                            border: 2px solid var(--black, black);
                             border-radius: 7px;
                             padding: 10px; "/>
 
@@ -230,19 +231,19 @@ ViewData["Title"] = "New Client";
         </div>
 
         <div style="
-            background-color: white;
-            border: 2px solid black;
+            background-color: var(--white, white);
+            border: 2px solid var(--black, black);
             border-radius: 14px;
             box-shadow: 0 6px 14px rgba(0,0,0,0.20);
             padding: 25px; ">
 
             <h2 style="
                 margin: 0;
-                color: #24463A;
+                color: var(--black, #171717);
                 font-size: 21px;
                 font-weight: 700;
                 padding-bottom: 10px;
-                border-bottom: 2px solid #68926D; ">
+                border-bottom: 2px solid var(--primary, #D4A72C); ">
                 Address
             </h2>
 
@@ -261,7 +262,7 @@ ViewData["Title"] = "New Client";
                        class="form-control"
                        placeholder="Enter street address"
                        style="
-                            border: 2px solid black;
+                            border: 2px solid var(--black, black);
                             border-radius: 7px;
                             padding: 10px; "/>
 
@@ -287,7 +288,7 @@ ViewData["Title"] = "New Client";
                            class="form-control"
                            placeholder="City"
                            style="
-                                border: 2px solid black;
+                                border: 2px solid var(--black, black);
                                 border-radius: 7px;
                                 padding: 10px; " />
 
@@ -307,7 +308,7 @@ ViewData["Title"] = "New Client";
                            class="form-control"
                            placeholder="Postal code"
                            style="
-                                border: 2px solid black;
+                                border: 2px solid var(--black, black);
                                 border-radius: 7px;
                                 padding: 10px;"/>
 
@@ -317,19 +318,19 @@ ViewData["Title"] = "New Client";
 
         </div>
         <div style="
-            background-color: white;
-            border: 2px solid black;
+            background-color: var(--white, white);
+            border: 2px solid var(--black, black);
             border-radius: 14px;
             box-shadow: 0 6px 14px rgba(0,0,0,0.20);
             padding: 25px; ">
 
             <h2 style="
                 margin: 0;
-                color: #24463A;
+                color: var(--black, #171717);
                 font-size: 21px;
                 font-weight: 700;
                 padding-bottom: 10px;
-                border-bottom: 2px solid #68926D;">
+                border-bottom: 2px solid var(--primary, #D4A72C);">
                 Organisation
             </h2>
 
@@ -346,7 +347,7 @@ ViewData["Title"] = "New Client";
                 <select asp-for="OrganisationID"
                         class="form-select"
                         style="
-                            border: 2px solid black;
+                            border: 2px solid var(--black, black);
                             border-radius: 7px;
                             padding: 10px;">
 
@@ -374,8 +375,8 @@ ViewData["Title"] = "New Client";
                    asp-action="Create"
                    style="
                         display: inline-block;
-                        background-color: #68926D;
-                        color: white;
+                        background-color: var(--primary, #D4A72C);
+                        color: var(--black, #171717);
                         text-decoration: none;
                         padding: 10px 16px;
                         border-radius: 7px;
@@ -397,8 +398,8 @@ ViewData["Title"] = "New Client";
 
         <a asp-action="Index"
            style="
-                background-color: #D46271;
-                color: white;
+                background-color: var(--dark-grey, #343434);
+                color: var(--white, white);
                 text-decoration: none;
                 padding: 11px 22px;
                 border-radius: 7px;
@@ -408,8 +409,8 @@ ViewData["Title"] = "New Client";
 
         <button type="submit"
                 style="
-                    background-color: #5A93C8;
-                    color: white;
+                    background-color: var(--primary, #D4A72C);
+                    color: var(--black, #171717);
                     border: none;
                     padding: 11px 22px;
                     border-radius: 7px;

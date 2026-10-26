@@ -6,111 +6,326 @@
     var productsList = (List<Nado_Graphics_MS_Frontend.Models.ProductModel>)ViewBag.Products;
 }
 
-<div style="width: 100%; max-width: 900px;">
+<style>
+    .quote-create-page {
+        width: 100%;
+        max-width: 900px;
+        color: var(--black, #171717) !important;
+    }
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">Create Quote</h1>
-        <a asp-controller="Quotes" asp-action="Index"
-               style="background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+    .quote-create-page .quote-heading {
+        color: var(--black, #171717) !important;
+    }
+
+    .quote-create-page .quote-card {
+        background: var(--white, #FFFFFF) !important;
+        background-color: var(--white, #FFFFFF) !important;
+        color: var(--black, #171717) !important;
+        border-radius: 14px;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+        padding: 30px;
+    }
+
+    .quote-create-page .quote-label {
+        display: block;
+        font-weight: 600;
+        color: var(--black, #171717) !important;
+        margin-bottom: 6px;
+    }
+
+    .quote-create-page .quote-input,
+    .quote-create-page .quote-item-row input:not([type="checkbox"]),
+    .quote-create-page .quote-item-row select {
+        background: var(--white, #FFFFFF) !important;
+        background-color: var(--white, #FFFFFF) !important;
+        color: var(--black, #171717) !important;
+        border: 1px solid var(--grey, #777777) !important;
+        border-radius: 7px;
+        padding: 8px 12px;
+    }
+
+    .quote-create-page .quote-input {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .quote-create-page .quote-item-row input:not([type="checkbox"]),
+    .quote-create-page .quote-item-row select {
+        width: 100%;
+        min-width: 0;
+        height: 42px;
+    }
+
+    .quote-create-page .quote-input::placeholder,
+    .quote-create-page .quote-item-row input::placeholder {
+        color: var(--grey, #777777) !important;
+    }
+
+    .quote-create-page .quote-muted {
+        color: var(--grey, #777777) !important;
+    }
+
+    .quote-create-page .quote-error,
+    .quote-create-page .field-validation-error,
+    .quote-create-page .validation-summary-errors {
+        color: var(--danger, #B54747) !important;
+    }
+
+    .quote-create-page .quote-mustard {
+        display: inline-block;
+        background: var(--primary, #D4A72C) !important;
+        background-color: var(--primary, #D4A72C) !important;
+        color: var(--black, #171717) !important;
+        border: none !important;
+        border-radius: 7px;
+        padding: 10px 18px;
+        font-weight: 600;
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .quote-create-page .quote-dark {
+        display: inline-block;
+        background: var(--dark-grey, #343434) !important;
+        background-color: var(--dark-grey, #343434) !important;
+        color: var(--white, #FFFFFF) !important;
+        border: none !important;
+        border-radius: 7px;
+        padding: 10px 20px;
+        font-weight: 600;
+        text-decoration: none !important;
+    }
+
+    .quote-create-page .quote-remove {
+        background: var(--danger, #B54747) !important;
+        background-color: var(--danger, #B54747) !important;
+        color: var(--white, #FFFFFF) !important;
+        border: none !important;
+        border-radius: 7px;
+        height: 42px;
+        cursor: pointer;
+    }
+
+    .quote-create-page .quote-item-row {
+        display: grid;
+        grid-template-columns: 2fr 90px 130px 110px 70px 40px;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+        color: var(--black, #171717) !important;
+    }
+
+    .quote-create-page .item-linetotal,
+    .quote-create-page .quote-item-row label,
+    .quote-create-page .quote-total {
+        color: var(--black, #171717) !important;
+    }
+
+    .quote-create-page input[type="checkbox"] {
+        accent-color: var(--primary, #D4A72C);
+    }
+
+    @@media (max-width: 800px) {
+        .quote-create-page .quote-item-row {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+</style>
+
+<div class="quote-create-page">
+
+    <!-- PAGE HEADER -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:25px;">
+
+        <h1 class="quote-heading"
+            style="margin:0; font-size:32px; font-weight:700;">
+            Create Quote
+        </h1>
+
+        <a asp-controller="Quotes"
+           asp-action="Index"
+           class="quote-dark">
             Back
         </a>
+
     </div>
 
-    <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px;">
+    <!-- FORM CARD -->
+    <div class="quote-card">
 
-        <form asp-controller="Quotes" asp-action="Create" method="post" id="quoteForm">
+        <form asp-controller="Quotes"
+              asp-action="Create"
+              method="post"
+              id="quoteForm">
+
             @Html.AntiForgeryToken()
 
-            @* <div asp-validation-summary="ModelOnly" style="color: #C85A5A; margin-bottom: 15px;"></div> *@
-            <div asp-validation-summary="All" style="color: #C85A5A; margin-bottom: 15px;"></div>
+            <div asp-validation-summary="All"
+                 class="quote-error"
+                 style="margin-bottom:15px;">
+            </div>
 
-            <div style="margin-bottom: 18px;">
-                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Client</label>
-                <select asp-for="ClientID" style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;">
+            <!-- CLIENT -->
+            <div style="margin-bottom:18px;">
+
+                <label class="quote-label">Client</label>
+
+                <select asp-for="ClientID" class="quote-input">
                     <option value="">Select a client...</option>
+
                     @foreach (var client in clientsList)
                     {
-                        <option value="@client.ClientID">@client.FirstName @client.LastName</option>
+                        <option value="@client.ClientID">
+                            @client.FirstName @client.LastName
+                        </option>
                     }
                 </select>
-                <span asp-validation-for="ClientID" style="color: #C85A5A; font-size: 13px;"></span>
+
+                <span asp-validation-for="ClientID"
+                      class="quote-error"
+                      style="font-size:13px;">
+                </span>
+
             </div>
 
-            <div style="margin-bottom: 18px;">
-                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Valid Until</label>
-                <input asp-for="ValidUntil" type="date"
-                       style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;" />
+            <!-- VALID UNTIL -->
+            <div style="margin-bottom:18px;">
+
+                <label class="quote-label">Valid Until</label>
+
+                <input asp-for="ValidUntil"
+                       type="date"
+                       class="quote-input" />
+
             </div>
 
-            <div style="margin-bottom: 25px;">
-                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Notes</label>
-                <textarea asp-for="Notes" rows="3"
-                          style="width: 100%; padding: 10px 12px; border: 1px solid #aaa; border-radius: 7px; resize: vertical;"></textarea>
+            <!-- NOTES -->
+            <div style="margin-bottom:25px;">
+
+                <label class="quote-label">Notes</label>
+
+                <textarea asp-for="Notes"
+                          rows="3"
+                          class="quote-input"
+                          style="resize:vertical;"></textarea>
+
             </div>
 
-            <h3 style="color: #24463A; font-size: 18px; margin-bottom: 12px;">Products</h3>
+            <!-- PRODUCTS -->
+            <h3 class="quote-heading"
+                style="font-size:18px; margin-bottom:12px;">
+                Products
+            </h3>
 
-            <div id="itemsContainer" style="margin-bottom: 12px;"></div>
+            <div id="itemsContainer"
+                 style="margin-bottom:12px; overflow-x:auto;">
+            </div>
 
-            <button type="button" id="addItemBtn"
-                    style="background-color: #5A93C8; color: white; border: none; padding: 10px 18px; border-radius: 7px; font-weight: 600; cursor: pointer; margin-bottom: 20px;">
+            <button type="button"
+                    id="addItemBtn"
+                    class="quote-mustard"
+                    style="margin-bottom:20px;">
                 + Add Product
             </button>
 
-            <div style="text-align: right; margin-bottom: 25px;">
-                <div style="font-size: 13px; color: #666; margin-bottom: 4px;">
+            <!-- TOTAL -->
+            <div style="text-align:right; margin-bottom:25px;">
+
+                <div class="quote-muted"
+                     style="font-size:13px; margin-bottom:4px;">
                     Includes VAT: R<span id="vatAmount">0.00</span>
                 </div>
-                <div style="font-size: 18px; font-weight: 700; color: #24463A;">
+
+                <div class="quote-total"
+                     style="font-size:18px; font-weight:700;">
                     Estimated Total: R<span id="grandTotal">0.00</span>
                 </div>
+
             </div>
 
-            <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                <a asp-controller="Quotes" asp-action="Index"
-                       style="padding: 10px 24px; border-radius: 7px; text-decoration: none; color: #24463A; border: 1px solid #aaa; font-weight: 600;">
+            <!-- ACTION BUTTONS -->
+            <div style="display:flex; gap:12px; justify-content:flex-end;">
+
+                <a asp-controller="Quotes"
+                   asp-action="Index"
+                   class="quote-dark"
+                   style="padding:10px 24px;">
                     Cancel
                 </a>
+
                 <button type="submit"
-                        style="background-color: #68926D; color: white; border: none; padding: 10px 24px; border-radius: 7px; font-weight: 600; cursor: pointer;">
+                        class="quote-mustard"
+                        style="padding:10px 24px;">
                     Create Quote
                 </button>
+
             </div>
 
         </form>
 
     </div>
 
-</div>
+    <!-- DYNAMIC PRODUCT ROW TEMPLATE -->
+    <template id="itemRowTemplate">
 
-<template id="itemRowTemplate">
-    <div class="quote-item-row"
-         style="display: grid; grid-template-columns: 2fr 90px 130px 110px 70px 40px; gap: 10px; align-items: center; margin-bottom: 10px;">
-        <select name="QuoteItems[__INDEX__].ProductID" class="item-product" required
-                style="height: 42px; padding: 6px 10px; border: 1px solid #aaa; border-radius: 7px;">
-            <option value="">Select a product...</option>
-            @foreach (var product in productsList)
-            {
-                <option value="@product.ProductID" data-price="@product.Price">@product.ProductName (R @product.Price)</option>
-            }
-        </select>
-        <input type="number" name="QuoteItems[__INDEX__].Quantity" class="item-quantity" min="1" value="1" required
-               style="height: 42px; padding: 6px 10px; border: 1px solid #aaa; border-radius: 7px;" />
-        
-        <input type="number" step="0.01" name="QuoteItems[__INDEX__].UnitPrice" class="item-unitprice" min="0"
-               placeholder="Default price"
-               style="height: 42px; padding: 6px 10px; border: 1px solid #aaa; border-radius: 7px;" />
-        <span class="item-linetotal" style="font-weight: 600; color: #24463A;">R0.00</span>
-        <label style="display: flex; align-items: center; gap: 5px; font-size: 13px;">
-            <input type="checkbox" name="QuoteItems[__INDEX__].IsVatIncluded" class="item-vat" value="true" />
-            VAT
-        </label>
-        <button type="button" class="remove-item-btn"
-                style="background-color: #C85A5A; color: white; border: none; border-radius: 7px; height: 42px; cursor: pointer;">
-            X
-        </button>
-    </div>
-</template>
+        <div class="quote-item-row">
+
+            <select name="QuoteItems[__INDEX__].ProductID"
+                    class="item-product"
+                    required>
+
+                <option value="">Select a product...</option>
+
+                @foreach (var product in productsList)
+                {
+                    <option value="@product.ProductID"
+                            data-price="@product.Price">
+                        @product.ProductName (R @product.Price)
+                    </option>
+                }
+
+            </select>
+
+            <input type="number"
+                   name="QuoteItems[__INDEX__].Quantity"
+                   class="item-quantity"
+                   min="1"
+                   value="1"
+                   required />
+
+            <input type="number"
+                   step="0.01"
+                   name="QuoteItems[__INDEX__].UnitPrice"
+                   class="item-unitprice"
+                   min="0"
+                   placeholder="Default price" />
+
+            <span class="item-linetotal"
+                  style="font-weight:600;">
+                R0.00
+            </span>
+
+            <label style="display:flex; align-items:center; gap:5px; font-size:13px;">
+
+                <input type="checkbox"
+                       name="QuoteItems[__INDEX__].IsVatIncluded"
+                       class="item-vat"
+                       value="true" />
+
+                VAT
+
+            </label>
+
+            <button type="button"
+                    class="remove-item-btn quote-remove">
+                X
+            </button>
+
+        </div>
+
+    </template>
+
+</div>
 
 @section Scripts {
     <script>
@@ -139,7 +354,7 @@
             let total = 0;
             let vatTotal = 0;
             const vatRate = 0.15;
-            
+
             document.querySelectorAll(".quote-item-row").forEach(function (row) {
                 const lineTotalText = row.querySelector(".item-linetotal").textContent.replace("R", "");
                 const lineTotal = parseFloat(lineTotalText) || 0;
@@ -158,11 +373,13 @@
 
         function reindexRows() {
             const rows = itemsContainer.querySelectorAll(".quote-item-row");
+
             rows.forEach(function (row, i) {
                 row.querySelectorAll("[name]").forEach(function (field) {
                     field.name = field.name.replace(/\[\d+\]/, "[" + i + "]");
                 });
             });
+
             rowIndex = rows.length;
         }
 
@@ -170,15 +387,26 @@
             const html = template.replaceAll("__INDEX__", rowIndex);
             const wrapper = document.createElement("div");
             wrapper.innerHTML = html.trim();
+
             const row = wrapper.firstElementChild;
 
             itemsContainer.appendChild(row);
             rowIndex++;
 
-            row.querySelector(".item-product").addEventListener("change", function () { calculateLineTotal(row); });
-            row.querySelector(".item-quantity").addEventListener("input", function () { calculateLineTotal(row); });
-            row.querySelector(".item-unitprice").addEventListener("input", function () { calculateLineTotal(row); });
+            row.querySelector(".item-product").addEventListener("change", function () {
+                calculateLineTotal(row);
+            });
+
+            row.querySelector(".item-quantity").addEventListener("input", function () {
+                calculateLineTotal(row);
+            });
+
+            row.querySelector(".item-unitprice").addEventListener("input", function () {
+                calculateLineTotal(row);
+            });
+
             row.querySelector(".item-vat").addEventListener("change", updateGrandTotal);
+
             row.querySelector(".remove-item-btn").addEventListener("click", function () {
                 row.remove();
                 reindexRows();
@@ -188,7 +416,8 @@
 
         document.getElementById("addItemBtn").addEventListener("click", addRow);
 
-        //Every quote starts with one blank row to fill in.
+        // Every quote starts with one blank row to fill in.
         addRow();
     </script>
 }
+

@@ -9,42 +9,42 @@
     <div style="margin-bottom: 25px;">
 
         <h1 style="
-            color: #24463A;
+            color: var(--black, #171717) !important;
             font-weight: 600;
-            margin-bottom: 5px; ">
+            margin-bottom: 5px;">
             Organisation Details
         </h1>
 
         <p style="
-            color: #6c757d;
-            margin-bottom: 0; ">
+            color: var(--grey, #777777) !important;
+            margin-bottom: 0;">
             View the information for this organisation.
         </p>
 
     </div>
 
-
     <div style="
-        background-color: white;
-        border: 2px solid black;
+        background-color: var(--white, #FFFFFF) !important;
+        color: var(--black, #171717) !important;
+        border: 2px solid var(--black, #171717) !important;
         border-radius: 14px;
         overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.30); ">
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.30);">
 
         <div style="
-            background-color: #68926D;
-            color: white;
-            padding: 18px 25px; ">
+            background-color: var(--black, #171717) !important;
+            color: var(--white, #FFFFFF) !important;
+            padding: 18px 25px;">
 
             <h4 style="
                 margin: 0;
-                font-weight: 600; ">
+                font-weight: 600;
+                color: var(--white, #FFFFFF) !important;">
                 <i class="bi bi-building"></i>
                 @Model.OrganisationName
             </h4>
 
         </div>
-
 
         <div style="padding: 25px;">
 
@@ -53,111 +53,106 @@
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         ORGANISATION ID
                     </div>
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @Model.OrganisationID
                     </div>
 
                 </div>
 
-
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         REGISTRATION NUMBER
                     </div>
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @(string.IsNullOrEmpty(Model.RegistrationNumber) ? "—" : Model.RegistrationNumber)
                     </div>
 
                 </div>
 
-
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         EMAIL ADDRESS
                     </div>
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @(string.IsNullOrEmpty(Model.Email) ? "—" : Model.Email)
                     </div>
 
                 </div>
 
-
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         PHONE NUMBER
                     </div>
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
-                        @(string.IsNullOrEmpty(Model.Phone)  ? "—" : Model.Phone)
+                        color: var(--black, #171717) !important;">
+                        @(string.IsNullOrEmpty(Model.Phone) ? "—" : Model.Phone)
                     </div>
 
                 </div>
 
-
                 <div class="col-12 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         BILLING ADDRESS
                     </div>
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @(string.IsNullOrEmpty(Model.BillingAddress) ? "—" : Model.BillingAddress)
                     </div>
 
                 </div>
 
-
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         CREATED
                     </div>
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")
                     </div>
 
@@ -165,42 +160,40 @@
 
             </div>
 
-
             <hr style="
                 margin-top: 5px;
                 margin-bottom: 20px;
                 border: 0;
-                border-top: 1px solid #d9dfda; "/>
+                border-top: 1px solid var(--light-grey, #E5E5E5) !important;" />
 
-
-            <div style="
-                display: flex;
-                gap: 10px;
-                flex-wrap: wrap; ">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
 
                 <a asp-action="Index"
                    class="btn"
                    style="
-                       background-color: #68926D;
-                       color: white;
-                       border: none;
+                       background-color: var(--dark-grey, #343434) !important;
+                       color: var(--white, #FFFFFF) !important;
+                       border: none !important;
                        padding: 10px 18px;
                        border-radius: 7px;
-                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+                       font-weight: 600;
+                       text-decoration: none !important;
+                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20);">
                     Back to Organisations
                 </a>
-
 
                 <a asp-action="Edit"
                    asp-route-id="@Model.OrganisationID"
                    class="btn"
                    style="
-                       background-color: #5A93C8;
-                       color: white;
-                       border: none;
+                       background-color: var(--primary, #D4A72C) !important;
+                       color: var(--black, #171717) !important;
+                       border: none !important;
                        padding: 10px 18px;
                        border-radius: 7px;
-                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+                       font-weight: 600;
+                       text-decoration: none !important;
+                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20);">
                     Edit Organisation
                 </a>
 

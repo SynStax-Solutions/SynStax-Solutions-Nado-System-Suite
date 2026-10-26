@@ -1,201 +1,329 @@
-﻿@model List<Nado_Graphics_MS_Frontend.Models.ViewUserModel>
+﻿
+@model List<Nado_Graphics_MS_Frontend.Models.ViewUserModel>
 
 @{
     ViewData["Title"] = "Manage Users";
 
-    //This gets the logged-in user's role and ID so we know which buttons to show.
+    // This gets the logged-in user's role and ID so we know which buttons to show.
     var currentRole = User.FindFirst(ClaimTypes.Role)?.Value;
     var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 }
 
 <div class="container mt-5">
 
-    <h1>Manage Users</h1>
+    <!-- PAGE HEADING -->
+    <h1 style="
+        color: var(--black, #171717) !important;
+        font-weight: 700;">
+        Manage Users
+    </h1>
 
-    <p class="text-muted">
+    <p class="text-muted"
+       style="color: var(--grey, #777777) !important;">
         Manage staff accounts. You can only edit or delete accounts with a lower role than yours.
     </p>
 
-    @* These show the green or red message after creating, editing or deleting. *@
+    <!-- SUCCESS AND ERROR MESSAGES -->
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
+        <div class="alert alert-success"
+             style="
+                background: var(--success, #47785B) !important;
+                background-color: var(--success, #47785B) !important;
+                color: var(--white, #FFFFFF) !important;
+                border-color: var(--success, #47785B) !important;">
+            @TempData["Success"]
+        </div>
     }
 
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger"
+             style="
+                background: var(--danger, #B54747) !important;
+                background-color: var(--danger, #B54747) !important;
+                color: var(--white, #FFFFFF) !important;
+                border-color: var(--danger, #B54747) !important;">
+            @TempData["Error"]
+        </div>
+    }
+
+    <!-- MUSTARD CREATE USER BUTTON -->
     <a asp-controller="Users"
        asp-action="Create"
-       class="btn btn-success mb-3">
+       class="btn btn-success mb-3"
+       style="
+            background: var(--primary, #D4A72C) !important;
+            background-color: var(--primary, #D4A72C) !important;
+            color: var(--black, #171717) !important;
+            border-color: var(--primary, #D4A72C) !important;
+            text-decoration: none !important;
+            font-weight: 600;
+            border-radius: 7px;
+            padding: 10px 20px;">
         Create User
     </a>
 
-    <table class="table table-bordered table-striped"
-           style="
-        background-color: white;
-        border: 2px solid black;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.30);">
+    <!-- USERS TABLE -->
+    <div style="
+        background-color: var(--white, #FFFFFF);
+        border-radius: 14px;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+        overflow: hidden;">
 
-        <thead>
-            <tr>
-                <th style="
-                    background-color: #68926D;
-                    color: white;
-                    padding: 14px; ">
-                    User Name
-                </th>
+        <table class="table table-bordered table-striped mb-0"
+               style="
+                    background-color: var(--white, #FFFFFF);
+                    border-color: var(--light-grey, #E5E5E5);
+                    margin-bottom: 0;">
 
-                <th style="
-                    background-color: #68926D;
-                    color: white;
-                    padding: 14px; ">
-                    Email Address
-                </th>
+            <!-- SOLID BLACK TABLE HEADER -->
+            <thead style="
+                background: var(--black, #171717) !important;
+                background-color: var(--black, #171717) !important;
+                color: var(--white, #FFFFFF) !important;">
 
-                <th style="
-                    background-color: #68926D;
-                    color: white;
-                    padding: 14px; ">
-                    User Role
-                </th>
-
-                <th style="
-                    background-color: #68926D;
-                    color: white;
-                    padding: 14px; ">
-                    Account Status
-                </th>
-
-                <th style="
-                    background-color: #68926D;
-                    color: white;
-                    padding: 14px; ">
-                    Manage Account
-                </th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            @foreach (var user in Model)
-            {
                 <tr>
-                    <td style="padding: 14px;">
-                        @user.FirstName @user.LastName
-                    </td>
 
-                    <td style="padding: 14px;">
-                        @user.Email
-                    </td>
+                    <th style="
+                        background: var(--black, #171717) !important;
+                        background-color: var(--black, #171717) !important;
+                        color: var(--white, #FFFFFF) !important;
+                        padding: 16px 20px;">
+                        User Name
+                    </th>
 
-                    <td style="padding: 14px;">
-                        @user.UserRole
-                    </td>
+                    <th style="
+                        background: var(--black, #171717) !important;
+                        background-color: var(--black, #171717) !important;
+                        color: var(--white, #FFFFFF) !important;
+                        padding: 16px 20px;">
+                        Email Address
+                    </th>
 
-                    <td style="padding: 14px;">
-                        @(user.IsActive ? "Active" : "Inactive")
-                        @* This badge shows if the user hasn't verified their email yet. *@
-                        @if (!user.EmailVerified)
-                        {
-                            <br /><span class="badge bg-warning text-dark">Email not verified</span>
-                        }
-                    </td>
+                    <th style="
+                        background: var(--black, #171717) !important;
+                        background-color: var(--black, #171717) !important;
+                        color: var(--white, #FFFFFF) !important;
+                        padding: 16px 20px;">
+                        User Role
+                    </th>
 
-                    <td style="padding: 14px;">
+                    <th style="
+                        background: var(--black, #171717) !important;
+                        background-color: var(--black, #171717) !important;
+                        color: var(--white, #FFFFFF) !important;
+                        padding: 16px 20px;">
+                        Account Status
+                    </th>
 
-                        <div class="dropdown">
+                    <th style="
+                        background: var(--black, #171717) !important;
+                        background-color: var(--black, #171717) !important;
+                        padding: 16px 20px;
+                        text-align: center;
+                        color: var(--white, #FFFFFF) !important;">
+                        Manage Account
+                    </th>
 
-                            <button class="btn dropdown-toggle"
-                                    type="button"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @foreach (var user in Model)
+                {
+                    <tr style="color: var(--black, #171717);">
+
+                        <!-- USER NAME -->
+                        <td style="
+                            padding: 14px 20px;
+                            color: var(--black, #171717);">
+                            @user.FirstName @user.LastName
+                        </td>
+
+                        <!-- EMAIL ADDRESS -->
+                        <td style="
+                            padding: 14px 20px;
+                            color: var(--black, #171717);">
+                            @user.Email
+                        </td>
+
+                        <!-- USER ROLE -->
+                        <td style="
+                            padding: 14px 20px;
+                            color: var(--black, #171717);">
+                            @user.UserRole
+                        </td>
+
+                        <!-- ACCOUNT STATUS -->
+                        <td style="
+                            padding: 14px 20px;
+                            color: var(--black, #171717);">
+
+                            @if (user.IsActive)
+                            {
+                                <span style="
+                                    background: var(--success, #47785B) !important;
+                                    background-color: var(--success, #47785B) !important;
+                                    color: var(--white, #FFFFFF) !important;
+                                    padding: 4px 10px;
+                                    border-radius: 12px;
+                                    font-size: 12px;
+                                    font-weight: 600;">
+                                    Active
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="
+                                    background: var(--grey, #777777) !important;
+                                    background-color: var(--grey, #777777) !important;
+                                    color: var(--white, #FFFFFF) !important;
+                                    padding: 4px 10px;
+                                    border-radius: 12px;
+                                    font-size: 12px;
+                                    font-weight: 600;">
+                                    Inactive
+                                </span>
+                            }
+
+                            @* This badge shows if the user hasn't verified their email yet. *@
+                            @if (!user.EmailVerified)
+                            {
+                                <div style="margin-top: 8px;">
+
+                                    <span class="badge bg-warning text-dark"
+                                          style="
+                                            background: var(--primary, #D4A72C) !important;
+                                            background-color: var(--primary, #D4A72C) !important;
+                                            color: var(--black, #171717) !important;
+                                            padding: 5px 9px;
+                                            border-radius: 10px;
+                                            font-size: 11px;
+                                            font-weight: 600;">
+                                        Email not verified
+                                    </span>
+
+                                </div>
+                            }
+
+                        </td>
+
+                        <!-- MANAGE ACCOUNT -->
+                        <td style="
+                            padding: 14px 20px;
+                            text-align: center;">
+
+                            <div class="dropdown">
+
+                                <!-- MUSTARD MANAGE BUTTON -->
+                                <button class="btn dropdown-toggle"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        style="
+                                            background: var(--primary, #D4A72C) !important;
+                                            background-color: var(--primary, #D4A72C) !important;
+                                            color: var(--black, #171717) !important;
+                                            border: none !important;
+                                            border-radius: 7px;
+                                            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20);">
+                                    Manage
+                                </button>
+
+                                <ul class="dropdown-menu"
                                     style="
-                                background-color: #68926D;
-                                color: white;
-                                border: none;
-                                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20); ">
-                                Manage
-                            </button>
+                                        background-color: var(--white, #FFFFFF);
+                                        border-color: var(--light-grey, #E5E5E5);
+                                        text-align: left;">
 
-                            <ul class="dropdown-menu">
-
-                                <li>
-                                    <a class="dropdown-item"
-                                       asp-controller="Users"
-                                       asp-action="Details"
-                                       asp-route-id="@user.UserID">
-                                        View
-                                    </a>
-                                </li>
-
-                                @* This checks if this row is the logged-in user, and if they can manage this user. *@
-                                @{
-                                    var isSelf = currentUserId == user.UserID.ToString();
-                                    var canManage = AppRoles.CanManage(currentRole, user.UserRole);
-                                }
-
-                                @* Edit only shows for yourself or users with a lower role. *@
-                                @if (isSelf || canManage)
-                                {
+                                    <!-- VIEW -->
                                     <li>
                                         <a class="dropdown-item"
                                            asp-controller="Users"
-                                           asp-action="Edit"
-                                           asp-route-id="@user.UserID">
-                                            Edit
+                                           asp-action="Details"
+                                           asp-route-id="@user.UserID"
+                                           style="color: var(--black, #171717);">
+                                            View
                                         </a>
                                     </li>
-                                }
 
-                                @* Resend only shows if the email isn't verified yet. *@
-                                @if (!user.EmailVerified && (isSelf || canManage))
-                                {
-                                    <li>
-                                        <form asp-controller="Users"
-                                              asp-action="ResendVerification"
-                                              asp-route-id="@user.UserID"
-                                              method="post">
-                                            <button type="submit" class="dropdown-item">
-                                                Resend verification
-                                            </button>
-                                        </form>
-                                    </li>
-                                }
+                                    @* Check whether this is the logged-in user and whether they can manage this account. *@
+                                    @{
+                                        var isSelf = currentUserId == user.UserID.ToString();
+                                        var canManage = AppRoles.CanManage(currentRole, user.UserRole);
+                                    }
 
-                                @* Delete doesn't show for yourself or for users with a higher/equal role. *@
-                                @if (!isSelf && canManage)
-                                {
+                                    <!-- EDIT -->
+                                    @if (isSelf || canManage)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Users"
+                                               asp-action="Edit"
+                                               asp-route-id="@user.UserID"
+                                               style="color: var(--black, #171717);">
+                                                Edit
+                                            </a>
+                                        </li>
+                                    }
 
-                                    <li>
-                                        <form asp-controller="Users"
-                                              asp-action="Delete"
-                                              asp-route-id="@user.UserID"
-                                              method="post">
+                                    <!-- RESEND VERIFICATION -->
+                                    @if (!user.EmailVerified && (isSelf || canManage))
+                                    {
+                                        <li>
+                                            <form asp-controller="Users"
+                                                  asp-action="ResendVerification"
+                                                  asp-route-id="@user.UserID"
+                                                  method="post">
 
-                                            <button type="submit"
-                                                    class="dropdown-item"
-                                                    onclick="return confirm('Are you sure you want to delete this user?');">
-                                                Delete
-                                            </button>
+                                                <button type="submit"
+                                                        class="dropdown-item"
+                                                        style="color: var(--black, #171717);">
+                                                    Resend verification
+                                                </button>
 
-                                        </form>
-                                    </li>
+                                            </form>
+                                        </li>
+                                    }
 
-                                }
-                            </ul>
+                                    <!-- DELETE -->
+                                    @if (!isSelf && canManage)
+                                    {
+                                        <li>
+                                            <form asp-controller="Users"
+                                                  asp-action="Delete"
+                                                  asp-route-id="@user.UserID"
+                                                  method="post">
 
-                        </div>
+                                                <button type="submit"
+                                                        class="dropdown-item"
+                                                        style="
+                                                            color: var(--danger, #B54747) !important;
+                                                            font-weight: 600;"
+                                                        onclick="return confirm('Are you sure you want to delete this user?');">
+                                                    Delete
+                                                </button>
 
-                    </td>
-                </tr>
-            }
+                                            </form>
+                                        </li>
+                                    }
 
-        </tbody>
+                                </ul>
 
-    </table>
+                            </div>
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>

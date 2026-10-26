@@ -2,58 +2,184 @@
 
 @{
     ViewData["Title"] = "Statements";
+
     var clients = ((List<Nado_Graphics_MS_Frontend.Models.ClientModel>)ViewBag.Clients)
         .ToDictionary(c => c.ClientID, c => $"{c.FirstName} {c.LastName}");
+
     var organisations = ((List<Nado_Graphics_MS_Frontend.Models.OrganisationModel>)ViewBag.Organisations)
         .ToDictionary(o => o.OrganisationID, o => o.OrganisationName);
 }
 
 <div style="width: 100%;">
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">Statements</h1>
-        <a asp-controller="Owner" asp-action="Dashboard"
-               style="background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+    <!-- PAGE HEADING AND BACK BUTTON -->
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;">
+
+        <h1 style="
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--black, #171717) !important;">
+            Statements
+        </h1>
+
+        <a asp-controller="Owner"
+           asp-action="Dashboard"
+           style="
+                background: var(--dark-grey, #343434) !important;
+                background-color: var(--dark-grey, #343434) !important;
+                color: var(--white, #FFFFFF) !important;
+                text-decoration: none;
+                padding: 10px 20px;
+                border-radius: 7px;
+                font-weight: 600;
+                border: none;">
             Back
         </a>
+
     </div>
 
+    <!-- SUCCESS AND ERROR MESSAGES -->
     @if (TempData["Success"] != null)
     {
-        <div style="background-color: #DCEEDC; color: #24463A; padding: 12px 16px; border-radius: 7px; margin-bottom: 20px;">@TempData["Success"]</div>
+        <div style="
+            background: var(--success, #47785B) !important;
+            background-color: var(--success, #47785B) !important;
+            color: var(--white, #FFFFFF) !important;
+            padding: 12px 16px;
+            border-radius: 7px;
+            margin-bottom: 20px;">
+            @TempData["Success"]
+        </div>
     }
+
     @if (TempData["Error"] != null)
     {
-        <div style="background-color: #F8D7DA; color: #842029; padding: 12px 16px; border-radius: 7px; margin-bottom: 20px;">@TempData["Error"]</div>
+        <div style="
+            background: var(--danger, #B54747) !important;
+            background-color: var(--danger, #B54747) !important;
+            color: var(--white, #FFFFFF) !important;
+            padding: 12px 16px;
+            border-radius: 7px;
+            margin-bottom: 20px;">
+            @TempData["Error"]
+        </div>
     }
 
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
+    <!-- SEARCH AND CREATE BUTTON -->
+    <div style="
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;">
+
         <div style="flex: 1;">
-            <input type="text" id="statementSearch" placeholder="Search by reference or client / organisation..."
-                   style="width: 100%; height: 44px; padding: 8px 15px; border: 1px solid #aaa; border-radius: 7px; font-size: 15px; outline: none;" />
+
+            <input type="text"
+                   id="statementSearch"
+                   placeholder="Search by reference or client / organisation..."
+                   style="
+                        width: 100%;
+                        height: 44px;
+                        padding: 8px 15px;
+                        border: 1px solid var(--grey, #777777);
+                        border-radius: 7px;
+                        font-size: 15px;
+                        outline: none;
+                        background-color: var(--white, #FFFFFF);
+                        color: var(--black, #171717);" />
+
         </div>
-        <a asp-controller="Statements" asp-action="Create"
-               style="height: 44px; display: flex; align-items: center; gap: 7px; background-color: #5A93C8; color: white; text-decoration: none; padding: 0 20px; border-radius: 7px; font-weight: 600; white-space: nowrap;">
+
+        <a asp-controller="Statements"
+           asp-action="Create"
+           style="
+                height: 44px;
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                background: var(--primary, #D4A72C) !important;
+                background-color: var(--primary, #D4A72C) !important;
+                color: var(--black, #171717) !important;
+                text-decoration: none !important;
+                padding: 0 20px;
+                border-radius: 7px;
+                font-weight: 600;
+                white-space: nowrap;
+                border: none;">
             Create Statement
         </a>
+
     </div>
 
-    <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); overflow: hidden;">
+    <!-- STATEMENTS TABLE -->
+    <div style="
+        background-color: var(--white, #FFFFFF);
+        border-radius: 14px;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+        overflow: hidden;">
 
-        <div style="display: grid; grid-template-columns: 90px 1.4fr 1.6fr 1.6fr 1fr 140px; align-items: center; padding: 16px 20px; background-color: #68926D; color: white; font-weight: 700; font-size: 14px;">
-            <div>ID</div>
-            <div>Reference</div>
-            <div>Account</div>
-            <div>Period</div>
-            <div>Generated</div>
-            <div style="text-align: center;">Manage</div>
+        <!-- SOLID BLACK TABLE HEADER -->
+        <div style="
+            display: grid;
+            grid-template-columns: 90px 1.4fr 1.6fr 1.6fr 1fr 140px;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--black, #171717) !important;
+            background-color: var(--black, #171717) !important;
+            color: var(--white, #FFFFFF) !important;
+            font-weight: 700;
+            font-size: 14px;">
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                ID
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Reference
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Account
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Period
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Generated
+            </div>
+
+            <div style="
+                text-align: center;
+                color: var(--white, #FFFFFF) !important;">
+                Manage
+            </div>
+
         </div>
 
         @if (Model == null || !Model.Any())
         {
-            <div style="padding: 55px 20px; text-align: center; color: #666;">
-                <h3 style="margin-top: 12px; color: #24463A;">No Statements Found</h3>
-                <p style="margin-bottom: 0;">There are currently no statements on record.</p>
+            <div style="
+                padding: 55px 20px;
+                text-align: center;
+                color: var(--grey, #777777);">
+
+                <h3 style="
+                    margin-top: 12px;
+                    color: var(--black, #171717);">
+                    No Statements Found
+                </h3>
+
+                <p style="margin-bottom: 0;">
+                    There are currently no statements on record.
+                </p>
+
             </div>
         }
         else
@@ -69,48 +195,136 @@
                 <div class="statement-row"
                      data-reference="@statement.StatementReference"
                      data-account="@accountName"
-                     style="display: grid; grid-template-columns: 90px 1.4fr 1.6fr 1.6fr 1fr 140px; align-items: center; padding: 16px 20px; border-bottom: 1px solid #d9d9d9; font-size: 14px;">
+                     style="
+                        display: grid;
+                        grid-template-columns: 90px 1.4fr 1.6fr 1.6fr 1fr 140px;
+                        align-items: center;
+                        padding: 16px 20px;
+                        border-bottom: 1px solid var(--light-grey, #E5E5E5);
+                        font-size: 14px;
+                        background-color: var(--white, #FFFFFF);
+                        color: var(--black, #171717);">
 
-                    <div>@statement.StatementID</div>
-                    <div style="font-weight: 600; color: #24463A;">@statement.StatementReference</div>
+                    <!-- STATEMENT ID -->
                     <div>
+                        @statement.StatementID
+                    </div>
+
+                    <!-- REFERENCE -->
+                    <div style="
+                        font-weight: 600;
+                        color: var(--black, #171717);">
+                        @statement.StatementReference
+                    </div>
+
+                    <!-- ACCOUNT -->
+                    <div>
+
                         @accountName
+
                         @if (isOrganisation)
                         {
-                            <span style="background-color: #5A93C8; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-left: 6px;">Organisation</span>
+                            <span style="
+                                background: var(--primary, #D4A72C) !important;
+                                background-color: var(--primary, #D4A72C) !important;
+                                color: var(--black, #171717) !important;
+                                padding: 2px 8px;
+                                border-radius: 10px;
+                                font-size: 11px;
+                                font-weight: 600;
+                                margin-left: 6px;">
+                                Organisation
+                            </span>
                         }
-                    </div>
-                    <div>@statement.StartDate.ToString("dd MMM yyyy") - @statement.EndDate.ToString("dd MMM yyyy")</div>
-                    <div>@statement.DateGenerated.ToString("dd MMM yyyy")</div>
 
-                    <div style="display: flex; justify-content: center; align-items: center;">
+                    </div>
+
+                    <!-- PERIOD -->
+                    <div>
+                        @statement.StartDate.ToString("dd MMM yyyy") - @statement.EndDate.ToString("dd MMM yyyy")
+                    </div>
+
+                    <!-- GENERATED -->
+                    <div>
+                        @statement.DateGenerated.ToString("dd MMM yyyy")
+                    </div>
+
+                    <!-- MANAGE -->
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;">
+
                         <div class="dropdown">
-                            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                    style="background-color: #68926D; color: white; border: none; border-radius: 7px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20);">
+
+                            <button class="btn dropdown-toggle"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    style="
+                                        background: var(--primary, #D4A72C) !important;
+                                        background-color: var(--primary, #D4A72C) !important;
+                                        color: var(--black, #171717) !important;
+                                        border: none !important;
+                                        border-radius: 7px;
+                                        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20);">
                                 Manage
                             </button>
-                            <ul class="dropdown-menu">
+
+                            <ul class="dropdown-menu"
+                                style="
+                                    background-color: var(--white, #FFFFFF);
+                                    border-color: var(--light-grey, #E5E5E5);">
+
+                                <!-- DOWNLOAD PDF -->
                                 <li>
-                                    <a class="dropdown-item" asp-controller="Statements" asp-action="DownloadPdf" asp-route-id="@statement.StatementID">
+                                    <a class="dropdown-item"
+                                       asp-controller="Statements"
+                                       asp-action="DownloadPdf"
+                                       asp-route-id="@statement.StatementID"
+                                       style="color: var(--black, #171717);">
                                         Download PDF
                                     </a>
                                 </li>
+
+                                <!-- VIEW -->
                                 <li>
-                                    <a class="dropdown-item" asp-controller="Statements" asp-action="Details" asp-route-id="@statement.StatementID">
+                                    <a class="dropdown-item"
+                                       asp-controller="Statements"
+                                       asp-action="Details"
+                                       asp-route-id="@statement.StatementID"
+                                       style="color: var(--black, #171717);">
                                         View
                                     </a>
                                 </li>
+
+                                <!-- DELETE -->
                                 <li>
-                                    <form asp-controller="Statements" asp-action="Delete" asp-route-id="@statement.StatementID" method="post">
+
+                                    <form asp-controller="Statements"
+                                          asp-action="Delete"
+                                          asp-route-id="@statement.StatementID"
+                                          method="post">
+
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="dropdown-item"
+
+                                        <button type="submit"
+                                                class="dropdown-item"
+                                                style="
+                                                    color: var(--danger, #B54747) !important;
+                                                    font-weight: 600;"
                                                 onclick="return confirm('Are you sure you want to delete this statement?');">
                                             Delete
                                         </button>
+
                                     </form>
+
                                 </li>
+
                             </ul>
+
                         </div>
+
                     </div>
 
                 </div>
@@ -122,19 +336,29 @@
 </div>
 
 @section Scripts {
+
     <script>
+
         const searchInput = document.getElementById("statementSearch");
+
         const statementRows = document.querySelectorAll(".statement-row");
 
         searchInput.addEventListener("input", function () {
+
             const value = searchInput.value.toLowerCase().trim();
 
             statementRows.forEach(function (row) {
-                const matches = row.dataset.reference.toLowerCase().includes(value)
-                             || row.dataset.account.toLowerCase().includes(value);
+
+                const matches =
+                    row.dataset.reference.toLowerCase().includes(value) ||
+                    row.dataset.account.toLowerCase().includes(value);
 
                 row.style.display = matches ? "grid" : "none";
+
             });
+
         });
+
     </script>
+
 }

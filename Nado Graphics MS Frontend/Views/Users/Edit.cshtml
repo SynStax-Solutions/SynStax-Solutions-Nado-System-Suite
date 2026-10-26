@@ -1,55 +1,66 @@
-﻿@model Nado_Graphics_MS_Frontend.Models.EditUserModel
+﻿
+@model Nado_Graphics_MS_Frontend.Models.EditUserModel
 
 @{
     ViewData["Title"] = "Edit User";
 
-    //This gets the logged-in user's role.
+    // This gets the logged-in user's role.
     var currentRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
-    //This checks if the user is editing their own account.
+    // This checks if the user is editing their own account.
     var isSelf = User.FindFirst(ClaimTypes.NameIdentifier)?.Value == Model.UserID.ToString();
 }
 
 <div class="container mt-4">
 
+    <!-- PAGE HEADING -->
     <div style="margin-bottom: 25px;">
 
         <h1 style="
-            color: #24463A;
+            color: var(--black, #171717) !important;
             font-weight: 600;
             margin-bottom: 5px;">
             Edit User
         </h1>
 
         <p style="
-            color: #6c757d;
+            color: var(--grey, #777777) !important;
             margin-bottom: 0;">
             Update the user's account information.
         </p>
 
     </div>
 
+    <!-- EDIT USER CARD -->
     <div style="
-        background-color: white;
-        border: 2px solid black;
+        background: var(--white, #FFFFFF) !important;
+        background-color: var(--white, #FFFFFF) !important;
+        border: 2px solid var(--black, #171717);
         border-radius: 14px;
         overflow: hidden;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);">
 
+        <!-- BLACK HEADER -->
         <div style="
-            background-color: #68926D;
-            color: white;
+            background: var(--black, #171717) !important;
+            background-color: var(--black, #171717) !important;
+            color: var(--white, #FFFFFF) !important;
             padding: 18px 25px;">
 
             <h4 style="
                 margin: 0;
-                font-weight: 600;">
+                font-weight: 600;
+                color: var(--white, #FFFFFF) !important;">
                 Account Information
             </h4>
 
         </div>
 
-        <div style="padding: 25px;">
+        <!-- FORM CONTENT -->
+        <div style="
+            padding: 25px;
+            background-color: var(--white, #FFFFFF) !important;
+            color: var(--black, #171717) !important;">
 
             <form asp-action="Edit" method="post">
 
@@ -57,120 +68,148 @@
 
                 @* This shows errors from the API. *@
                 <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
+                     class="text-danger mb-3"
+                     style="color: var(--danger, #B54747) !important;">
                 </div>
 
-
+                <!-- FIRST NAME -->
                 <div class="mb-4">
 
                     <label asp-for="FirstName"
                            class="form-label"
                            style="
-                        font-weight: 600;
-                        color: #24463A;">
+                                font-weight: 600;
+                                color: var(--black, #171717) !important;">
                         First Name
                     </label>
 
                     <input asp-for="FirstName"
                            class="form-control"
                            style="
-                    border: 1px solid #adb5bd;
-                    border-radius: 7px;
-                    padding: 10px 12px;" />
+                                background-color: var(--white, #FFFFFF) !important;
+                                color: var(--black, #171717) !important;
+                                border: 1px solid var(--grey, #777777) !important;
+                                border-radius: 7px;
+                                padding: 10px 12px;" />
 
                     <span asp-validation-for="FirstName"
-                          class="text-danger">
+                          class="text-danger"
+                          style="color: var(--danger, #B54747) !important;">
                     </span>
 
                 </div>
 
-
+                <!-- LAST NAME -->
                 <div class="mb-4">
 
                     <label asp-for="LastName"
                            class="form-label"
                            style="
-                        font-weight: 600;
-                        color: #24463A;">
+                                font-weight: 600;
+                                color: var(--black, #171717) !important;">
                         Last Name
                     </label>
 
                     <input asp-for="LastName"
                            class="form-control"
                            style="
-                    border: 1px solid #adb5bd;
-                    border-radius: 7px;
-                    padding: 10px 12px;" />
+                                background-color: var(--white, #FFFFFF) !important;
+                                color: var(--black, #171717) !important;
+                                border: 1px solid var(--grey, #777777) !important;
+                                border-radius: 7px;
+                                padding: 10px 12px;" />
 
                     <span asp-validation-for="LastName"
-                          class="text-danger">
+                          class="text-danger"
+                          style="color: var(--danger, #B54747) !important;">
                     </span>
 
                 </div>
 
+                <!-- EMAIL ADDRESS -->
                 <div class="mb-4">
 
                     <label asp-for="Email"
                            class="form-label"
                            style="
-                        font-weight: 600;
-                        color: #24463A;">
+                                font-weight: 600;
+                                color: var(--black, #171717) !important;">
                         Email Address
                     </label>
 
                     <input asp-for="Email"
                            class="form-control"
                            style="
-                    border: 1px solid #adb5bd;
-                    border-radius: 7px;
-                    padding: 10px 12px;" />
+                                background-color: var(--white, #FFFFFF) !important;
+                                color: var(--black, #171717) !important;
+                                border: 1px solid var(--grey, #777777) !important;
+                                border-radius: 7px;
+                                padding: 10px 12px;" />
 
                     <span asp-validation-for="Email"
-                          class="text-danger">
+                          class="text-danger"
+                          style="color: var(--danger, #B54747) !important;">
                     </span>
 
                 </div>
 
-
+                <!-- USER ROLE -->
                 <div class="mb-4">
 
                     <label asp-for="UserRole"
                            class="form-label"
                            style="
-                        font-weight: 600;
-                        color: #24463A;">
+                                font-weight: 600;
+                                color: var(--black, #171717) !important;">
                         User Role
                     </label>
 
                     @if (isSelf)
                     {
                         @* You can't change your own role, so it's shown but can't be edited. *@
+
                         <input asp-for="UserRole" type="hidden" />
-                        <input class="form-control" value="@Model.UserRole" disabled />
+
+                        <input class="form-control"
+                               value="@Model.UserRole"
+                               disabled
+                               style="
+                                    background-color: var(--background, #F5F5F5) !important;
+                                    color: var(--black, #171717) !important;
+                                    border: 1px solid var(--grey, #777777) !important;
+                                    border-radius: 7px;
+                                    padding: 10px 12px;" />
                     }
                     else
                     {
                         <select asp-for="UserRole"
                                 class="form-select"
                                 style="
-                            border: 1px solid #adb5bd;
-                            border-radius: 7px;
-                            padding: 10px 12px;">
+                                    background-color: var(--white, #FFFFFF) !important;
+                                    color: var(--black, #171717) !important;
+                                    border: 1px solid var(--grey, #777777) !important;
+                                    border-radius: 7px;
+                                    padding: 10px 12px;">
+
                             @* This only shows the roles the logged-in user is allowed to give out. *@
                             @foreach (var r in AppRoles.AssignableBy(currentRole))
                             {
-                                <option value="@r">@(r == AppRoles.Manager ? "Manager (Owner)" : r)</option>
+                                <option value="@r">
+                                    @(r == AppRoles.Manager ? "Manager (Owner)" : r)
+                                </option>
                             }
+
                         </select>
                     }
 
                     <span asp-validation-for="UserRole"
-                          class="text-danger">
+                          class="text-danger"
+                          style="color: var(--danger, #B54747) !important;">
                     </span>
 
                 </div>
 
-
+                <!-- ACCOUNT STATUS -->
                 @if (isSelf)
                 {
                     @* You can't deactivate your own account, so the checkbox is hidden. *@
@@ -179,8 +218,9 @@
                 else
                 {
                     <div style="
-                        background-color: #f5f7f5;
-                        border: 1px solid #d9dfda;
+                        background: var(--background, #F5F5F5) !important;
+                        background-color: var(--background, #F5F5F5) !important;
+                        border: 1px solid var(--light-grey, #E5E5E5) !important;
                         border-radius: 8px;
                         padding: 15px;
                         margin-bottom: 25px;">
@@ -188,20 +228,23 @@
                         <div class="form-check">
 
                             <input asp-for="IsActive"
-                                   class="form-check-input" />
+                                   class="form-check-input"
+                                   style="
+                                        accent-color: var(--primary, #D4A72C);
+                                        border-color: var(--grey, #777777);" />
 
                             <label asp-for="IsActive"
                                    class="form-check-label"
                                    style="
-                                font-weight: 600;
-                                color: #24463A;">
+                                        font-weight: 600;
+                                        color: var(--black, #171717) !important;">
                                 Account Active
                             </label>
 
                         </div>
 
                         <small style="
-                            color: #6c757d;
+                            color: var(--grey, #777777) !important;
                             margin-left: 24px;">
                             Enable this option if the user should be able to access their account.
                         </small>
@@ -209,45 +252,48 @@
                     </div>
                 }
 
-
+                <!-- DIVIDER -->
                 <hr style="
-                margin-top: 5px;
-                margin-bottom: 20px;
-                border: 0;
-                border-top: 1px solid #d9dfda;" />
+                    margin-top: 5px;
+                    margin-bottom: 20px;
+                    border: 0;
+                    border-top: 1px solid var(--light-grey, #E5E5E5) !important;" />
 
+                <!-- ACTION BUTTONS -->
                 <div style="
                     display: flex;
                     gap: 10px;
                     flex-wrap: wrap;">
 
+                    <!-- MUSTARD SAVE BUTTON -->
                     <button type="submit"
                             class="btn"
                             style="
-                        background-color: #68926D;
-                        color: white;
-                        border: none;
-                        padding: 10px 20px;
-                        border-radius: 7px;
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
-
+                                background: var(--primary, #D4A72C) !important;
+                                background-color: var(--primary, #D4A72C) !important;
+                                color: var(--black, #171717) !important;
+                                border: none !important;
+                                padding: 10px 20px;
+                                border-radius: 7px;
+                                font-weight: 600;
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20);">
                         Save Changes
-
                     </button>
 
-
+                    <!-- DARK GREY CANCEL BUTTON -->
                     <a asp-action="Index"
                        class="btn"
                        style="
-                        background-color: #D46271;
-                        color: white;
-                        border: none;
-                        padding: 10px 20px;
-                        border-radius: 7px;
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
-
+                            background: var(--dark-grey, #343434) !important;
+                            background-color: var(--dark-grey, #343434) !important;
+                            color: var(--white, #FFFFFF) !important;
+                            border: none !important;
+                            padding: 10px 20px;
+                            border-radius: 7px;
+                            text-decoration: none !important;
+                            font-weight: 600;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20);">
                         Cancel
-
                     </a>
 
                 </div>

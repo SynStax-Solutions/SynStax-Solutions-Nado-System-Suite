@@ -1,4 +1,5 @@
-﻿@model Nado_Graphics_MS_Frontend.Models.CreateStatementViewModel
+﻿
+@model Nado_Graphics_MS_Frontend.Models.CreateStatementViewModel
 
 @{
     ViewData["Title"] = "Create Statement";
@@ -9,82 +10,148 @@
 <div style="width: 100%; max-width: 700px;">
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">Create Statement</h1>
+
+        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: var(--black, #171717) !important;">
+            Create Statement
+        </h1>
+
         <a asp-controller="Statements" asp-action="Index"
-               style="background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+           style="background-color: var(--dark-grey, #343434) !important; color: var(--white, #FFFFFF) !important; text-decoration: none !important; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
             Back
         </a>
+
     </div>
 
-    <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px;">
+    <div style="background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px;">
 
         <form asp-controller="Statements" asp-action="Create" method="post">
+
             @Html.AntiForgeryToken()
 
-            <div asp-validation-summary="ModelOnly" style="color: #C85A5A; margin-bottom: 15px;"></div>
+            <div asp-validation-summary="ModelOnly"
+                 style="color: var(--danger, #B54747) !important; margin-bottom: 15px;">
+            </div>
 
             <div style="margin-bottom: 18px;">
-                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 8px;">Statement for</label>
+
+                <label style="display: block; font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 8px;">
+                    Statement for
+                </label>
+
                 <div style="display: flex; gap: 25px;">
-                    <label style="cursor: pointer;">
-                        <input type="radio" name="StatementFor" value="Client" id="forClient" @(Model.StatementFor == "Client" ? "checked" : "") />
+
+                    <label style="cursor: pointer; color: var(--black, #171717) !important;">
+                        <input type="radio" name="StatementFor" value="Client" id="forClient"
+                               @(Model.StatementFor == "Client" ? "checked" : "")
+                               style="accent-color: var(--primary, #D4A72C) !important;" />
                         A single client
                     </label>
-                    <label style="cursor: pointer;">
-                        <input type="radio" name="StatementFor" value="Organisation" id="forOrganisation" @(Model.StatementFor == "Organisation" ? "checked" : "") />
+
+                    <label style="cursor: pointer; color: var(--black, #171717) !important;">
+                        <input type="radio" name="StatementFor" value="Organisation" id="forOrganisation"
+                               @(Model.StatementFor == "Organisation" ? "checked" : "")
+                               style="accent-color: var(--primary, #D4A72C) !important;" />
                         An organisation (all its clients)
                     </label>
+
                 </div>
+
             </div>
 
             <div id="clientSection" style="margin-bottom: 18px;">
-                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Client</label>
-                <select asp-for="ClientID" style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;">
+
+                <label style="display: block; font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 6px;">
+                    Client
+                </label>
+
+                <select asp-for="ClientID"
+                        style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid var(--grey, #777777) !important; border-radius: 7px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;">
+
                     <option value="">Select a client...</option>
+
                     @foreach (var client in clientsList)
                     {
                         <option value="@client.ClientID">@client.FirstName @client.LastName</option>
                     }
+
                 </select>
-                <span asp-validation-for="ClientID" style="color: #C85A5A; font-size: 13px;"></span>
+
+                <span asp-validation-for="ClientID"
+                      style="color: var(--danger, #B54747) !important; font-size: 13px;">
+                </span>
+
             </div>
 
             <div id="organisationSection" style="margin-bottom: 18px; display: none;">
-                <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Organisation</label>
-                <select asp-for="OrganisationID" style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;">
+
+                <label style="display: block; font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 6px;">
+                    Organisation
+                </label>
+
+                <select asp-for="OrganisationID"
+                        style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid var(--grey, #777777) !important; border-radius: 7px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;">
+
                     <option value="">Select an organisation...</option>
+
                     @foreach (var organisation in organisationsList)
                     {
                         <option value="@organisation.OrganisationID">@organisation.OrganisationName</option>
                     }
+
                 </select>
-                <span asp-validation-for="OrganisationID" style="color: #C85A5A; font-size: 13px;"></span>
+
+                <span asp-validation-for="OrganisationID"
+                      style="color: var(--danger, #B54747) !important; font-size: 13px;">
+                </span>
+
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+
                 <div>
-                    <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">Start Date</label>
+
+                    <label style="display: block; font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 6px;">
+                        Start Date
+                    </label>
+
                     <input asp-for="StartDate" type="date"
-                           style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;" />
-                    <span asp-validation-for="StartDate" style="color: #C85A5A; font-size: 13px;"></span>
+                           style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid var(--grey, #777777) !important; border-radius: 7px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;" />
+
+                    <span asp-validation-for="StartDate"
+                          style="color: var(--danger, #B54747) !important; font-size: 13px;">
+                    </span>
+
                 </div>
+
                 <div>
-                    <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px;">End Date</label>
+
+                    <label style="display: block; font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 6px;">
+                        End Date
+                    </label>
+
                     <input asp-for="EndDate" type="date"
-                           style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px;" />
-                    <span asp-validation-for="EndDate" style="color: #C85A5A; font-size: 13px;"></span>
+                           style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid var(--grey, #777777) !important; border-radius: 7px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;" />
+
+                    <span asp-validation-for="EndDate"
+                          style="color: var(--danger, #B54747) !important; font-size: 13px;">
+                    </span>
+
                 </div>
+
             </div>
 
             <div style="display: flex; gap: 12px; justify-content: flex-end;">
+
                 <a asp-controller="Statements" asp-action="Index"
-                       style="padding: 10px 24px; border-radius: 7px; text-decoration: none; color: #24463A; border: 1px solid #aaa; font-weight: 600;">
+                   style="padding: 10px 24px; border-radius: 7px; text-decoration: none !important; background-color: var(--dark-grey, #343434) !important; color: var(--white, #FFFFFF) !important; border: 1px solid var(--dark-grey, #343434) !important; font-weight: 600;">
                     Cancel
                 </a>
+
                 <button type="submit"
-                        style="background-color: #68926D; color: white; border: none; padding: 10px 24px; border-radius: 7px; font-weight: 600; cursor: pointer;">
+                        style="background-color: var(--primary, #D4A72C) !important; color: var(--black, #171717) !important; border: none !important; padding: 10px 24px; border-radius: 7px; font-weight: 600; cursor: pointer;">
                     Create Statement
                 </button>
+
             </div>
 
         </form>
@@ -97,6 +164,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
     <script>
         const forClient = document.getElementById("forClient");
         const forOrganisation = document.getElementById("forOrganisation");
@@ -115,3 +183,4 @@
         toggleSections();
     </script>
 }
+

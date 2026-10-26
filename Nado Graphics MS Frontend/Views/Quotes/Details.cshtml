@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Quote Details";
+
     var clientsList = (List<Nado_Graphics_MS_Frontend.Models.ClientModel>)ViewBag.Clients;
     var productsList = (List<Nado_Graphics_MS_Frontend.Models.ProductModel>)ViewBag.Products;
 
@@ -11,167 +12,372 @@
 
     var statusColor = Model.QuoteStatus switch
     {
-        "Accepted" => "#68926D",
-        "Rejected" => "#C85A5A",
-        "Expired" => "#B08C3A",
-        _ => "#5A93C8"
+        "Accepted" => "var(--success, #47785B)",
+        "Rejected" => "var(--danger, #B54747)",
+        "Expired" => "var(--grey, #777777)",
+        _ => "var(--primary, #D4A72C)"
     };
+
+    var statusTextColor = Model.QuoteStatus == "Pending"
+        ? "var(--black, #171717)"
+        : "var(--white, #FFFFFF)";
 }
 
-<div style="width: 100%; max-width: 900px;">
+<style>
+    .quote-details-page {
+        width: 100%;
+        max-width: 900px;
+        color: var(--black, #171717) !important;
+    }
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    .quote-details-page .quote-heading,
+    .quote-details-page .quote-heading * {
+        color: var(--black, #171717) !important;
+    }
+
+    .quote-details-page .quote-card {
+        background: var(--white, #FFFFFF) !important;
+        background-color: var(--white, #FFFFFF) !important;
+        color: var(--black, #171717) !important;
+        border-radius: 14px;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+
+    .quote-details-page .quote-card div {
+        color: var(--black, #171717) !important;
+    }
+
+    .quote-details-page .quote-mustard {
+        display: inline-block;
+        background: var(--primary, #D4A72C) !important;
+        background-color: var(--primary, #D4A72C) !important;
+        color: var(--black, #171717) !important;
+        border: none !important;
+        text-decoration: none !important;
+        padding: 10px 20px;
+        border-radius: 7px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .quote-details-page .quote-dark {
+        display: inline-block;
+        background: var(--dark-grey, #343434) !important;
+        background-color: var(--dark-grey, #343434) !important;
+        color: var(--white, #FFFFFF) !important;
+        border: none !important;
+        text-decoration: none !important;
+        padding: 10px 20px;
+        border-radius: 7px;
+        font-weight: 600;
+    }
+
+    .quote-details-page .quote-success {
+        background: var(--success, #47785B) !important;
+        background-color: var(--success, #47785B) !important;
+        color: var(--white, #FFFFFF) !important;
+    }
+
+    .quote-details-page .quote-danger {
+        background: var(--danger, #B54747) !important;
+        background-color: var(--danger, #B54747) !important;
+        color: var(--white, #FFFFFF) !important;
+    }
+
+    .quote-details-page .quote-products-header {
+        border-bottom: 2px solid var(--primary, #D4A72C) !important;
+        color: var(--black, #171717) !important;
+    }
+
+    .quote-details-page .quote-product-row {
+        border-bottom: 1px solid var(--light-grey, #E5E5E5) !important;
+        color: var(--black, #171717) !important;
+    }
+
+    .quote-details-page .dropdown-menu {
+        background: var(--white, #FFFFFF) !important;
+        background-color: var(--white, #FFFFFF) !important;
+        border-color: var(--light-grey, #E5E5E5) !important;
+    }
+
+    .quote-details-page .dropdown-item {
+        color: var(--black, #171717) !important;
+    }
+
+    .quote-details-page .dropdown-item:hover {
+        background-color: var(--background, #F5F5F5) !important;
+    }
+</style>
+
+<div class="quote-details-page">
+
+    <!-- PAGE HEADER -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:25px;">
+
         <div>
-            <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">Quote @Model.ReferenceNumber</h1>
+
+            <h1 class="quote-heading"
+                style="margin:0; font-size:32px; font-weight:700;">
+                Quote @Model.ReferenceNumber
+            </h1>
+
             <span style="
-                display: inline-block;
-                margin-top: 8px;
-                background-color: @statusColor;
-                color: white;
-                padding: 4px 12px;
-                border-radius: 12px;
-                font-size: 13px;
-                font-weight: 600;">
+                display:inline-block;
+                margin-top:8px;
+                background: @statusColor !important;
+                background-color: @statusColor !important;
+                color: @statusTextColor !important;
+                padding:4px 12px;
+                border-radius:12px;
+                font-size:13px;
+                font-weight:600;">
                 @Model.QuoteStatus
             </span>
+
         </div>
-        <a asp-controller="Quotes" asp-action="Index"
-               style="background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+
+        <a asp-controller="Quotes"
+           asp-action="Index"
+           class="quote-dark">
             Back
         </a>
+
     </div>
 
+    <!-- MESSAGES -->
     @if (TempData["Success"] != null)
     {
-        <div style="background-color: #DCEEDC; color: #24463A; padding: 12px 16px; border-radius: 7px; margin-bottom: 20px;">
+        <div class="quote-success"
+             style="padding:12px 16px; border-radius:7px; margin-bottom:20px;">
             @TempData["Success"]
         </div>
     }
+
     @if (TempData["Error"] != null)
     {
-        <div style="background-color: #F8D7DA; color: #842029; padding: 12px 16px; border-radius: 7px; margin-bottom: 20px;">
+        <div class="quote-danger"
+             style="padding:12px 16px; border-radius:7px; margin-bottom:20px;">
             @TempData["Error"]
         </div>
     }
 
-    <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px; margin-bottom: 20px;">
+    <!-- QUOTE INFORMATION -->
+    <div class="quote-card">
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+        <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:20px;
+            margin-bottom:25px;">
+
             <div>
-                <div style="font-weight: 600; color: #24463A; margin-bottom: 4px;">Client</div>
+                <div style="font-weight:600; margin-bottom:4px;">Client</div>
                 <div>@clientName</div>
             </div>
+
             <div>
-                <div style="font-weight: 600; color: #24463A; margin-bottom: 4px;">Quote Date</div>
+                <div style="font-weight:600; margin-bottom:4px;">Quote Date</div>
                 <div>@Model.QuoteDate.ToString("dd MMM yyyy")</div>
             </div>
+
             <div>
-                <div style="font-weight: 600; color: #24463A; margin-bottom: 4px;">Valid Until</div>
+                <div style="font-weight:600; margin-bottom:4px;">Valid Until</div>
                 <div>@(Model.ValidUntil?.ToString("dd MMM yyyy") ?? "-")</div>
             </div>
+
             <div>
-                <div style="font-weight: 600; color: #24463A; margin-bottom: 4px;">Notes</div>
+                <div style="font-weight:600; margin-bottom:4px;">Notes</div>
                 <div>@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</div>
             </div>
+
         </div>
 
-        <h3 style="color: #24463A; font-size: 18px; margin-bottom: 12px;">Products</h3>
+        <!-- PRODUCTS -->
+        <h3 class="quote-heading"
+            style="font-size:18px; margin-bottom:12px;">
+            Products
+        </h3>
 
-        <div style="display: grid; grid-template-columns: 2fr 90px 120px 100px 120px; gap: 10px; padding: 10px 0; border-bottom: 2px solid #68926D; font-weight: 700; color: #24463A; font-size: 14px;">
-            <div>Product</div>
-            <div>Qty</div>
-            <div>Unit Price</div>
-            <div>VAT</div>
-            <div>Line Total</div>
-        </div>
+        <div style="overflow-x:auto;">
 
-        @foreach (var item in Model.QuoteItems)
-        {
-            var productName = products.TryGetValue(item.ProductID, out var name) ? name : "Unknown Product";
+            <div class="quote-products-header"
+                 style="
+                    display:grid;
+                    grid-template-columns:2fr 90px 120px 100px 120px;
+                    gap:10px;
+                    padding:10px 0;
+                    font-weight:700;
+                    font-size:14px;
+                    min-width:580px;">
 
-            <div style="display: grid; grid-template-columns: 2fr 90px 120px 100px 120px; gap: 10px; padding: 10px 0; border-bottom: 1px solid #d9d9d9; font-size: 14px;">
-                <div>@productName</div>
-                <div>@item.Quantity</div>
-                <div>R @item.UnitPrice?.ToString("N2")</div>
-                <div>@(item.IsVatIncluded ? "Yes" : "No")</div>
-                <div>R @item.LineTotal.ToString("N2")</div>
+                <div>Product</div>
+                <div>Qty</div>
+                <div>Unit Price</div>
+                <div>VAT</div>
+                <div>Line Total</div>
+
             </div>
-        }
 
-        <div style="text-align: right; margin-top: 15px; font-size: 18px; font-weight: 700; color: #24463A;">
+            @foreach (var item in Model.QuoteItems)
+            {
+                var productName = products.TryGetValue(item.ProductID, out var name)
+                    ? name
+                    : "Unknown Product";
+
+                <div class="quote-product-row"
+                     style="
+                        display:grid;
+                        grid-template-columns:2fr 90px 120px 100px 120px;
+                        gap:10px;
+                        padding:10px 0;
+                        font-size:14px;
+                        min-width:580px;">
+
+                    <div>@productName</div>
+                    <div>@item.Quantity</div>
+                    <div>R @item.UnitPrice?.ToString("N2")</div>
+                    <div>@(item.IsVatIncluded ? "Yes" : "No")</div>
+                    <div>R @item.LineTotal.ToString("N2")</div>
+
+                </div>
+            }
+
+        </div>
+
+        <div style="
+            text-align:right;
+            margin-top:15px;
+            font-size:18px;
+            font-weight:700;
+            color:var(--black, #171717) !important;">
             Total: R @Model.TotalAmount.ToString("N2")
         </div>
 
     </div>
 
-    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
+    <!-- ACTION BUTTONS -->
+    <div style="
+        display:flex;
+        gap:12px;
+        flex-wrap:wrap;
+        margin-bottom:20px;">
 
-        <a asp-controller="Quotes" asp-action="DownloadPdf" asp-route-id="@Model.QuoteID"
-               style="background-color: #5A93C8; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+        <a asp-controller="Quotes"
+           asp-action="DownloadPdf"
+           asp-route-id="@Model.QuoteID"
+           class="quote-mustard">
             Download PDF
         </a>
 
         @if (Model.QuoteStatus == "Pending")
         {
-            <a asp-controller="Quotes" asp-action="Edit" asp-route-id="@Model.QuoteID"
-                   style="background-color: #24463A; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+            <a asp-controller="Quotes"
+               asp-action="Edit"
+               asp-route-id="@Model.QuoteID"
+               class="quote-dark">
                 Edit
             </a>
 
+            <!-- STATUS DROPDOWN -->
             <div class="dropdown">
-                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                        style="
-                    background-color: #68926D;
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    border-radius: 7px;
-                    font-weight: 600;
-                    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20);">
+
+                <button class="btn dropdown-toggle quote-mustard"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        style="box-shadow:0 3px 6px rgba(0,0,0,0.20);">
                     Update Status
                 </button>
+
                 <ul class="dropdown-menu">
+
                     <li>
-                        <form asp-controller="Quotes" asp-action="Accept" asp-route-id="@Model.QuoteID" method="post">
+                        <form asp-controller="Quotes"
+                              asp-action="Accept"
+                              asp-route-id="@Model.QuoteID"
+                              method="post">
+
                             @Html.AntiForgeryToken()
+
                             <button type="submit" class="dropdown-item">
                                 Accept
                             </button>
+
                         </form>
                     </li>
+
                     <li>
-                        <button type="button" class="dropdown-item" id="rejectBtn">
+                        <button type="button"
+                                class="dropdown-item"
+                                id="rejectBtn">
                             Reject
                         </button>
                     </li>
+
                     <li>
-                        <button type="button" class="dropdown-item" id="expireBtn">
+                        <button type="button"
+                                class="dropdown-item"
+                                id="expireBtn">
                             Mark Expired
                         </button>
                     </li>
+
                 </ul>
+
             </div>
 
-            <form asp-controller="Quotes" asp-action="Reject" asp-route-id="@Model.QuoteID" method="post" id="rejectForm" style="display: none;">
+            <!-- HIDDEN REJECTION FORM -->
+            <form asp-controller="Quotes"
+                  asp-action="Reject"
+                  asp-route-id="@Model.QuoteID"
+                  method="post"
+                  id="rejectForm"
+                  style="display:none;">
+
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="reason" id="rejectReason" />
+
+                <input type="hidden"
+                       name="reason"
+                       id="rejectReason" />
+
             </form>
 
-            <form asp-controller="Quotes" asp-action="Expire" asp-route-id="@Model.QuoteID" method="post" id="expireForm" style="display: none;">
+            <!-- HIDDEN EXPIRY FORM -->
+            <form asp-controller="Quotes"
+                  asp-action="Expire"
+                  asp-route-id="@Model.QuoteID"
+                  method="post"
+                  id="expireForm"
+                  style="display:none;">
+
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="reason" id="expireReason" />
+
+                <input type="hidden"
+                       name="reason"
+                       id="expireReason" />
+
             </form>
         }
 
         @if (Model.QuoteStatus == "Accepted")
         {
-            <form asp-controller="Invoices" asp-action="CreateFromQuote" method="post" style="display: inline;">
+            <form asp-controller="Invoices"
+                  asp-action="CreateFromQuote"
+                  method="post"
+                  style="display:inline;">
+
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="quoteId" value="@Model.QuoteID" />
-                <button type="submit"
-                        style="background-color: #24463A; color: white; border: none; padding: 10px 20px; border-radius: 7px; font-weight: 600; cursor: pointer;">
+
+                <input type="hidden"
+                       name="quoteId"
+                       value="@Model.QuoteID" />
+
+                <button type="submit" class="quote-mustard">
                     Create Invoice
                 </button>
+
             </form>
         }
 
@@ -183,6 +389,7 @@
     <script>
         document.getElementById("rejectBtn")?.addEventListener("click", function () {
             const reason = prompt("Reason for rejecting this quote:");
+
             if (reason === null || reason.trim() === "") return;
 
             document.getElementById("rejectReason").value = reason.trim();
@@ -191,6 +398,7 @@
 
         document.getElementById("expireBtn")?.addEventListener("click", function () {
             const reason = prompt("Reason for marking this quote as expired:");
+
             if (reason === null || reason.trim() === "") return;
 
             document.getElementById("expireReason").value = reason.trim();

@@ -1,0 +1,564 @@
+﻿:root 
+{
+    --primary: #D4A72C;
+    --primary-hover: #B88C1F;
+    --black: #171717;
+    --dark-grey: #343434;
+    --grey: #777777;
+    --light-grey: #E5E5E5;
+    --background: #F5F5F5;
+    --white: #FFFFFF;
+    --danger: #B54747;
+    --success: #47785B;
+    --border-radius: 10px;
+    --shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================
+   GLOBAL ELEMENTS
+   ========================================== */
+
+body 
+{
+    background-color: var(--background);
+    color: var(--black);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--black);
+    font-weight: 600;
+}
+
+a 
+{
+    color: var(--primary-hover);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+    a:hover 
+    {
+        color: var(--black);
+    }
+
+.text-muted 
+{
+    color: var(--grey) !important;
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
+.btn 
+{
+    border-radius: 7px;
+    font-weight: 600;
+    padding: 10px 20px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary,
+.btn-mustard 
+{
+    background-color: var(--primary);
+    border: 1px solid var(--primary);
+    color: var(--black);
+}
+
+    .btn-primary:hover,
+    .btn-mustard:hover 
+    {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+        color: var(--black);
+        transform: translateY(-1px);
+    }
+
+.btn-secondary,
+.btn-grey
+{
+    background-color: var(--dark-grey);
+    border: 1px solid var(--dark-grey);
+    color: var(--white);
+}
+
+    .btn-secondary:hover,
+    .btn-grey:hover 
+    {
+        background-color: var(--black);
+        border-color: var(--black);
+        color: var(--white);
+    }
+
+.btn-outline-mustard
+{
+    background-color: transparent;
+    border: 1px solid var(--primary);
+    color: var(--black);
+}
+
+    .btn-outline-mustard:hover 
+    {
+        background-color: var(--primary);
+        color: var(--black);
+    }
+
+.btn-danger 
+{
+    background-color: var(--danger);
+    border-color: var(--danger);
+    color: white;
+}
+
+    .btn-danger:hover 
+    {
+        background-color: #963737;
+        border-color: #963737;
+        color: white;
+    }
+
+.btn:focus-visible 
+{
+    box-shadow: 0 0 0 3px rgba(212, 167, 44, 0.3);
+}
+
+/* ==========================================
+   CARDS AND PANELS
+   ========================================== */
+
+.card,
+.shared-card 
+{
+    background-color: var(--white);
+    border: 1px solid var(--light-grey);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.card-header,
+.shared-card-header 
+{
+    background-color: var(--black);
+    color: var(--white);
+    padding: 18px 25px;
+    border-bottom: 3px solid var(--primary);
+}
+
+    .card-header h1,
+    .card-header h2,
+    .card-header h3,
+    .card-header h4,
+    .card-header h5,
+    .shared-card-header h1,
+    .shared-card-header h2,
+    .shared-card-header h3,
+    .shared-card-header h4 {
+        color: var(--white);
+        margin: 0;
+    }
+
+.card-body,
+.shared-card-body 
+{
+    padding: 25px;
+}
+
+/* ==========================================
+   FORMS
+   ========================================== */
+
+.form-label 
+{
+    color: var(--dark-grey);
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.form-control,
+.form-select 
+{
+    border: 1px solid #CCCCCC;
+    border-radius: 7px;
+    padding: 10px 12px;
+    background-color: var(--white);
+    color: var(--black);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .form-control:focus,
+    .form-select:focus
+    {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(212, 167, 44, 0.18);
+        outline: none;
+    }
+
+    .form-control::placeholder 
+    {
+        color: #999999;
+    }
+
+    .form-control:disabled,
+    .form-select:disabled 
+    {
+        background-color: #EEEEEE;
+        cursor: not-allowed;
+    }
+
+.form-check-input:checked 
+{
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.form-check-input:focus 
+{
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(212, 167, 44, 0.18);
+}
+
+/* ==========================================
+   VALIDATION AND ALERTS
+   ========================================== */
+
+.text-danger,
+.field-validation-error
+{
+    color: var(--danger) !important;
+    font-size: 13px;
+}
+
+.input-validation-error 
+{
+    border-color: var(--danger);
+}
+
+.validation-summary-errors 
+{
+    color: var(--danger);
+    font-size: 13px;
+}
+
+.alert
+{
+    border-radius: 8px;
+    padding: 12px 16px;
+    border: 1px solid transparent;
+}
+
+.alert-success 
+{
+    background-color: #EAF3EC;
+    border-color: #C5DDCB;
+    color: #285A39;
+}
+
+.alert-danger
+{
+    background-color: #FCECEC;
+    border-color: #EAC3C3;
+    color: #963737;
+}
+
+.alert-warning 
+{
+    background-color: #FFF6DC;
+    border-color: #E8D18C;
+    color: #735712;
+}
+
+.alert-info 
+{
+    background-color: #F0F0F0;
+    border-color: #D6D6D6;
+    color: var(--dark-grey);
+}
+
+/* ==========================================
+   TABLES
+   ========================================== */
+
+.table 
+{
+    background-color: var(--white);
+    color: var(--black);
+    vertical-align: middle;
+}
+
+    .table thead th 
+    {
+        background-color: var(--black);
+        color: var(--white);
+        font-weight: 600;
+        padding: 13px 15px;
+        border-bottom: 3px solid var(--primary);
+    }
+
+    .table tbody td
+    {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--light-grey);
+    }
+
+    .table tbody tr:hover td 
+    {
+        background-color: #FAF7ED;
+    }
+
+.table-responsive 
+{
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+/* ==========================================
+   ACCOUNT PAGES
+   Login, Forgot Password, Reset Password,
+   Change Password, Verify Email
+   ========================================== */
+
+.account-container 
+{
+    display: flex;
+    justify-content: center;
+    padding: 55px 15px;
+}
+
+.account-card 
+{
+    width: 100%;
+    max-width: 480px;
+    background-color: var(--white);
+    border: 1px solid var(--light-grey);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.09);
+}
+
+.account-header 
+{
+    background-color: var(--black);
+    border-bottom: 4px solid var(--primary);
+    padding: 22px 28px;
+}
+
+    .account-header h1,
+    .account-header h2,
+    .account-header h3,
+    .account-header h4 
+    {
+        color: var(--white);
+        margin: 0;
+        font-size: 21px;
+        font-weight: 600;
+    }
+
+.account-body 
+{
+    padding: 30px 28px;
+}
+
+.account-description 
+{
+    color: var(--grey);
+    font-size: 14px;
+    margin-bottom: 22px;
+}
+
+.account-actions 
+{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.account-footer 
+{
+    margin-top: 20px;
+    color: var(--grey);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.account-link 
+{
+    color: var(--primary-hover);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+    .account-link:hover 
+    {
+        color: var(--black);
+        text-decoration: underline;
+    }
+
+/* ==========================================
+   ACCESS DENIED / STATUS PAGES
+   ========================================== */
+
+.status-container 
+{
+    max-width: 600px;
+    margin: 70px auto;
+    padding: 40px 25px;
+    text-align: center;
+}
+
+.status-title 
+{
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.status-title-danger 
+{
+    color: var(--danger);
+}
+
+.status-title-success 
+{
+    color: var(--success);
+}
+
+.status-description 
+{
+    color: var(--grey);
+    margin-bottom: 25px;
+}
+
+/* ==========================================
+   GENERAL REUSABLE UTILITIES
+   ========================================== */
+
+.page-title 
+{
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.section-title 
+{
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+.content-panel 
+{
+    background-color: var(--white);
+    border: 1px solid var(--light-grey);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    box-shadow: var(--shadow);
+}
+
+.action-bar 
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.text-mustard
+{
+    color: var(--primary-hover);
+}
+
+.bg-mustard 
+{
+    background-color: var(--primary);
+}
+
+.border-mustard
+{
+    border-color: var(--primary) !important;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+
+@media (max-width: 768px)
+{
+
+    .account-container 
+    {
+        padding: 25px 10px;
+    }
+
+    .account-body
+    {
+        padding: 22px 18px;
+    }
+
+    .account-header
+    {
+        padding: 18px;
+    }
+
+    .account-actions
+    {
+        flex-direction: column;
+    }
+
+        .account-actions .btn
+        {
+            width: 100%;
+        }
+
+    .content-panel
+    {
+        padding: 18px;
+    }
+
+    .page-title
+    {
+        font-size: 22px;
+    }
+
+    .status-container
+    {
+        margin: 35px auto;
+        padding: 25px 15px;
+    }
+}
+/* ========================================== 
+ JOB CARD STATUS 
+========================================== */
+.job-status-badge {
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 12px;
+}
+
+.job-card .card {
+    transition: box-shadow 0.2s ease;
+}
+
+    .job-card .card:hover {
+        box-shadow: 0 7px 22px rgba(0, 0, 0, 0.12);
+    }
+
+.btn-outline-mustard {
+    background-color: var(--white);
+    border: 1px solid var(--primary);
+    color: var(--primary-hover);
+}
+
+    .btn-outline-mustard:hover {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: var(--black);
+    }
