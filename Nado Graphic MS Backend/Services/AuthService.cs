@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Repositories;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
@@ -18,13 +19,13 @@ namespace Nado_Graphics_MS_Backend.Services
         private static readonly string DummyHash = BCrypt.Net.BCrypt.HashPassword("dummy-password-for-timing");
 
         //The below lines store the database context and the token service.
-        private readonly BMSDbContext _context;
+        private readonly IUserRepository _users;
         private readonly TokenService _tokenService;
 
         //The constructor receives both using dependency injection.
-        public AuthService(BMSDbContext context, TokenService tokenService)
+        public AuthService(IUserRepository users, TokenService tokenService)
         {
-            _context = context;
+            _users = users;
             _tokenService = tokenService;
         }
         //----------------------------------------------------------------------------------//
@@ -39,7 +40,7 @@ namespace Nado_Graphics_MS_Backend.Services
             var email = request.Email.Trim().ToLowerInvariant();
 
             //This searches the database for the user with this email.
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _users.GetByEmailAsync(email);
 
             //This stops the login if the account is currently locked.
             if (user?.LockoutEnd != null && user.LockoutEnd > DateTime.UtcNow)
@@ -67,13 +68,13 @@ namespace Nado_Graphics_MS_Backend.Services
                 {
                     user.LockoutEnd = DateTime.UtcNow.AddMinutes(LockoutMinutes);
                     user.FailedLoginAttempts = 0;
-                    await _context.SaveChangesAsync();
+                    await _users.SaveChangesAsync();
 
                     return (null, StatusCodes.Status403Forbidden, LockedMessage(user.LockoutEnd.Value));
                 }
 
                 //This saves the new count.
-                await _context.SaveChangesAsync();
+                await _users.SaveChangesAsync();
 
                 return (null, StatusCodes.Status401Unauthorized, invalidLogin);
             }
@@ -83,7 +84,7 @@ namespace Nado_Graphics_MS_Backend.Services
             {
                 user.FailedLoginAttempts = 0;
                 user.LockoutEnd = null;
-                await _context.SaveChangesAsync();
+                await _users.SaveChangesAsync();
             }
 
             //This stops users who have not verified their email yet.

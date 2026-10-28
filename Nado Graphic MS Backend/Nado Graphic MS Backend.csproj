@@ -11,9 +11,9 @@
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="MailKit" Version="4.18.0" />
-	  
-	      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />    <!-- This package lets the API check the login token (JWT) on every request. -->
+	  	      
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />	  <!-- This package lets the API check the login token (JWT) on every request. -->
+	  <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />

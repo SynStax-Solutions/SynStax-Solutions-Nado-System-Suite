@@ -2,6 +2,7 @@
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Models.InvoiceStates;
+using Nado_Graphics_MS_Backend.Repositories;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
@@ -9,29 +10,36 @@ namespace Nado_Graphics_MS_Backend.Services
     // Cancelled invoices are ignored.
     public class StatementService
     {
-        private readonly BMSDbContext _context;
+        private readonly IStatementRepository _statements;
+        private readonly IClientRepository _clients;
+        private readonly IOrganisationRepository _organisations;
+        private readonly IInvoiceRepository _invoices;
 
-        public StatementService(BMSDbContext context)
+        public StatementService(IStatementRepository statements,
+            IClientRepository clients,
+            IOrganisationRepository organisations,
+            IInvoiceRepository invoices)
         {
-            _context = context;
+            _statements = statements;
+            _clients = clients;
+            _organisations = organisations;
+            _invoices = invoices;
         }
         //----------------------------------------------------------------------------------
         public async Task<List<Statement>> GetStatementsAsync()
         {
-            return await _context.Statements
-                .OrderByDescending(s => s.DateGenerated)
-                .ToListAsync();
+            return await _statements.GetNewestFirstAsync();
         }
         //----------------------------------------------------------------------------------
         public async Task<Statement?> GetStatementAsync(int id)
         {
-            return await _context.Statements.FindAsync(id);
+            return await _statements.GetByIdAsync(id);
         }
         //----------------------------------------------------------------------------------
         // Returns the statement together with its calculated lines and totals.
         public async Task<StatementData?> GetStatementDataAsync(int id)
         {
-            var statement = await _context.Statements.FindAsync(id);
+            var statement = await _statements.GetByIdAsync(id);
 
             if (statement == null)
             {
@@ -77,23 +85,23 @@ namespace Nado_Graphics_MS_Backend.Services
                 return (false, "There is no invoice or payment activity in the selected period.", null);
             }
 
-            _context.Statements.Add(statement);
-            await _context.SaveChangesAsync();
+            await _statements.AddAsync(statement);
+            await _statements.SaveChangesAsync();
 
             return (true, null, statement);
         }
         //----------------------------------------------------------------------------------
         public async Task<bool> DeleteStatementAsync(int id)
         {
-            var statement = await _context.Statements.FindAsync(id);
+            var statement = await _statements.GetByIdAsync(id);
 
             if (statement == null)
             {
                 return false;
             }
 
-            _context.Statements.Remove(statement);
-            await _context.SaveChangesAsync();
+            _statements.Remove(statement);
+            await _statements.SaveChangesAsync();
 
             return true;
         }
@@ -107,7 +115,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
             if (statement.ClientID != null)
             {
-                var client = await _context.Clients.FindAsync(statement.ClientID);
+                var client = await _clients.GetByIdAsync(statement.ClientID.Value);
 
                 if (client == null)
                 {
@@ -126,7 +134,9 @@ namespace Nado_Graphics_MS_Backend.Services
             }
             else
             {
-                var organisation = await _context.Organisations.FindAsync(statement.OrganisationID);
+                var organisation = statement.OrganisationID.HasValue
+                    ? await _organisations.GetByIdAsync(statement.OrganisationID.Value)
+                    : null;
 
                 if (organisation == null)
                 {
@@ -135,10 +145,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
                 accountName = organisation.OrganisationName;
 
-                clientIds = await _context.Clients
-                    .Where(c => c.OrganisationID == statement.OrganisationID)
-                    .Select(c => c.ClientID)
-                    .ToListAsync();
+                clientIds = await _clients.GetIdsByOrganisationAsync(organisation.OrganisationID);
 
                 if (!clientIds.Any())
                 {
@@ -149,26 +156,19 @@ namespace Nado_Graphics_MS_Backend.Services
                 if (!string.IsNullOrWhiteSpace(organisation.Email)) addressLines.Add(organisation.Email);
             }
 
-            var clientNames = await _context.Clients
-                .Where(c => clientIds.Contains(c.ClientID))
-                .ToDictionaryAsync(c => c.ClientID, c => $"{c.FirstName} {c.LastName}");
+            var clientNames = await _clients.GetFullNamesByIdsAsync(clientIds);
 
             var start = statement.StartDate.Date;
             var endExclusive = statement.EndDate.Date.AddDays(1); // end date is inclusive
             var cancelled = States.InvoiceStatus.Cancelled.ToDbString();
 
             // Every non-cancelled invoice up to the end of the period (earlier ones feed the opening balance).
-            var invoices = await _context.Invoices
-                .Where(i => clientIds.Contains(i.ClientID)
-                         && i.InvoiceStatus != cancelled
-                         && i.InvoiceDate < endExclusive)
-                .ToListAsync();
+            var invoices = await _invoices.GetForStatementAsync(clientIds, cancelled, endExclusive);
 
             var invoiceIds = invoices.Select(i => i.InvoiceID).ToList();
 
-            var payments = await _context.Payments
-                .Where(p => invoiceIds.Contains(p.InvoiceID) && p.PaymentDate < endExclusive)
-                .ToListAsync();
+            var payments = await _invoices.GetPaymentsForInvoicesAsync(invoiceIds, endExclusive);
+
 
             var opening = invoices.Where(i => i.InvoiceDate < start).Sum(i => i.TotalAmount)
                         - payments.Where(p => p.PaymentDate < start).Sum(p => p.Amount);

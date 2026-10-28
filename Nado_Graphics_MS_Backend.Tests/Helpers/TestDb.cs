@@ -5,6 +5,7 @@ using Moq;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Hubs;
 using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Repositories;
 using Nado_Graphics_MS_Backend.Services;
 
 public sealed class TestDb : IDisposable
@@ -81,13 +82,30 @@ public sealed class TestDb : IDisposable
     }
 
     //--------------------------------------------------------------------------
-    public JobCardService JobCards() => new(Ctx, Hub.Object);
+    public JobCardService JobCards() => new(
+        new JobCardRepository(Ctx),
+        new SupplierRepository(Ctx),
+        new QuoteRepository(Ctx),
+        new Repository<Client>(Ctx),
+        Hub.Object);
 
     //--------------------------------------------------------------------------
-    public QuoteService Quotes() => new(Ctx, new ReferenceNumberService(Ctx), JobCards(), Hub.Object);
+    public QuoteService Quotes() => new(
+        new QuoteRepository(Ctx),
+        new Repository<Client>(Ctx),
+        new Repository<Product>(Ctx),
+        new ReferenceNumberService(Ctx),
+        JobCards(),
+        Hub.Object);
 
     //--------------------------------------------------------------------------
-    public InvoiceService Invoices() => new(Ctx, new ReferenceNumberService(Ctx), JobCards());
+    public InvoiceService Invoices() => new(
+        new InvoiceRepository(Ctx),
+        new QuoteRepository(Ctx),
+        new Repository<Client>(Ctx),
+        new Repository<Product>(Ctx),
+        new ReferenceNumberService(Ctx),
+        JobCards());
 
     //--------------------------------------------------------------------------
     public Quote NewQuote(params (int qty, decimal price)[] lines) => new()

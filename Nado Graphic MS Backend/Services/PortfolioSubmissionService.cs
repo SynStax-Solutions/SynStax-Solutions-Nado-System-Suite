@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Repositories;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
@@ -11,12 +12,12 @@ namespace Nado_Graphics_MS_Backend.Services
         private static readonly string[] AllowedExtensions = { ".png", ".jpg", ".jpeg", ".gif", ".webp", ".pdf" };
         private const long MaxFileSize = 10 * 1024 * 1024; // 10 MB
 
-        private readonly BMSDbContext _context;
+        private readonly IPortfolioSubmissionRepository _repo;
         private readonly IWebHostEnvironment _environment;
 
-        public PortfolioSubmissionService(BMSDbContext context, IWebHostEnvironment environment)
+        public PortfolioSubmissionService(IPortfolioSubmissionRepository repo, IWebHostEnvironment environment)
         {
-            _context = context;
+            _repo = repo;
             _environment = environment;
         }
 
@@ -25,21 +26,13 @@ namespace Nado_Graphics_MS_Backend.Services
         //----------------------------------------------------------------------------------//
         public async Task<List<PortfolioSubmissionDto>> GetSubmissionsAsync(int? jobCardId)
         {
-            var query = _context.PortfolioSubmissions.AsQueryable();
-
-            if (jobCardId != null)
-            {
-                query = query.Where(s => s.JobCardID == jobCardId);
-            }
-
-            var submissions = await query.OrderByDescending(s => s.DateSubmitted).ToListAsync();
-
+            var submissions = await _repo.GetFilteredAsync(jobCardId);
             return await ToDtosAsync(submissions);
         }
         //----------------------------------------------------------------------------------//
         public async Task<PortfolioSubmissionDto?> GetSubmissionAsync(int id)
         {
-            var submission = await _context.PortfolioSubmissions.FindAsync(id);
+            var submission = await _repo.GetByIdAsync(id);
 
             if (submission == null)
             {
@@ -88,7 +81,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return (false, "Only PNG, JPG, GIF, WEBP and PDF files are allowed.", null);
             }
 
-            if (request.JobCardID != null && !await _context.JobCards.AnyAsync(j => j.JobCardID == request.JobCardID))
+            if (request.JobCardID != null && !await _repo.JobCardExistsAsync(request.JobCardID.Value))
             {
                 return (false, "The selected job card was not found.", null);
             }
@@ -115,8 +108,8 @@ namespace Nado_Graphics_MS_Backend.Services
 
             try
             {
-                _context.PortfolioSubmissions.Add(submission);
-                await _context.SaveChangesAsync();
+                await _repo.AddAsync(submission);
+                await _repo.SaveChangesAsync();
             }
             catch
             {
@@ -132,7 +125,7 @@ namespace Nado_Graphics_MS_Backend.Services
         // Returns the physical path and content type so the controller can stream the file.
         public async Task<(string Path, string ContentType)?> GetFileAsync(int id)
         {
-            var submission = await _context.PortfolioSubmissions.FindAsync(id);
+            var submission = await _repo.GetByIdAsync(id);
 
             if (submission == null)
             {
@@ -151,7 +144,7 @@ namespace Nado_Graphics_MS_Backend.Services
         //----------------------------------------------------------------------------------
         public async Task<bool> DeleteSubmissionAsync(int id)
         {
-            var submission = await _context.PortfolioSubmissions.FindAsync(id);
+            var submission = await _repo.GetByIdAsync(id);
 
             if (submission == null)
             {
@@ -159,17 +152,16 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             // JobCard has an optional PortfolioSubmissionID - clear it so the delete can't hit a foreign key error.
-            var linkedJobCards = await _context.JobCards
-                .Where(j => j.PortfolioSubmissionID == id)
-                .ToListAsync();
+            var linkedJobCards = await _repo.GetLinkedJobCardsAsync(id);
+                
 
             foreach (var jobCard in linkedJobCards)
             {
                 jobCard.PortfolioSubmissionID = null;
             }
 
-            _context.PortfolioSubmissions.Remove(submission);
-            await _context.SaveChangesAsync();
+            _repo.Remove(submission);
+            await _repo.SaveChangesAsync();
 
             var path = Path.Combine(UploadFolder, Path.GetFileName(submission.MediaURL));
 
@@ -186,14 +178,10 @@ namespace Nado_Graphics_MS_Backend.Services
             var jobCardIds = submissions.Where(s => s.JobCardID != null).Select(s => s.JobCardID!.Value).Distinct().ToList();
             var userIds = submissions.Select(s => s.SubmittedByUserID).Distinct().ToList();
 
-            var jobCards = await _context.JobCards
-                .Where(j => jobCardIds.Contains(j.JobCardID))
-                .ToDictionaryAsync(j => j.JobCardID, j => j.ReferenceNumber);
+            var jobCards = await _repo.GetJobCardReferencesAsync(jobCardIds);
 
             //
-            var users = await _context.Users
-                .Where(u => userIds.Contains(u.UserID))
-                .ToDictionaryAsync(u => u.UserID, u => u.FirstName);
+            var users = await _repo.GetUserFirstNamesAsync(userIds);
 
             return submissions.Select(s => new PortfolioSubmissionDto
             {

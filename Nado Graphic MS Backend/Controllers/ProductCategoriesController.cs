@@ -54,7 +54,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest();
+                return this.ApiBadRequest("The request could not be completed.");
             }
 
             return CreatedAtAction(nameof(GetCategory), new { id = category.ProductCategoryID }, category);
@@ -68,7 +68,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest();
+                return this.ApiBadRequest("The request could not be completed.");
             }
 
             return NoContent();

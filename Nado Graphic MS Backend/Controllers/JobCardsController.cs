@@ -81,7 +81,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest("Unable to assign the supplier.");
+                return this.ApiBadRequest("Unable to assign the supplier.");
             }
 
             return NoContent();
@@ -98,7 +98,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             //This checks whether the update failed. 
             if (!success)
             {
-                return BadRequest("Unable to update the job card.");
+                return this.ApiBadRequest("Unable to update the job card.");
             }
 
             //This returns a successful response. 
@@ -113,7 +113,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest("Unable to update the job card status.");
+                return this.ApiBadRequest("Unable to update the job card status.");
             }
 
             return NoContent();
@@ -128,7 +128,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest("Unable to update the payment status.");
+                return this.ApiBadRequest("Unable to update the payment status.");
             }
 
             return NoContent();

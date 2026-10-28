@@ -21,7 +21,7 @@ namespace Nado_Graphics_MS_Backend.Models.InvoiceStates
                 "Overdue" => new OverdueInvoiceState(invoice.Notes ?? string.Empty),
                 "Cancelled" => new CancelledInvoiceState(invoice.Notes ?? string.Empty),
                 "Extension Requested" => new ExtensionRequestedState(invoice.Notes ?? string.Empty),
-                _ => throw new InvalidOperationException($"Unknown quote status: {invoice.InvoiceStatus}")
+                _ => throw new InvalidOperationException($"Unknown invoice status: {invoice.InvoiceStatus}")
             };
         }
     }

@@ -2,15 +2,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Services;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Nado_Graphics_MS_Backend.Controllers
 {
+
     //Marks the class as an API controller.
     [ApiController]
 
     //Defines the API route as /api/Auth.
     [Route("api/[controller]")]
-
+    [EnableRateLimiting("auth")]
     //Anyone can use these endpoints, because you aren't logged in yet when you log in or verify.
     [AllowAnonymous]
     public class AuthController : ControllerBase
@@ -57,7 +59,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             if (!result.Success)
             {
                 //Returning an HTTP 400 Bad Request response with the reason.
-                return BadRequest(new { message = result.Message });
+                return this.ApiBadRequest(result.Message);
             }
 
             //Returning an HTTP 200 OK response.
@@ -85,13 +87,14 @@ namespace Nado_Graphics_MS_Backend.Controllers
             //Checking if the reset failed (wrong, used or expired link).
             if (!result.Success)
             {
-                return BadRequest(new { message = result.Message });
+                return this.ApiBadRequest(result.Message);
             }
 
             //Returning an HTTP 200 OK response.
             return Ok(new { message = result.Message });
         }
     }
+
 }
 
 /* References

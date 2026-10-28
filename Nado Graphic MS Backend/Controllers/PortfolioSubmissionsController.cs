@@ -71,7 +71,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
 
             if (!success)
             {
-                return BadRequest(new { message = error });
+                return this.ApiBadRequest(error);
             }
 
             return CreatedAtAction(nameof(GetSubmission), new { id = submission!.SubmissionID }, submission);

@@ -5,10 +5,15 @@ using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Security;
 using Nado_Graphics_MS_Backend.Services;
+using Nado_Graphics_MS_Backend.Repositories;
 using QuestPDF.Infrastructure;
 using System.Text.Json.Serialization;
 using Nado_Graphics_MS_Backend.Hubs;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Text;
+using Microsoft.AspNetCore.HttpOverrides;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,19 +25,6 @@ builder.Services.AddControllers()
         .Add(new JsonStringEnumConverter())); ;
 
 builder.Services.AddSignalR();
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Frontend", policy =>
-    {
-        policy.WithOrigins(
-                "http://localhost:5067",
-                "https://localhost:7227")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
-    });
-});
 
 builder.Services.AddDbContext<BMSDbContext>(options =>
     options.UseSqlServer(
@@ -142,10 +134,30 @@ builder.Services
 //This turns on role checking ([Authorize]).
 builder.Services.AddAuthorization();
 
+
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IOrganisationRepository, OrganisationRepository>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
+builder.Services.AddScoped<IPortfolioSubmissionRepository, PortfolioSubmissionRepository>();
+builder.Services.AddScoped<IJobCardRepository, JobCardRepository>();
+builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();                                   
+builder.Services.AddScoped<IEmailService>(sp => sp.GetRequiredService<EmailService>());
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IStatementRepository, StatementRepository>();
+
+builder.Services.AddScoped<IEnquiryRepository, EnquiryRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 builder.Services.AddScoped<ClientService>();
 builder.Services.AddScoped<SupplierService>();
+builder.Services.AddScoped<OrganisationService>();
 builder.Services.AddScoped<JobCardService>();
 builder.Services.AddScoped<UserService>();
+
+
 
 //Service for quote creation and reference counter
 builder.Services.AddScoped<QuoteService>();
@@ -165,17 +177,63 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AuthService>();
 
-var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+builder.Services.AddScoped<BillingStatusService>();
+builder.Services.AddHostedService<BillingStatusWorker>();
 
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+var frontendOrigins = builder.Configuration.GetSection("Cors:FrontendOrigins").Get<string[]>()
+    ?? new[] { "http://localhost:5067", "https://localhost:7227" };
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+// One CORS registration with two named policies.
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("PublicSite", policy =>
-    {
-        policy.WithOrigins(allowedOrigins)
-              .AllowAnyHeader()
-              .WithMethods("POST");
-    });
+    options.AddPolicy("Frontend", policy => policy
+        .WithOrigins(frontendOrigins)
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials());
+
+    options.AddPolicy("PublicSite", policy => policy
+        .WithOrigins(allowedOrigins)
+        .AllowAnyHeader()
+        .WithMethods("POST"));
 });
+
+// Rate limiting
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    //Strict, login and password endpoints (stops password guessing)
+    options.AddPolicy("auth", ctx => RateLimitPartition.GetFixedWindowLimiter(
+        ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = 10, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+
+    //Strict, the public enquiry form (stops spam)
+    options.AddPolicy("public-form", ctx => RateLimitPartition.GetFixedWindowLimiter(
+        ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = 5, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+
+    //Loose, everything else, per IP
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(ctx =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions { PermitLimit = 200, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+});
+
+// Health checks: live = process up, ready = database reachable
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<BMSDbContext>("database", tags: new[] { "ready" });
+
+// One error format (RFC 7807 ProblemDetails)
+builder.Services.AddProblemDetails();
 
 builder.Services.AddScoped<EnquiryService>();
 
@@ -184,42 +242,6 @@ builder.Services.AddAntiforgery(options => options.Cookie.SecurePolicy = CookieS
 
 var app = builder.Build();
 
-//This creates the Owner account if it does not already exist.
-//////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<BMSDbContext>();
-
-    var ownerEmail = builder.Configuration["SeedOwner:Email"];
-    var ownerPassword = builder.Configuration["SeedOwner:Password"];
-
-    if (!string.IsNullOrWhiteSpace(ownerEmail) &&
-        !string.IsNullOrWhiteSpace(ownerPassword))
-    {
-        ownerEmail = ownerEmail.Trim().ToLowerInvariant();
-
-        var ownerExists = await db.Users.AnyAsync(u => u.Email == ownerEmail);
-
-        if (!ownerExists)
-        {
-            var owner = new User
-            {
-                FirstName = builder.Configuration["SeedOwner:FirstName"] ?? "Owner",
-                LastName = builder.Configuration["SeedOwner:LastName"] ?? "Account",
-                Email = ownerEmail,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(ownerPassword),
-                UserRole = AppRoles.Manager,
-                IsActive = true,
-                EmailVerified = true,
-                CreatedAt = DateTime.Now
-            };
-
-            db.Users.Add(owner);
-            await db.SaveChangesAsync();
-        }
-    }
-}
 
 //---------------- First Owner account ----------------//
 //There is no sign-up page, so if there is no Manager in the database yet,
@@ -252,21 +274,30 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseForwardedHeaders();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 app.UseHttpsRedirection();
 
 app.UseCors("Frontend");
+app.UseRateLimiter();
+
 
 //This checks who the user is, then what they are allowed to do. The order matters.
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions { Predicate = _ => false });
+app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions { Predicate = c => c.Tags.Contains("ready") });
 app.MapHub<JobCardHub>("/jobCardHub");
 
 app.Run();
