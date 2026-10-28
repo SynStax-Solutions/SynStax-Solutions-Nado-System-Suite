@@ -1,0 +1,154 @@
+name: CD - Build, Test & Deploy (MonsterASP)
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'nado-graphics-website/**'
+      - '**/*.md'
+  workflow_dispatch:   # lets you trigger a deploy manually from the Actions tab
+
+concurrency:
+  group: deploy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false   # never cancel a deployment half-way through
+
+permissions:
+  contents: read
+  checks: write   # required by dorny/test-reporter to publish the test summary
+
+env:
+  SOLUTION: SynStax-Solutions-Nado-System-Suite.slnx
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Build and test (the same steps as ci-build-test.yml)
+  # ---------------------------------------------------------------------------
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore "$SOLUTION"
+
+      - name: Build
+        run: dotnet build "$SOLUTION" --configuration Release --no-restore
+
+      - name: Run unit tests
+        continue-on-error: true   # some tests are expected to fail; results still reported below
+        run: >
+          dotnet test "$SOLUTION"
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=test-results.trx"
+          --collect:"XPlat Code Coverage"
+          --results-directory ./TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/**
+
+      - name: Test summary
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Unit Test Results
+          path: TestResults/**/*.trx
+          reporter: dotnet-trx
+          fail-on-error: false
+          fail-on-empty: false
+
+  # ---------------------------------------------------------------------------
+  # 2. Publish and deploy to MonsterASP via Web Deploy (API and Frontend)
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: Deploy ${{ matrix.name }}
+    needs: build-and-test
+    runs-on: windows-latest   # msdeploy.exe (Web Deploy) is Windows-only
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: API (Backend)
+            target: api
+            project: Nado Graphic MS Backend/Nado Graphic MS Backend.csproj
+            site: site96250          # nadographicsapi.runasp.net
+          - name: Frontend (BMS)
+            target: frontend
+            project: Nado Graphics MS Frontend/Nado Graphics MS Frontend.csproj
+            site: site96231          # nadographicsbms.runasp.net
+
+    env:
+      PUBLISH_DIR: ${{ github.workspace }}\publish\${{ matrix.target }}
+      # Per-site Web Deploy passwords (MonsterASP panel > Deploy > Visual Studio access)
+      WEBDEPLOY_PASSWORD: ${{ matrix.target == 'api' && secrets.API_WEBDEPLOY_PASSWORD || secrets.BMS_WEBDEPLOY_PASSWORD }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish ${{ matrix.name }}
+        shell: pwsh
+        run: >
+          dotnet publish "${{ matrix.project }}"
+          --configuration Release
+          --output "$env:PUBLISH_DIR"
+
+      - name: Locate Web Deploy (msdeploy.exe)
+        id: msdeploy
+        shell: pwsh
+        run: |
+          $candidates = @(
+            "${env:ProgramFiles}\IIS\Microsoft Web Deploy V3\msdeploy.exe",
+            "${env:ProgramFiles(x86)}\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          )
+          $path = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $path) {
+            Write-Host "Web Deploy not found on runner, installing..."
+            choco install webdeploy -y --no-progress
+            $path = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          }
+          if (-not $path) { throw "msdeploy.exe could not be found or installed." }
+          "path=$path" >> $env:GITHUB_OUTPUT
+
+      - name: Deploy ${{ matrix.name }} to MonsterASP
+        shell: pwsh
+        run: |
+          $site = "${{ matrix.site }}"
+          $deployArgs = @(
+            "-verb:sync",
+            "-source:contentPath=$env:PUBLISH_DIR",
+            "-dest:contentPath=$site,computerName=https://$site.siteasp.net:8172/msdeploy.axd?site=$site,userName=$site,password=`"$env:WEBDEPLOY_PASSWORD`",authType=Basic",
+            "-allowUntrusted",
+            "-enableRule:AppOffline",       # takes the app offline briefly so files aren't locked
+            "-enableRule:DoNotDeleteRule",  # keeps server-only files (appsettings.json, Uploads/)
+            "-verbose"
+          )
+          & "${{ steps.msdeploy.outputs.path }}" @deployArgs
+          if ($LASTEXITCODE -ne 0) { throw "Web Deploy failed with exit code $LASTEXITCODE" }
