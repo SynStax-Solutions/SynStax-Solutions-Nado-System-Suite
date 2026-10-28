@@ -1,29 +1,29 @@
-﻿using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using Microsoft.AspNetCore.WebUtilities;
+﻿using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Repositories;
 using Nado_Graphics_MS_Backend.Security;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
     //This class is the service that handles user business logic.
     public class UserService
     {
-        //The below line stores the database context used to access the database.
-        private readonly BMSDbContext _context;
+        private readonly IUserRepository _users;
 
         //The below lines store the email service (for verification emails) and the app settings.
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
         private readonly IConfiguration _config;
 
         //The constructor receives the database context using dependency injection.
-        public UserService(BMSDbContext context, EmailService emailService, IConfiguration config)
+        public UserService(IUserRepository users, IEmailService emailService, IConfiguration config)
         {
-            //Storing the injected database context.
-            _context = context;
+            
+            _users = users;
 
             //Storing the injected email service and settings.
             _emailService = emailService;
@@ -35,7 +35,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<List<User>> GetUsersAsync()
         {
             //Getting all user records and returning them as a list.
-            return await _context.Users.ToListAsync();
+            return await _users.GetAllAsync();
         }
 
         //----------------------------------------------------------------------------------//
@@ -43,7 +43,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<User?> GetUserAsync(int id)
         {
             //Searching the database for the user with the specified ID.
-            return await _context.Users.FindAsync(id);
+            return await _users.GetByIdAsync(id);
         }
 
         //----------------------------------------------------------------------------------//
@@ -73,7 +73,7 @@ namespace Nado_Graphics_MS_Backend.Services
             var email = NormaliseEmail(request.Email);
 
             //This checks whether another user already uses the same email address.
-            var emailExists = await _context.Users.AnyAsync(u => u.Email == email);
+            var emailExists = await _users.EmailExistsAsync(email);
 
             //This checks whether the email address already exists.
             if (emailExists)
@@ -102,10 +102,10 @@ namespace Nado_Graphics_MS_Backend.Services
             };
 
             //This adds the new user to the db context.
-            _context.Users.Add(user);
+            await _users.AddAsync(user);
 
             //This saves the new user to the database.
-            await _context.SaveChangesAsync();
+            await _users.SaveChangesAsync();
 
             //This sends the verification email to the new user.
             var sent = await SendVerificationEmailAsync(user);
@@ -121,7 +121,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<ServiceResult> UpdateUserAsync(int id, UpdateUser request, int actorId, string? actorRole)
         {
             //This searches the database for the existing user.
-            var user = await _context.Users.FindAsync(id);
+            var user = await _users.GetByIdAsync(id);
 
             //This checks whether the user does not exist.
             if (user == null)
@@ -165,7 +165,7 @@ namespace Nado_Graphics_MS_Backend.Services
             var email = NormaliseEmail(request.Email);
 
             //This checks whether another user already uses the same email address.
-            var emailExists = await _context.Users.AnyAsync(u => u.Email == email && u.UserID != id);
+            var emailExists = await _users.EmailExistsAsync(email, id);
 
             //This checks whether the email address already exists.
             if (emailExists)
@@ -199,7 +199,7 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             //This saves the updated user to the database.
-            await _context.SaveChangesAsync();
+            await _users.SaveChangesAsync();
 
             //This sends a new verification email if the email address changed.
             if (emailChanged)
@@ -217,7 +217,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<ServiceResult> DeleteUserAsync(int id, int actorId, string? actorRole)
         {
             //This searches the database for the user using the specified ID.
-            var user = await _context.Users.FindAsync(id);
+            var user = await _users.GetByIdAsync(id);
 
             //This checks whether the user does not exist.
             if (user == null)
@@ -241,10 +241,10 @@ namespace Nado_Graphics_MS_Backend.Services
             try
             {
                 //This marks the user for deletion in the db context.
-                _context.Users.Remove(user);
+                _users.Remove(user);
 
                 //This saves the changes to the database.
-                await _context.SaveChangesAsync();
+                await _users.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
@@ -261,7 +261,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<ServiceResult> ResendVerificationAsync(int id, int actorId, string? actorRole)
         {
             //This searches the database for the user using the specified ID.
-            var user = await _context.Users.FindAsync(id);
+            var user = await _users.GetByIdAsync(id);
 
             //This checks whether the user does not exist.
             if (user == null)
@@ -302,7 +302,7 @@ namespace Nado_Graphics_MS_Backend.Services
             var tokenHash = HashToken(token);
 
             //This searches for the user who owns this token.
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.VerificationTokenHash == tokenHash);
+            var user = await _users.GetByVerificationTokenHashAsync(HashToken(token));
 
             //This checks whether the token does not exist (wrong, or already used).
             if (user == null)
@@ -322,7 +322,7 @@ namespace Nado_Graphics_MS_Backend.Services
             user.VerificationTokenExpiry = null;
 
             //This saves the changes to the database.
-            await _context.SaveChangesAsync();
+            await _users.SaveChangesAsync();
 
             //This returns a successful result.
             return ServiceResult.Ok("Your email address is verified. You can now log in.");
@@ -340,7 +340,7 @@ namespace Nado_Graphics_MS_Backend.Services
             user.VerificationTokenExpiry = DateTime.UtcNow.AddHours(_config.GetValue("App:VerificationLinkHours", 24));
 
             //This saves the token hash to the database.
-            await _context.SaveChangesAsync();
+            await _users.SaveChangesAsync();
 
             //This builds the link that points to the frontend's verify page.
             var link = $"{FrontendBaseUrl()}/Account/VerifyEmail?token={Uri.EscapeDataString(token)}";
@@ -362,7 +362,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<ServiceResult> ChangePasswordAsync(int userId, ChangePasswordRequest request)
         {
             //This searches the database for the logged-in user.
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _users.GetByIdAsync(userId);
 
             //This checks whether the user does not exist.
             if (user == null)
@@ -400,7 +400,7 @@ namespace Nado_Graphics_MS_Backend.Services
             user.PasswordChangedAt = DateTime.UtcNow;
 
             //This saves the changes to the database.
-            await _context.SaveChangesAsync();
+            await _users.SaveChangesAsync();
 
             //This returns a successful result.
             return ServiceResult.Ok("Your password has been changed. Please log in again with your new password.");
@@ -418,7 +418,7 @@ namespace Nado_Graphics_MS_Backend.Services
             var email = NormaliseEmail(emailInput);
 
             //This searches the database for the user with this email.
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _users.GetByEmailAsync(email);
 
             //Deactivated users or emails with no account get no email, but see the same message.
             if (user == null || !user.IsActive)
@@ -441,7 +441,7 @@ namespace Nado_Graphics_MS_Backend.Services
             //A new link replaces any older one, so only the newest link works.
             user.ResetTokenHash = HashToken(token);
             user.ResetTokenExpiry = DateTime.UtcNow.AddMinutes(linkMinutes);
-            await _context.SaveChangesAsync();
+            await _users.SaveChangesAsync();
 
             //This builds the link that points to the frontend's reset password page.
             var link = $"{FrontendBaseUrl()}/Account/ResetPassword?token={Uri.EscapeDataString(token)}";
@@ -478,7 +478,7 @@ namespace Nado_Graphics_MS_Backend.Services
             var tokenHash = HashToken(token);
 
             //This searches for the user who owns this token.
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.ResetTokenHash == tokenHash);
+            var user = await _users.GetByResetTokenHashAsync(HashToken(token));
 
             //This checks the token exists and has not expired.
             if (user == null || user.ResetTokenExpiry == null || user.ResetTokenExpiry < DateTime.UtcNow)
@@ -506,7 +506,7 @@ namespace Nado_Graphics_MS_Backend.Services
             user.VerificationTokenExpiry = null;
 
             //This saves the changes to the database.
-            await _context.SaveChangesAsync();
+            await _users.SaveChangesAsync();
 
             return ServiceResult.Ok("Your password has been reset. You can now log in with your new password.");
         }

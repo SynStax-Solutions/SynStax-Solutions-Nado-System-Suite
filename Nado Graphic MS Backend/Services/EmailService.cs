@@ -6,7 +6,7 @@ namespace Nado_Graphics_MS_Backend.Services
 {
     //This class sends emails using MailKit and the settings in the "Email" section.
     //MailKit is used because Microsoft recommends it instead of the older SmtpClient.
-    public class EmailService
+    public class EmailService : IEmailService
     {
         //The below lines store the app settings and the logger.
         private readonly IConfiguration _config;

@@ -71,7 +71,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             if (!result.Success)
             {
                 //Returning an HTTP 400 Bad Request response (with the reason).
-                return BadRequest(new { message = result.Message });
+                return this.ApiBadRequest(result.Message);
             }
 
             //Returning an HTTP 200 OK response with a message for the frontend to show.
@@ -91,7 +91,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             if (!result.Success)
             {
                 //Returning an HTTP 400 Bad Request response (with the reason).
-                return BadRequest(new { message = result.Message });
+                return this.ApiBadRequest(result.Message);
             }
 
             //Returning an HTTP 200 OK response with a message for the frontend to show.
@@ -110,7 +110,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             if (!result.Success)
             {
                 //Returning an HTTP 400 Bad Request response (with the reason).
-                return BadRequest(new { message = result.Message });
+                return this.ApiBadRequest(result.Message);
             }
 
             //Returning an HTTP 200 OK response with a message for the frontend to show.
@@ -128,7 +128,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             if (!result.Success)
             {
                 //Returning an HTTP 400 Bad Request response (with the reason).
-                return BadRequest(new { message = result.Message });
+                return this.ApiBadRequest(result.Message);
             }
 
             //Returning an HTTP 200 OK response with a message for the frontend to show.

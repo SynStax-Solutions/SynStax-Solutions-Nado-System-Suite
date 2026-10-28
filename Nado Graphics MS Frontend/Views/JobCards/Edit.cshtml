@@ -6,29 +6,32 @@
 
 <div style="width: 100%;">
 
+    <!-- PAGE HEADING -->
     <div style="margin-bottom: 25px;">
 
         <h1 style="
             margin: 0;
             font-size: 32px;
             font-weight: 700;
-            color: #24463A;">
+            color: var(--black, #171717) !important;">
             Edit Job Card
         </h1>
 
         <p style="
             margin: 5px 0 0 0;
-            color: #555;
+            color: var(--grey, #777777) !important;
             font-size: 15px;">
             Update the details of @Model.ReferenceNumber.
         </p>
 
     </div>
 
-
+    <!-- EDIT JOB CARD FORM -->
     <div style="
-        background-color: white;
-        border: 2px solid black;
+        background: var(--white, #FFFFFF) !important;
+        background-color: var(--white, #FFFFFF) !important;
+        color: var(--black, #171717) !important;
+        border: 2px solid var(--black, #171717) !important;
         border-radius: 14px;
         box-shadow: 0 6px 14px rgba(0,0,0,0.20);
         padding: 25px;
@@ -38,50 +41,56 @@
 
             @Html.AntiForgeryToken()
 
+            <!-- HIDDEN MODEL VALUES -->
             <input type="hidden" asp-for="JobCardID" />
             <input type="hidden" asp-for="ReferenceNumber" />
             <input type="hidden" asp-for="ClientID" />
             <input type="hidden" asp-for="JobDate" />
             <input type="hidden" asp-for="PortfolioSubmissionID" />
 
+            <!-- VALIDATION SUMMARY -->
             <div asp-validation-summary="ModelOnly"
                  style="
-                color: #D46271;
-                margin-bottom: 15px;">
+                    color: var(--danger, #B54747) !important;
+                    margin-bottom: 15px;">
             </div>
 
-
+            <!-- JOB TITLE -->
             <div style="margin-bottom: 20px;">
 
                 <label asp-for="JobTitle"
                        style="
-                    display: block;
-                    font-weight: 600;
-                    margin-bottom: 7px;">
+                            display: block;
+                            font-weight: 600;
+                            margin-bottom: 7px;
+                            color: var(--black, #171717) !important;">
                     Job Title
                 </label>
 
                 <input asp-for="JobTitle"
                        class="form-control"
                        style="
-                border: 2px solid black;
-                border-radius: 7px;
-                padding: 10px;" />
+                            background-color: var(--white, #FFFFFF) !important;
+                            color: var(--black, #171717) !important;
+                            border: 2px solid var(--black, #171717) !important;
+                            border-radius: 7px;
+                            padding: 10px;" />
 
                 <span asp-validation-for="JobTitle"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747) !important;">
                 </span>
 
             </div>
 
-
+            <!-- JOB DESCRIPTION -->
             <div style="margin-bottom: 20px;">
 
                 <label asp-for="JobDescription"
                        style="
-                    display: block;
-                    font-weight: 600;
-                    margin-bottom: 7px;">
+                            display: block;
+                            font-weight: 600;
+                            margin-bottom: 7px;
+                            color: var(--black, #171717) !important;">
                     Job Description
                 </label>
 
@@ -89,33 +98,38 @@
                           class="form-control"
                           rows="5"
                           style="
-                border: 2px solid black;
-                border-radius: 7px;
-                padding: 10px;"></textarea>
+                                background-color: var(--white, #FFFFFF) !important;
+                                color: var(--black, #171717) !important;
+                                border: 2px solid var(--black, #171717) !important;
+                                border-radius: 7px;
+                                padding: 10px;"></textarea>
 
                 <span asp-validation-for="JobDescription"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747) !important;">
                 </span>
 
             </div>
 
-
+            <!-- JOB STATUS -->
             <div style="margin-bottom: 20px;">
 
                 <label asp-for="JobStatus"
                        style="
-                    display: block;
-                    font-weight: 600;
-                    margin-bottom: 7px;">
+                            display: block;
+                            font-weight: 600;
+                            margin-bottom: 7px;
+                            color: var(--black, #171717) !important;">
                     Job Status
                 </label>
 
                 <select asp-for="JobStatus"
                         class="form-select"
                         style="
-                    border: 2px solid black;
-                    border-radius: 7px;
-                    padding: 10px;">
+                            background-color: var(--white, #FFFFFF) !important;
+                            color: var(--black, #171717) !important;
+                            border: 2px solid var(--black, #171717) !important;
+                            border-radius: 7px;
+                            padding: 10px;">
 
                     <option value="Not Started">Not Started</option>
                     <option value="In Progress">In Progress</option>
@@ -125,19 +139,20 @@
                 </select>
 
                 <span asp-validation-for="JobStatus"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747) !important;">
                 </span>
 
             </div>
 
-
+            <!-- DUE DATE -->
             <div style="margin-bottom: 20px;">
 
                 <label asp-for="DueDate"
                        style="
-                    display: block;
-                    font-weight: 600;
-                    margin-bottom: 7px;">
+                            display: block;
+                            font-weight: 600;
+                            margin-bottom: 7px;
+                            color: var(--black, #171717) !important;">
                     Due Date
                 </label>
 
@@ -145,24 +160,27 @@
                        type="date"
                        class="form-control"
                        style="
-                border: 2px solid black;
-                border-radius: 7px;
-                padding: 10px;" />
+                            background-color: var(--white, #FFFFFF) !important;
+                            color: var(--black, #171717) !important;
+                            border: 2px solid var(--black, #171717) !important;
+                            border-radius: 7px;
+                            padding: 10px;" />
 
                 <span asp-validation-for="DueDate"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747) !important;">
                 </span>
 
             </div>
 
-
+            <!-- COMPLETED AT -->
             <div style="margin-bottom: 25px;">
 
                 <label asp-for="CompletedAt"
                        style="
-                    display: block;
-                    font-weight: 600;
-                    margin-bottom: 7px;">
+                            display: block;
+                            font-weight: 600;
+                            margin-bottom: 7px;
+                            color: var(--black, #171717) !important;">
                     Completed At
                 </label>
 
@@ -170,41 +188,48 @@
                        type="datetime-local"
                        class="form-control"
                        style="
-                border: 2px solid black;
-                border-radius: 7px;
-                padding: 10px;" />
+                            background-color: var(--white, #FFFFFF) !important;
+                            color: var(--black, #171717) !important;
+                            border: 2px solid var(--black, #171717) !important;
+                            border-radius: 7px;
+                            padding: 10px;" />
 
                 <span asp-validation-for="CompletedAt"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747) !important;">
                 </span>
 
             </div>
 
-
-            <div style=" display: flex;
+            <!-- FORM ACTION BUTTONS -->
+            <div style="
+                display: flex;
                 justify-content: flex-end;
                 gap: 12px;">
 
+                <!-- DARK GREY CANCEL BUTTON -->
                 <a asp-action="Details"
                    asp-route-id="@Model.JobCardID"
                    style="
-                    background-color: #D46271;
-                    color: white;
-                    text-decoration: none;
-                    padding: 11px 22px;
-                    border-radius: 7px;
-                    font-weight: 600;">
+                        background: var(--dark-grey, #343434) !important;
+                        background-color: var(--dark-grey, #343434) !important;
+                        color: var(--white, #FFFFFF) !important;
+                        text-decoration: none !important;
+                        padding: 11px 22px;
+                        border-radius: 7px;
+                        font-weight: 600;">
                     Cancel
                 </a>
 
+                <!-- MUSTARD SAVE BUTTON -->
                 <button type="submit"
                         style="
-                    background-color: #5A93C8;
-                    color: white;
-                    border: none;
-                    padding: 11px 22px;
-                    border-radius: 7px;
-                    font-weight: 600;">
+                            background: var(--primary, #D4A72C) !important;
+                            background-color: var(--primary, #D4A72C) !important;
+                            color: var(--black, #171717) !important;
+                            border: none !important;
+                            padding: 11px 22px;
+                            border-radius: 7px;
+                            font-weight: 600;">
                     Save Changes
                 </button>
 
@@ -221,3 +246,5 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+
+

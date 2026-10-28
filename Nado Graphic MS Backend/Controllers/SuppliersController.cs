@@ -67,7 +67,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             if (!success)
             {
                 //Returning a basic HTTP 400 Bad Request response.
-                return BadRequest();
+                return this.ApiBadRequest("The request could not be completed.");
             }
 
             //Returning the supplier with an HTTP 200 OK response.
@@ -85,7 +85,7 @@ namespace Nado_Graphics_MS_Backend.Controllers
             if (!success)
             {
                 //Returning a basic HTTP 400 Bad Request response.
-                return BadRequest();
+                return this.ApiBadRequest("The request could not be completed.");
             }
 
             //Returning an HTTP 204 No Content response.

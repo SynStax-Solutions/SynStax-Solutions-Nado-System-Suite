@@ -1,12 +1,13 @@
-﻿@model List<Nado_Graphics_MS_Frontend.Models.JobCardModel>
+﻿
+@model List<Nado_Graphics_MS_Frontend.Models.JobCardModel>
 
 @{
     ViewData["Title"] = "Job Cards";
 }
 
-<div style="
-    padding: 30px;">
+<div style="padding: 30px;">
 
+    <!-- PAGE HEADING AND ARCHIVED BUTTON -->
     <div style="
         display: flex;
         justify-content: space-between;
@@ -14,28 +15,36 @@
 
         <h1 style="
             margin: 0;
-            color: #24463A;">
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--black, #171717) !important;">
             Job Cards
         </h1>
 
         <a asp-action="Archived"
            style="
-            background-color: #777777;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            text-decoration: none;">
+                background: var(--dark-grey, #343434) !important;
+                background-color: var(--dark-grey, #343434) !important;
+                color: var(--white, #FFFFFF) !important;
+                padding: 10px 18px;
+                border-radius: 8px;
+                text-decoration: none !important;
+                font-weight: 600;
+                border: none;">
             Archived Job Cards
         </a>
 
     </div>
 
+    <!-- MUSTARD DIVIDER -->
     <div style="
         height: 3px;
-        background-color: #68926D;
+        background: var(--primary, #D4A72C) !important;
+        background-color: var(--primary, #D4A72C) !important;
         margin: 20px 0;">
     </div>
 
+    <!-- SEARCH AND STATUS FILTER -->
     <div style="
         display: flex;
         gap: 10px;
@@ -45,15 +54,21 @@
                id="searchInput"
                placeholder="Search jobs..."
                style="
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 8px;" />
+                    padding: 10px;
+                    border: 1px solid var(--light-grey, #E5E5E5);
+                    border-radius: 8px;
+                    background-color: var(--white, #FFFFFF);
+                    color: var(--black, #171717);
+                    font-size: 15px;" />
 
         <select id="statusFilter"
                 style="
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;">
+                    padding: 10px;
+                    border: 1px solid var(--light-grey, #E5E5E5);
+                    border-radius: 8px;
+                    background-color: var(--white, #FFFFFF);
+                    color: var(--black, #171717);
+                    font-size: 15px;">
 
             <option value="">
                 All Statuses
@@ -79,30 +94,40 @@
 
     </div>
 
+    <!-- ALL JOBS HEADING -->
     <h2 style="
-        color: #24463A;">
+        color: var(--black, #171717) !important;
+        font-weight: 700;">
         ALL JOBS
     </h2>
 
     @if (Model == null || !Model.Any())
     {
+        <!-- EMPTY STATE -->
         <div style="
             padding: 25px;
-            background-color: white;
-            border-radius: 10px;">
+            background: var(--white, #FFFFFF) !important;
+            background-color: var(--white, #FFFFFF) !important;
+            color: var(--black, #171717) !important;
+            border-radius: 10px;
+            box-shadow: 0 5px 14px rgba(0,0,0,0.12);">
+
             Accept a quote to automatically create a Job Card.
+
         </div>
     }
     else
     {
+        <!-- JOB CARDS GRID -->
         <div id="jobGrid"
              style="
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;">
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;">
 
             @foreach (var job in Model)
             {
+                @* Keep the original job status colours. *@
                 var cardBackground = job.JobStatus switch
                 {
                     "In Progress" => "#DFA738",
@@ -116,20 +141,23 @@
                      data-reference="@job.ReferenceNumber"
                      data-status="@job.JobStatus"
                      style="
-                    padding: 20px;
-                    border-radius: 12px;
-                    border: 2px solid transparent;
-                    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-                    color: white;
-                    background-color: @cardBackground;">
+                        padding: 20px;
+                        border-radius: 12px;
+                        border: 2px solid transparent;
+                        box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+                        color: #FFFFFF !important;
+                        background: @cardBackground !important;
+                        background-color: @cardBackground !important;">
 
-                    <h3 style="color: white;">
+                    <!-- JOB TITLE -->
+                    <h3 style="color: #FFFFFF !important;">
                         @job.JobTitle
                     </h3>
 
-                    <p style="color: white;">
+                    <!-- REFERENCE -->
+                    <p style="color: #FFFFFF !important;">
 
-                        <strong style=" color: white;">
+                        <strong style="color: #FFFFFF !important;">
                             Reference:
                         </strong>
 
@@ -137,9 +165,10 @@
 
                     </p>
 
-                    <p style="color: white;">
+                    <!-- STATUS -->
+                    <p style="color: #FFFFFF !important;">
 
-                        <strong style=" color: white;">
+                        <strong style="color: #FFFFFF !important;">
                             Status:
                         </strong>
 
@@ -147,10 +176,10 @@
 
                     </p>
 
-                    <p style="
-                        color: white;">
+                    <!-- JOB DATE -->
+                    <p style="color: #FFFFFF !important;">
 
-                        <strong style="color: white;">
+                        <strong style="color: #FFFFFF !important;">
                             Job Date:
                         </strong>
 
@@ -158,11 +187,12 @@
 
                     </p>
 
+                    <!-- DUE DATE -->
                     @if (job.DueDate.HasValue)
                     {
-                        <p style="color: white;">
+                        <p style="color: #FFFFFF !important;">
 
-                            <strong style="color: white;">
+                            <strong style="color: #FFFFFF !important;">
                                 Due Date:
                             </strong>
 
@@ -171,17 +201,20 @@
                         </p>
                     }
 
+                    <!-- VIEW JOB BUTTON -->
                     <a asp-action="Details"
                        asp-route-id="@job.JobCardID"
                        style="
-                        display: inline-block;
-                        margin-top: 10px;
-                        padding: 8px 14px;
-                        background-color: rgba(255,255,255,0.2);
-                        color: white;
-                        border: 1px solid white;
-                        border-radius: 6px;
-                        text-decoration: none;">
+                            display: inline-block;
+                            margin-top: 10px;
+                            padding: 8px 14px;
+                            background: rgba(255,255,255,0.2) !important;
+                            background-color: rgba(255,255,255,0.2) !important;
+                            color: #FFFFFF !important;
+                            border: 1px solid #FFFFFF !important;
+                            border-radius: 6px;
+                            text-decoration: none !important;
+                            font-weight: 600;">
                         View Job
                     </a>
 
@@ -196,17 +229,21 @@
 <script>
 
     const searchInput = document.getElementById("searchInput");
+
     const statusFilter = document.getElementById("statusFilter");
 
     function filterJobs() {
 
         const search = searchInput.value.toLowerCase();
+
         const status = statusFilter.value;
 
         document.querySelectorAll(".job-card").forEach(card => {
 
             const title = card.dataset.title.toLowerCase();
+
             const reference = card.dataset.reference.toLowerCase();
+
             const cardStatus = card.dataset.status;
 
             const matchesSearch =
@@ -225,6 +262,8 @@
     }
 
     searchInput.addEventListener("input", filterJobs);
+
     statusFilter.addEventListener("change", filterJobs);
 
 </script>
+

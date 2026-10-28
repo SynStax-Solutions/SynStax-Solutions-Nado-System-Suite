@@ -1,4 +1,5 @@
-﻿@model Nado_Graphics_MS_Frontend.Models.EnquiryModel
+﻿
+@model Nado_Graphics_MS_Frontend.Models.EnquiryModel
 
 @{
     ViewData["Title"] = "Enquiry";
@@ -12,14 +13,14 @@
         align-items: center;
         margin-bottom: 25px;">
 
-        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">
+        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: var(--black, #171717);">
             Enquiry Details
         </h1>
 
         <a asp-action="Index"
                style="
-            background-color: #68926D;
-            color: white;
+            background-color: var(--dark-grey, #343434);
+            color: var(--white, #FFFFFF);
             text-decoration: none;
             padding: 10px 20px;
             border-radius: 7px;
@@ -29,15 +30,15 @@
     </div>
 
     <div style="
-        background-color: white;
+        background-color: var(--white, #FFFFFF);
         border-radius: 14px;
         box-shadow: 0 5px 14px rgba(0,0,0,0.16);
         overflow: hidden;">
 
         <!-- Header strip -->
         <div style="
-            background-color: #68926D;
-            color: white;
+            background-color: var(--black, #171717);
+            color: var(--white, #FFFFFF);
             padding: 20px 28px;
             display: flex;
             justify-content: space-between;
@@ -53,8 +54,8 @@
             @if (!string.IsNullOrWhiteSpace(Model.Service))
             {
                 <span style="
-                    background-color: white;
-                    color: #24463A;
+                    background-color: var(--white, #FFFFFF);
+                    color: var(--black, #171717);
                     padding: 6px 14px;
                     border-radius: 15px;
                     font-size: 13px;
@@ -74,33 +75,33 @@
                 margin-bottom: 28px;">
 
                 <div>
-                    <div style="font-size: 12px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 4px;">Email</div>
-                    <a href="mailto:@Model.Email" style="color: #5A93C8; font-weight: 600; text-decoration: none; word-break: break-word;">
+                    <div style="font-size: 12px; font-weight: 700; color: var(--grey, #777777); text-transform: uppercase; margin-bottom: 4px;">Email</div>
+                    <a href="mailto:@Model.Email" style="color: var(--primary-hover, #B88C1F); font-weight: 600; text-decoration: none; word-break: break-word;">
                         @Model.Email
                     </a>
                 </div>
 
                 <div>
-                    <div style="font-size: 12px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 4px;">Phone</div>
+                    <div style="font-size: 12px; font-weight: 700; color: var(--grey, #777777); text-transform: uppercase; margin-bottom: 4px;">Phone</div>
                     @if (!string.IsNullOrWhiteSpace(Model.Phone))
                     {
-                        <a href="tel:@Model.Phone" style="color: #5A93C8; font-weight: 600; text-decoration: none;">@Model.Phone</a>
+                        <a href="tel:@Model.Phone" style="color: var(--primary-hover, #B88C1F); font-weight: 600; text-decoration: none;">@Model.Phone</a>
                     }
                     else
                     {
-                        <span style="color: #777;">Not provided</span>
+                        <span style="color: var(--grey, #777777);">Not provided</span>
                     }
                 </div>
             </div>
 
             <!-- Message -->
-            <div style="font-size: 12px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 8px;">Message</div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--grey, #777777); text-transform: uppercase; margin-bottom: 8px;">Message</div>
             <div style="
-                background-color: #F5F7F5;
-                border-left: 4px solid #68926D;
+                background-color: var(--background, #F5F5F5);
+                border-left: 4px solid var(--primary, #D4A72C);
                 border-radius: 7px;
                 padding: 18px 20px;
-                color: #333;
+                color: var(--dark-grey, #343434);
                 line-height: 1.6;
                 white-space: pre-wrap;
                 word-break: break-word;">
@@ -108,7 +109,7 @@
             </div>
 
             <!-- Consent -->
-            <div style="margin-top: 22px; font-size: 13px; color: #666;">
+            <div style="margin-top: 22px; font-size: 13px; color: var(--grey, #777777);">
                 @if (Model.ConsentGiven)
                 {
                     <span>Consent to be contacted given@(Model.ConsentGivenAt.HasValue ? " on " + Model.ConsentGivenAt.Value.ToString("dd/MM/yyyy HH:mm") : "").</span>
@@ -123,8 +124,8 @@
             <div style="display: flex; gap: 12px; margin-top: 28px;">
                 <a href="mailto:@Model.Email?subject=Re: Your enquiry to Nado Graphics"
                        style="
-                    background-color: #5A93C8;
-                    color: white;
+                    background-color: var(--primary, #D4A72C);
+                    color: var(--black, #171717);
                     text-decoration: none;
                     padding: 10px 22px;
                     border-radius: 7px;
@@ -136,8 +137,8 @@
                 {
                     <a href="tel:@Model.Phone"
                            style="
-                        background-color: #DFA738;
-                        color: white;
+                        background-color: var(--dark-grey, #343434);
+                        color: var(--white, #FFFFFF);
                         text-decoration: none;
                         padding: 10px 22px;
                         border-radius: 7px;

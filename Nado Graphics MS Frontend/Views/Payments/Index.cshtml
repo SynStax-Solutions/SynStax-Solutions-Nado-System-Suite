@@ -2,37 +2,109 @@
 
 @{
     ViewData["Title"] = "Payments";
+
     var clients = ((List<Nado_Graphics_MS_Frontend.Models.ClientModel>)ViewBag.Clients)
         .ToDictionary(c => c.ClientID, c => $"{c.FirstName} {c.LastName}");
 }
 
 <div style="width: 100%;">
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">Payments</h1>
-        <a asp-controller="Owner" asp-action="Dashboard"
-               style="background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+    <!-- PAGE HEADING AND BACK BUTTON -->
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;">
+
+        <h1 style="
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--black, #171717) !important;">
+            Payments
+        </h1>
+
+        <a asp-controller="Owner"
+           asp-action="Dashboard"
+           style="
+                background: var(--dark-grey, #343434) !important;
+                background-color: var(--dark-grey, #343434) !important;
+                color: var(--white, #FFFFFF) !important;
+                text-decoration: none;
+                padding: 10px 20px;
+                border-radius: 7px;
+                font-weight: 600;
+                border: none;">
             Back
         </a>
+
     </div>
 
+    <!-- ERROR AND SUCCESS MESSAGES -->
     @if (TempData["Error"] != null)
     {
-        <div style="background-color: #D46271; color: white; padding: 12px 18px; border-radius: 7px; margin-bottom: 20px;">@TempData["Error"]</div>
+        <div style="
+            background: var(--danger, #B54747) !important;
+            background-color: var(--danger, #B54747) !important;
+            color: var(--white, #FFFFFF) !important;
+            padding: 12px 18px;
+            border-radius: 7px;
+            margin-bottom: 20px;">
+            @TempData["Error"]
+        </div>
     }
 
     @if (TempData["Success"] != null)
     {
-        <div style="background-color: #E6F2E8; color: #24463A; padding: 12px 18px; border-radius: 7px; margin-bottom: 20px;">@TempData["Success"]</div>
+        <div style="
+            background: var(--success, #47785B) !important;
+            background-color: var(--success, #47785B) !important;
+            color: var(--white, #FFFFFF) !important;
+            padding: 12px 18px;
+            border-radius: 7px;
+            margin-bottom: 20px;">
+            @TempData["Success"]
+        </div>
     }
 
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
+    <!-- SEARCH AND STATUS FILTER -->
+    <div style="
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;">
+
         <div style="flex: 1;">
-            <input type="text" id="invoiceSearch" placeholder="Search by reference number or client..."
-                   style="width: 100%; height: 44px; padding: 8px 15px; border: 1px solid #aaa; border-radius: 7px; font-size: 15px; outline: none;" />
+
+            <input type="text"
+                   id="invoiceSearch"
+                   placeholder="Search by reference number or client..."
+                   style="
+                        width: 100%;
+                        height: 44px;
+                        padding: 8px 15px;
+                        border: 1px solid var(--grey, #777777);
+                        border-radius: 7px;
+                        font-size: 15px;
+                        outline: none;
+                        background-color: var(--white, #FFFFFF);
+                        color: var(--black, #171717);" />
+
         </div>
+
         <div style="min-width: 200px;">
-            <select id="statusFilter" style="width: 100%; height: 44px; padding: 8px 12px; border: 1px solid #aaa; border-radius: 7px; background-color: white; font-size: 15px;">
+
+            <select id="statusFilter"
+                    style="
+                        width: 100%;
+                        height: 44px;
+                        padding: 8px 12px;
+                        border: 1px solid var(--grey, #777777);
+                        border-radius: 7px;
+                        background-color: var(--white, #FFFFFF);
+                        color: var(--black, #171717);
+                        font-size: 15px;">
+
                 <option value="">All Statuses</option>
                 <option value="Unpaid">Unpaid</option>
                 <option value="Partially Paid">Partially Paid</option>
@@ -40,95 +112,240 @@
                 <option value="Overdue">Overdue</option>
                 <option value="Extension Requested">Extension Requested</option>
                 <option value="Cancelled">Cancelled</option>
+
             </select>
+
         </div>
+
     </div>
 
-    <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); overflow: hidden;">
+    <!-- PAYMENTS TABLE -->
+    <div style="
+        background-color: var(--white, #FFFFFF);
+        border-radius: 14px;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+        overflow: hidden;">
 
-        <div style="display: grid; grid-template-columns: 90px 1.1fr 1.2fr 1fr 1fr 1fr 1.3fr 140px; align-items: center; padding: 16px 20px; background-color: #68926D; color: white; font-weight: 700; font-size: 14px;">
-            <div>Invoice ID</div>
-            <div>Reference</div>
-            <div>Client</div>
-            <div>Total</div>
-            <div>Paid</div>
-            <div>Balance</div>
-            <div>Status</div>
-            <div style="text-align: center;">Manage</div>
+        <!-- SOLID BLACK TABLE HEADER -->
+        <div style="
+            display: grid;
+            grid-template-columns: 90px 1.1fr 1.2fr 1fr 1fr 1fr 1.3fr 140px;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--black, #171717) !important;
+            background-color: var(--black, #171717) !important;
+            color: var(--white, #FFFFFF) !important;
+            font-weight: 700;
+            font-size: 14px;">
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Invoice ID
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Reference
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Client
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Total
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Paid
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Balance
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Status
+            </div>
+
+            <div style="
+                text-align: center;
+                color: var(--white, #FFFFFF) !important;">
+                Manage
+            </div>
+
         </div>
 
         @if (Model == null || !Model.Any())
         {
-            <div style="padding: 55px 20px; text-align: center; color: #666;">
-                <h3 style="margin-top: 12px; color: #24463A;">No Invoices Found</h3>
-                <p style="margin-bottom: 0;">There are currently no invoices to record payments against.</p>
+            <div style="
+                padding: 55px 20px;
+                text-align: center;
+                color: var(--grey, #777777);">
+
+                <h3 style="
+                    margin-top: 12px;
+                    color: var(--black, #171717);">
+                    No Invoices Found
+                </h3>
+
+                <p style="margin-bottom: 0;">
+                    There are currently no invoices to record payments against.
+                </p>
+
             </div>
         }
         else
         {
             foreach (var invoice in Model)
             {
-                var clientName = clients.TryGetValue(invoice.ClientID, out var name) ? name : "Unknown Client";
+                var clientName = clients.TryGetValue(invoice.ClientID, out var name)
+                    ? name
+                    : "Unknown Client";
+
                 var balance = invoice.TotalAmount - invoice.AmountPaid;
+
                 var canRecord = invoice.InvoiceStatus != "Paid" && invoice.InvoiceStatus != "Cancelled";
 
                 var statusColor = invoice.InvoiceStatus switch
                 {
-                    "Paid" => "#68926D",
-                    "Partially Paid" => "#5A93C8",
-                    "Overdue" => "#C85A5A",
-                    "Extension Requested" => "#B08C3A",
-                    "Cancelled" => "#999999",
-                    _ => "#DFA738"
+                    "Paid" => "var(--success, #47785B)",
+                    "Partially Paid" => "var(--dark-grey, #343434)",
+                    "Overdue" => "var(--danger, #B54747)",
+                    "Extension Requested" => "var(--primary-hover, #B88C1F)",
+                    "Cancelled" => "var(--grey, #777777)",
+                    _ => "var(--primary, #D4A72C)"
                 };
 
                 <div class="invoice-row"
                      data-reference="@invoice.ReferenceNumber"
                      data-client="@clientName"
                      data-status="@invoice.InvoiceStatus"
-                     style="display: grid; grid-template-columns: 90px 1.1fr 1.2fr 1fr 1fr 1fr 1.3fr 140px; align-items: center; padding: 16px 20px; border-bottom: 1px solid #d9d9d9; font-size: 14px;">
+                     style="
+                        display: grid;
+                        grid-template-columns: 90px 1.1fr 1.2fr 1fr 1fr 1fr 1.3fr 140px;
+                        align-items: center;
+                        padding: 16px 20px;
+                        border-bottom: 1px solid var(--light-grey, #E5E5E5);
+                        font-size: 14px;
+                        background-color: var(--white, #FFFFFF);
+                        color: var(--black, #171717);">
 
-                    <div>@invoice.InvoiceID</div>
-                    <div style="font-weight: 600; color: #24463A;">@invoice.ReferenceNumber</div>
-                    <div>@clientName</div>
-                    <div>R @invoice.TotalAmount.ToString("N2")</div>
-                    <div>R @invoice.AmountPaid.ToString("N2")</div>
-                    <div style="font-weight: 600; color: @(balance > 0 && invoice.InvoiceStatus != "Cancelled" ? "#C85A5A" : "#24463A");">
+                    <!-- INVOICE ID -->
+                    <div>
+                        @invoice.InvoiceID
+                    </div>
+
+                    <!-- REFERENCE -->
+                    <div style="
+                        font-weight: 600;
+                        color: var(--black, #171717);">
+                        @invoice.ReferenceNumber
+                    </div>
+
+                    <!-- CLIENT -->
+                    <div>
+                        @clientName
+                    </div>
+
+                    <!-- TOTAL -->
+                    <div>
+                        R @invoice.TotalAmount.ToString("N2")
+                    </div>
+
+                    <!-- PAID -->
+                    <div>
+                        R @invoice.AmountPaid.ToString("N2")
+                    </div>
+
+                    <!-- BALANCE -->
+                    <div style="
+                        font-weight: 600;
+                        color: @(balance > 0 && invoice.InvoiceStatus != "Cancelled" ? "var(--danger, #B54747)" : "var(--black, #171717)") !important;">
                         R @balance.ToString("N2")
                     </div>
+
+                    <!-- STATUS -->
                     <div>
-                        <span style="background-color: @statusColor; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+
+                        <span style="
+                            background: @statusColor !important;
+                            background-color: @statusColor !important;
+                            color: @(invoice.InvoiceStatus == "Unpaid" ? "var(--black, #171717)" : "var(--white, #FFFFFF)") !important;
+                            padding: 4px 10px;
+                            border-radius: 12px;
+                            font-size: 12px;
+                            font-weight: 600;">
                             @invoice.InvoiceStatus
                         </span>
+
                     </div>
 
-                    <div style="display: flex; justify-content: center; align-items: center;">
+                    <!-- MANAGE -->
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;">
+
                         <div class="dropdown">
-                            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                    style="background-color: #68926D; color: white; border: none; border-radius: 7px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20);">
+
+                            <button class="btn dropdown-toggle"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    style="
+                                        background: var(--primary, #D4A72C) !important;
+                                        background-color: var(--primary, #D4A72C) !important;
+                                        color: var(--black, #171717) !important;
+                                        border: none !important;
+                                        border-radius: 7px;
+                                        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20);">
                                 Manage
                             </button>
-                            <ul class="dropdown-menu">
+
+                            <ul class="dropdown-menu"
+                                style="
+                                    background-color: var(--white, #FFFFFF);
+                                    border-color: var(--light-grey, #E5E5E5);">
+
+                                <!-- RECORD PAYMENT -->
                                 @if (canRecord)
                                 {
                                     <li>
-                                        <a class="dropdown-item" asp-controller="Payments" asp-action="Create" asp-route-invoiceId="@invoice.InvoiceID">
+                                        <a class="dropdown-item"
+                                           asp-controller="Payments"
+                                           asp-action="Create"
+                                           asp-route-invoiceId="@invoice.InvoiceID"
+                                           style="color: var(--black, #171717);">
                                             Record Payment
                                         </a>
                                     </li>
                                 }
+
+                                <!-- VIEW INVOICE -->
                                 <li>
-                                    <a class="dropdown-item" asp-controller="Invoices" asp-action="Details" asp-route-id="@invoice.InvoiceID">
+                                    <a class="dropdown-item"
+                                       asp-controller="Invoices"
+                                       asp-action="Details"
+                                       asp-route-id="@invoice.InvoiceID"
+                                       style="color: var(--black, #171717);">
                                         View Invoice
                                     </a>
                                 </li>
+
+                                <!-- DOWNLOAD PDF -->
                                 <li>
-                                    <a class="dropdown-item" asp-controller="Invoices" asp-action="DownloadPdf" asp-route-id="@invoice.InvoiceID">
+                                    <a class="dropdown-item"
+                                       asp-controller="Invoices"
+                                       asp-action="DownloadPdf"
+                                       asp-route-id="@invoice.InvoiceID"
+                                       style="color: var(--black, #171717);">
                                         Download PDF
                                     </a>
                                 </li>
+
                             </ul>
+
                         </div>
+
                     </div>
 
                 </div>
@@ -140,28 +357,49 @@
 </div>
 
 @section Scripts {
+
     <script>
+
         const searchInput = document.getElementById("invoiceSearch");
+
         const statusFilter = document.getElementById("statusFilter");
+
         const invoiceRows = document.querySelectorAll(".invoice-row");
 
         function filterInvoices() {
+
             const searchValue = searchInput.value.toLowerCase().trim();
+
             const statusValue = statusFilter.value;
 
             invoiceRows.forEach(function (row) {
+
                 const reference = row.dataset.reference.toLowerCase();
+
                 const client = row.dataset.client.toLowerCase();
+
                 const status = row.dataset.status;
 
-                const matchesSearch = reference.includes(searchValue) || client.includes(searchValue);
-                const matchesStatus = statusValue === "" || status === statusValue;
+                const matchesSearch =
+                    reference.includes(searchValue) ||
+                    client.includes(searchValue);
 
-                row.style.display = (matchesSearch && matchesStatus) ? "grid" : "none";
+                const matchesStatus =
+                    statusValue === "" ||
+                    status === statusValue;
+
+                row.style.display =
+                    (matchesSearch && matchesStatus) ? "grid" : "none";
+
             });
+
         }
 
         searchInput.addEventListener("input", filterInvoices);
+
         statusFilter.addEventListener("change", filterInvoices);
+
     </script>
+
 }
+

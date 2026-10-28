@@ -1,27 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Repositories;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
     //This class is the service that handles client business logic.
     public class ClientService
     {
-        //The below line stores the database context used to access the database.
-        private readonly BMSDbContext _context;
+        private readonly IRepository<Client> _clients;
+        private readonly IOrganisationRepository _organisations;
 
-        // The constructor receives the database context using dependency injection.
-        public ClientService(BMSDbContext context)
+        public ClientService(IRepository<Client> clients, IOrganisationRepository organisations)
         {
-            // Storing the injected database context.
-            _context = context;
+            _clients = clients;
+            _organisations = organisations;
         }
         //----------------------------------------------------------------------------------//
         // This gets all the clients from the database.
         public async Task<List<Client>> GetClientsAsync()
         {
             //getting all client records and returning them as a list.
-            return await _context.Clients.ToListAsync();
+            return await _clients.GetAllAsync();
         }
         //----------------------------------------------------------------------------------//
 
@@ -29,7 +29,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<Client?> GetClientAsync(int id)
         {
             // Searches the database for the client with the specified ID.
-            return await _context.Clients.FindAsync(id);
+            return await _clients.GetByIdAsync(id);
         }
         //----------------------------------------------------------------------------------//
 
@@ -49,7 +49,7 @@ namespace Nado_Graphics_MS_Backend.Services
             if (client.OrganisationID.HasValue)
             {
                 //This searches for the organisation selected by the client.
-                var organisation = await _context.Organisations.FindAsync(client.OrganisationID.Value);
+                var organisation = await _organisations.GetByIdAsync(client.OrganisationID.Value);
 
                 //This checks if the selected organisation does not exist.
                 if (organisation == null)
@@ -68,10 +68,8 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             //Adds the new client to the db context.
-            _context.Clients.Add(client);
-
-            //Saves the new client to the database.
-            await _context.SaveChangesAsync();
+            await _clients.AddAsync(client);
+            await _clients.SaveChangesAsync();
 
             //Returns a successful result without an error message.
             return true;
@@ -90,7 +88,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
             //This searches the database for the existing client.
             var existingClient =
-                await _context.Clients.FindAsync(id);
+                await _clients.GetByIdAsync(id);
 
             //This checks whether the client does not exist.
             if (existingClient == null)
@@ -103,7 +101,7 @@ namespace Nado_Graphics_MS_Backend.Services
             if (client.OrganisationID.HasValue)
             {
                 //Searches for the selected organisation.
-                var organisation = await _context.Organisations.FindAsync(client.OrganisationID.Value);
+                var organisation = await _organisations.GetByIdAsync(client.OrganisationID.Value);
 
                 //Checks if the selected organisation does not exist.
                 if (organisation == null)
@@ -162,7 +160,7 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             //This saves the updated client to the database.
-            await _context.SaveChangesAsync();
+            await _clients.SaveChangesAsync();
 
             //This returns a successful result without an error message.
             return true;
@@ -173,7 +171,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<bool> DeleteClientAsync(int id)
         {
             //Searching the database for the client using the specified ID.
-            var client = await _context.Clients.FindAsync(id);
+            var client = await _clients.GetByIdAsync(id);
 
             //Checking if the client does not exist.
             if (client == null)
@@ -183,10 +181,10 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             //Marks the client for deletion in the db context.
-            _context.Clients.Remove(client);
+            _clients.Remove(client);
 
             //Saving Changes
-            await _context.SaveChangesAsync();
+            await _clients.SaveChangesAsync();
 
             //Returns a successful result without an error message.
             return true;

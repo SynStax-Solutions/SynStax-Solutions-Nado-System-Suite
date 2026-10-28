@@ -1,4 +1,5 @@
-﻿@model Nado_Graphics_MS_Frontend.Models.ViewUserModel
+﻿
+@model Nado_Graphics_MS_Frontend.Models.ViewUserModel
 
 @{
     ViewData["Title"] = "User Details";
@@ -9,69 +10,80 @@
     <div style="margin-bottom: 25px;">
 
         <h1 style="
-            color: #24463A;
+            color: var(--black, #171717) !important;
             font-weight: 600;
-            margin-bottom: 5px; ">
+            margin-bottom: 5px;">
             User Details
         </h1>
 
         <p style="
-            color: #6c757d;
+            color: var(--grey, #777777) !important;
             margin-bottom: 0;">
             View the information and account status of this user.
         </p>
 
     </div>
 
+    <!-- ACCOUNT INFORMATION CARD -->
     <div style="
-        background-color: white;
-        border: 2px solid black;
+        background: var(--white, #FFFFFF) !important;
+        background-color: var(--white, #FFFFFF) !important;
+        border: 2px solid var(--black, #171717);
         border-radius: 14px;
         overflow: hidden;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);">
 
+        <!-- BLACK HEADER -->
         <div style="
-            background-color: #68926D;
-            color: white;
+            background: var(--black, #171717) !important;
+            background-color: var(--black, #171717) !important;
+            color: var(--white, #FFFFFF) !important;
             padding: 18px 25px;">
 
             <h4 style="
                 margin: 0;
-                font-weight: 600; ">
+                font-weight: 600;
+                color: var(--white, #FFFFFF) !important;">
                 Account Information
             </h4>
 
         </div>
 
-        <div style="padding: 25px;">
+        <div style="
+            padding: 25px;
+            background-color: var(--white, #FFFFFF) !important;
+            color: var(--black, #171717) !important;">
 
             <div class="row">
+
+                <!-- USER ID -->
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         USER ID
                     </div>
 
                     <div style="
                         font-size: 17px;
                         font-weight: 500;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @Model.UserID
                     </div>
 
                 </div>
 
+                <!-- ACCOUNT STATUS -->
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         ACCOUNT STATUS
                     </div>
 
@@ -79,12 +91,13 @@
                     {
                         <span style="
                             display: inline-block;
-                            background-color: #68926D;
-                            color: white;
+                            background: var(--success, #47785B) !important;
+                            background-color: var(--success, #47785B) !important;
+                            color: var(--white, #FFFFFF) !important;
                             padding: 6px 14px;
                             border-radius: 20px;
                             font-size: 14px;
-                            font-weight: 600; ">
+                            font-weight: 600;">
                             Active
                         </span>
                     }
@@ -92,41 +105,43 @@
                     {
                         <span style="
                             display: inline-block;
-                            background-color: #D46271;
-                            color: white;
+                            background: var(--danger, #B54747) !important;
+                            background-color: var(--danger, #B54747) !important;
+                            color: var(--white, #FFFFFF) !important;
                             padding: 6px 14px;
                             border-radius: 20px;
                             font-size: 14px;
-                            font-weight: 600; ">
+                            font-weight: 600;">
                             Inactive
                         </span>
                     }
 
                 </div>
 
-
+                <!-- FIRST NAME -->
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         FIRST NAME
                     </div>
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @Model.FirstName
                     </div>
 
                 </div>
 
+                <!-- LAST NAME -->
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
                         margin-bottom: 5px;">
@@ -135,61 +150,64 @@
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @Model.LastName
                     </div>
 
                 </div>
 
+                <!-- EMAIL ADDRESS -->
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         EMAIL ADDRESS
                     </div>
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @Model.Email
                     </div>
 
                 </div>
 
+                <!-- USER ROLE -->
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         USER ROLE
                     </div>
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @Model.UserRole
                     </div>
 
                 </div>
 
+                <!-- ACCOUNT CREATED -->
                 <div class="col-md-6 mb-4">
 
                     <div style="
-                        color: #6c757d;
+                        color: var(--grey, #777777) !important;
                         font-size: 13px;
                         font-weight: 600;
-                        margin-bottom: 5px; ">
+                        margin-bottom: 5px;">
                         ACCOUNT CREATED
                     </div>
 
                     <div style="
                         font-size: 17px;
-                        color: #212529; ">
+                        color: var(--black, #171717) !important;">
                         @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")
                     </div>
 
@@ -197,41 +215,48 @@
 
             </div>
 
-
             <hr style="
                 margin-top: 5px;
                 margin-bottom: 20px;
                 border: 0;
-                border-top: 1px solid #d9dfda; " />
+                border-top: 1px solid var(--light-grey, #E5E5E5) !important;" />
 
-
+            <!-- ACTION BUTTONS -->
             <div style="
                 display: flex;
                 gap: 10px;
-                flex-wrap: wrap; ">
+                flex-wrap: wrap;">
 
+                <!-- DARK GREY BACK BUTTON -->
                 <a asp-action="Index"
                    class="btn"
                    style="
-                       background-color: #68926D;
-                       color: white;
-                       border: none;
+                       background: var(--dark-grey, #343434) !important;
+                       background-color: var(--dark-grey, #343434) !important;
+                       color: var(--white, #FFFFFF) !important;
+                       border: none !important;
                        padding: 10px 18px;
                        border-radius: 7px;
-                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+                       text-decoration: none !important;
+                       font-weight: 600;
+                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20);">
                     Back to Users
                 </a>
 
+                <!-- MUSTARD EDIT BUTTON -->
                 <a asp-action="Edit"
                    asp-route-id="@Model.UserID"
                    class="btn"
                    style="
-                       background-color: #5A93C8;
-                       color: white;
-                       border: none;
+                       background: var(--primary, #D4A72C) !important;
+                       background-color: var(--primary, #D4A72C) !important;
+                       color: var(--black, #171717) !important;
+                       border: none !important;
                        padding: 10px 18px;
                        border-radius: 7px;
-                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20); ">
+                       text-decoration: none !important;
+                       font-weight: 600;
+                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.20);">
                     Edit User
                 </a>
 

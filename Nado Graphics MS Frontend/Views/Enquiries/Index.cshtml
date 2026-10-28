@@ -1,4 +1,5 @@
-﻿@model List<Nado_Graphics_MS_Frontend.Models.EnquiryModel>
+﻿
+@model List<Nado_Graphics_MS_Frontend.Models.EnquiryModel>
 
 @{
     ViewData["Title"] = "Enquiries";
@@ -14,13 +15,13 @@
         align-items: center;
         margin-bottom: 25px;">
 
-        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">
+        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: var(--black);">
             Enquiries
             @if (unreadCount > 0)
             {
                 <span style="
-                    background-color: #D46271;
-                    color: white;
+                    background-color: var(--danger);
+                    color: var(--white);
                     padding: 4px 12px;
                     border-radius: 15px;
                     font-size: 14px;
@@ -35,8 +36,8 @@
         <a asp-controller="@backController"
                asp-action="Dashboard"
                style="
-            background-color: #68926D;
-            color: white;
+            background-color: var(--dark-grey);
+            color: var(--white);
             text-decoration: none;
             padding: 10px 20px;
             border-radius: 7px;
@@ -54,7 +55,7 @@
         flex: 1;
         height: 44px;
         padding: 8px 15px;
-        border: 1px solid #aaa;
+        border: 1px solid var(--grey);
         border-radius: 7px;
         font-size: 15px;
         outline: none;" />
@@ -64,9 +65,9 @@
             min-width: 180px;
             height: 44px;
             padding: 8px 12px;
-            border: 1px solid #aaa;
+            border: 1px solid var(--grey);
             border-radius: 7px;
-            background-color: white;
+            background-color: var(--white);
             font-size: 15px;">
             <option value="">All Enquiries</option>
             <option value="unread">Unread</option>
@@ -75,7 +76,7 @@
     </div>
 
     <div style="
-        background-color: white;
+        background-color: var(--white);
         border-radius: 14px;
         box-shadow: 0 5px 14px rgba(0,0,0,0.16);
         overflow: hidden;">
@@ -85,8 +86,8 @@
             grid-template-columns: 160px 1.2fr 1.5fr 1.1fr 90px 110px;
             align-items: center;
             padding: 16px 20px;
-            background-color: #68926D;
-            color: white;
+            background-color: var(--black);
+            color: var(--white);
             font-weight: 700;
             font-size: 14px;">
             <div>Received</div>
@@ -99,8 +100,8 @@
 
         @if (!Model.Any())
         {
-            <div style="padding: 55px 20px; text-align: center; color: #666;">
-                <h3 style="margin-top: 12px; color: #24463A;">No Enquiries Found</h3>
+            <div style="padding: 55px 20px; text-align: center; color: var(--grey);">
+                <h3 style="margin-top: 12px; color: var(--black);">No Enquiries Found</h3>
                 <p style="margin-bottom: 0;">No enquiries have been received yet.</p>
             </div>
         }
@@ -116,13 +117,13 @@
                     grid-template-columns: 160px 1.2fr 1.5fr 1.1fr 90px 110px;
                     align-items: center;
                     padding: 16px 20px;
-                    border-bottom: 1px solid #d9d9d9;
+                    border-bottom: 1px solid var(--light-grey);
                     font-size: 14px;
-                    background-color: @(e.IsRead ? "white" : "#FFFBEF");">
+                    background-color: @(e.IsRead ? "var(--white)" : "var(--background)");">
 
                     <div>@e.SubmittedAt.ToString("dd/MM/yyyy HH:mm")</div>
 
-                    <div style="color: #24463A; font-weight: @(e.IsRead ? "500" : "700");">
+                    <div style="color: var(--black); font-weight: @(e.IsRead ? "500" : "700");">
                         @e.Name
                     </div>
 
@@ -133,11 +134,11 @@
                     <div>
                         @if (e.IsRead)
                         {
-                            <span style="background-color: #68926D; color: white; padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: 600;">Read</span>
+                            <span style="background-color: var(--success); color: var(--white); padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: 600;">Read</span>
                         }
                         else
                         {
-                            <span style="background-color: #DFA738; color: white; padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: 600;">New</span>
+                            <span style="background-color: var(--primary); color: var(--black); padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: 600;">New</span>
                         }
                     </div>
 
@@ -145,8 +146,8 @@
                         <a asp-action="Details"
                                asp-route-id="@e.EnquiryID"
                                style="
-                            background-color: #5A93C8;
-                            color: white;
+                            background-color: var(--primary);
+                            color: var(--black);
                             text-decoration: none;
                             padding: 7px 16px;
                             border-radius: 7px;

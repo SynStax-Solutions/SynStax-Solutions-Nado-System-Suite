@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Repositories;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
@@ -8,22 +9,22 @@ namespace Nado_Graphics_MS_Backend.Services
     // controller so validation rules live in one place.
     public class ProductCategoryService
     {
-        private readonly BMSDbContext _context;
+        private readonly IProductCategoryRepository _repo;
 
-        public ProductCategoryService(BMSDbContext context)
+        public ProductCategoryService(IProductCategoryRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
         //----------------------------------------------------------------------------------
         // Returns every category, active or not 
         public async Task<List<ProductCategory>> GetCategoriesAsync()
         {
-            return await _context.ProductCategories.ToListAsync();
+            return await _repo.GetAllAsync();
         }
         //----------------------------------------------------------------------------------
         public async Task<ProductCategory?> GetCategoryAsync(int id)
         {
-            return await _context.ProductCategories.FindAsync(id);
+            return await _repo.GetByIdAsync(id);
         }
         //----------------------------------------------------------------------------------
         // Creates a new category after checking the name isn't already used.
@@ -35,17 +36,16 @@ namespace Nado_Graphics_MS_Backend.Services
 
             //CategoryName must be unique per the schema - check before inserting so
             //we return a clean false instead of an unhandled SQL exception.
-            var nameTaken = await _context.ProductCategories
-                .AnyAsync(c => c.CategoryName == category.CategoryName);
+            var nameTaken = await _repo.NameExistsAsync(category.CategoryName);
 
             if (nameTaken)
             {
                 return false;
             }
 
-            _context.ProductCategories.Add(category);
+            await _repo.AddAsync(category);
 
-            await _context.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
 
             return true;
         }
@@ -58,7 +58,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return false;
             }
 
-            var existingCategory = await _context.ProductCategories.FindAsync(id);
+            var existingCategory = await _repo.GetByIdAsync(id);
 
             if (existingCategory == null)
             {
@@ -69,7 +69,7 @@ namespace Nado_Graphics_MS_Backend.Services
             existingCategory.CategoryDescription = category.CategoryDescription;
             existingCategory.IsActive = category.IsActive;
 
-            await _context.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
 
             return true;
         }
@@ -77,16 +77,16 @@ namespace Nado_Graphics_MS_Backend.Services
         // Hard-deletes a category.
         public async Task<bool> DeleteCategoryAsync(int id)
         {
-            var category = await _context.ProductCategories.FindAsync(id);
+            var category = await _repo.GetByIdAsync(id);
 
             if (category == null)
             {
                 return false;
             }
 
-            _context.ProductCategories.Remove(category);
+            _repo.Remove(category);
 
-            await _context.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
 
             return true;
         }

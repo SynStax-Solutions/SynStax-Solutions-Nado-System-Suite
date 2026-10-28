@@ -7,92 +7,289 @@
 
 <div style="width: 100%;">
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">Products</h1>
-        <a asp-controller="Owner" asp-action="Dashboard"
-               style="background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+    <!-- PAGE HEADING AND BACK BUTTON -->
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;">
+
+        <h1 style="
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--black, #171717) !important;">
+            Products
+        </h1>
+
+        <a asp-controller="Owner"
+           asp-action="Dashboard"
+           style="
+                background: var(--dark-grey, #343434) !important;
+                background-color: var(--dark-grey, #343434) !important;
+                color: var(--white, #FFFFFF) !important;
+                text-decoration: none;
+                padding: 10px 20px;
+                border-radius: 7px;
+                font-weight: 600;
+                border: none;">
             Back
         </a>
+
     </div>
 
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
+    <!-- SEARCH AND CREATE BUTTON -->
+    <div style="
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;">
+
         <div style="flex: 1;">
-            <input type="text" id="productSearch" placeholder="Search for a product..."
-                   style="width: 100%; height: 44px; padding: 8px 15px; border: 1px solid #aaa; border-radius: 7px; font-size: 15px; outline: none;" />
+
+            <input type="text"
+                   id="productSearch"
+                   placeholder="Search for a product..."
+                   style="
+                        width: 100%;
+                        height: 44px;
+                        padding: 8px 15px;
+                        border: 1px solid var(--grey, #777777);
+                        border-radius: 7px;
+                        font-size: 15px;
+                        outline: none;
+                        background-color: var(--white, #FFFFFF);
+                        color: var(--black, #171717);" />
+
         </div>
-        <a asp-controller="Products" asp-action="Create"
-               style="height: 44px; display: flex; align-items: center; gap: 7px; background-color: #5A93C8; color: white; text-decoration: none; padding: 0 20px; border-radius: 7px; font-weight: 600; white-space: nowrap;">
+
+        <a asp-controller="Products"
+           asp-action="Create"
+           style="
+                height: 44px;
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                background: var(--primary, #D4A72C) !important;
+                background-color: var(--primary, #D4A72C) !important;
+                color: var(--black, #171717) !important;
+                text-decoration: none !important;
+                padding: 0 20px;
+                border-radius: 7px;
+                font-weight: 600;
+                white-space: nowrap;
+                border: none;">
             Create Product
         </a>
+
     </div>
 
-    <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); overflow: hidden;">
+    <!-- PRODUCTS TABLE -->
+    <div style="
+        background-color: var(--white, #FFFFFF);
+        border-radius: 14px;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+        overflow: hidden;">
 
-        <div style="display: grid; grid-template-columns: 80px 1.5fr 1.3fr 1fr 100px 140px; align-items: center; padding: 16px 20px; background-color: #68926D; color: white; font-weight: 700; font-size: 14px;">
-            <div>ID</div>
-            <div>Product Name</div>
-            <div>Category</div>
-            <div>Price</div>
-            <div>Active</div>
-            <div style="text-align: center;">Manage</div>
+        <!-- SOLID BLACK TABLE HEADER -->
+        <div style="
+            display: grid;
+            grid-template-columns: 80px 1.5fr 1.3fr 1fr 100px 140px;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--black, #171717) !important;
+            background-color: var(--black, #171717) !important;
+            color: var(--white, #FFFFFF) !important;
+            font-weight: 700;
+            font-size: 14px;">
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                ID
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Product Name
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Category
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Price
+            </div>
+
+            <div style="color: var(--white, #FFFFFF) !important;">
+                Active
+            </div>
+
+            <div style="
+                text-align: center;
+                color: var(--white, #FFFFFF) !important;">
+                Manage
+            </div>
+
         </div>
 
         @if (Model == null || !Model.Any())
         {
-            <div style="padding: 55px 20px; text-align: center; color: #666;">
-                <h3 style="margin-top: 12px; color: #24463A;">No Products Found</h3>
-                <p style="margin-bottom: 0;">There are currently no products on record.</p>
+            <div style="
+                padding: 55px 20px;
+                text-align: center;
+                color: var(--grey, #777777);">
+
+                <h3 style="
+                    margin-top: 12px;
+                    color: var(--black, #171717);">
+                    No Products Found
+                </h3>
+
+                <p style="margin-bottom: 0;">
+                    There are currently no products on record.
+                </p>
+
             </div>
         }
         else
         {
             foreach (var product in Model)
             {
-                var categoryName = categories.TryGetValue(product.ProductCategoryID, out var name) ? name : "Uncategorised";
+                var categoryName = categories.TryGetValue(product.ProductCategoryID, out var name)
+                    ? name
+                    : "Uncategorised";
 
                 <div class="product-row"
                      data-name="@product.ProductName"
                      data-category="@categoryName"
-                     style="display: grid; grid-template-columns: 80px 1.5fr 1.3fr 1fr 100px 140px; align-items: center; padding: 16px 20px; border-bottom: 1px solid #d9d9d9; font-size: 14px;">
+                     style="
+                        display: grid;
+                        grid-template-columns: 80px 1.5fr 1.3fr 1fr 100px 140px;
+                        align-items: center;
+                        padding: 16px 20px;
+                        border-bottom: 1px solid var(--light-grey, #E5E5E5);
+                        font-size: 14px;
+                        background-color: var(--white, #FFFFFF);
+                        color: var(--black, #171717);">
 
-                    <div>@product.ProductID</div>
-                    <div style="font-weight: 600; color: #24463A;">@product.ProductName</div>
-                    <div>@categoryName</div>
-                    <div>R @product.Price.ToString("N2")</div>
+                    <!-- PRODUCT ID -->
                     <div>
+                        @product.ProductID
+                    </div>
+
+                    <!-- PRODUCT NAME -->
+                    <div style="
+                        font-weight: 600;
+                        color: var(--black, #171717);">
+                        @product.ProductName
+                    </div>
+
+                    <!-- CATEGORY -->
+                    <div>
+                        @categoryName
+                    </div>
+
+                    <!-- PRICE -->
+                    <div>
+                        R @product.Price.ToString("N2")
+                    </div>
+
+                    <!-- ACTIVE STATUS -->
+                    <div>
+
                         @if (product.IsActive)
                         {
-                            <span style="background-color: #68926D; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Active</span>
+                            <span style="
+                                background: var(--success, #47785B) !important;
+                                background-color: var(--success, #47785B) !important;
+                                color: var(--white, #FFFFFF) !important;
+                                padding: 4px 10px;
+                                border-radius: 12px;
+                                font-size: 12px;
+                                font-weight: 600;">
+                                Active
+                            </span>
                         }
                         else
                         {
-                            <span style="background-color: #999; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Inactive</span>
+                            <span style="
+                                background: var(--grey, #777777) !important;
+                                background-color: var(--grey, #777777) !important;
+                                color: var(--white, #FFFFFF) !important;
+                                padding: 4px 10px;
+                                border-radius: 12px;
+                                font-size: 12px;
+                                font-weight: 600;">
+                                Inactive
+                            </span>
                         }
+
                     </div>
 
-                    <div style="display: flex; justify-content: center; align-items: center;">
+                    <!-- MANAGE -->
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;">
+
                         <div class="dropdown">
-                            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                    style="background-color: #68926D; color: white; border: none; border-radius: 7px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20);">
+
+                            <button class="btn dropdown-toggle"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    style="
+                                        background: var(--primary, #D4A72C) !important;
+                                        background-color: var(--primary, #D4A72C) !important;
+                                        color: var(--black, #171717) !important;
+                                        border: none !important;
+                                        border-radius: 7px;
+                                        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20);">
                                 Manage
                             </button>
-                            <ul class="dropdown-menu">
+
+                            <ul class="dropdown-menu"
+                                style="
+                                    background-color: var(--white, #FFFFFF);
+                                    border-color: var(--light-grey, #E5E5E5);">
+
+                                <!-- EDIT -->
                                 <li>
-                                    <a class="dropdown-item" asp-controller="Products" asp-action="Edit" asp-route-id="@product.ProductID">
+                                    <a class="dropdown-item"
+                                       asp-controller="Products"
+                                       asp-action="Edit"
+                                       asp-route-id="@product.ProductID"
+                                       style="color: var(--black, #171717);">
                                         Edit
                                     </a>
                                 </li>
+
+                                <!-- DELETE -->
                                 <li>
-                                    <form asp-controller="Products" asp-action="Delete" asp-route-id="@product.ProductID" method="post">
+
+                                    <form asp-controller="Products"
+                                          asp-action="Delete"
+                                          asp-route-id="@product.ProductID"
+                                          method="post">
+
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="dropdown-item"
+
+                                        <button type="submit"
+                                                class="dropdown-item"
+                                                style="
+                                                    color: var(--danger, #B54747) !important;
+                                                    font-weight: 600;"
                                                 onclick="return confirm('Are you sure you want to delete this product?');">
                                             Delete
                                         </button>
+
                                     </form>
+
                                 </li>
+
                             </ul>
+
                         </div>
+
                     </div>
 
                 </div>
@@ -104,18 +301,31 @@
 </div>
 
 @section Scripts {
+
     <script>
+
         const searchInput = document.getElementById("productSearch");
+
         const productRows = document.querySelectorAll(".product-row");
 
         searchInput.addEventListener("input", function () {
+
             const value = searchInput.value.toLowerCase().trim();
 
             productRows.forEach(function (row) {
+
                 const name = row.dataset.name.toLowerCase();
+
                 const category = row.dataset.category.toLowerCase();
-                row.style.display = (name.includes(value) || category.includes(value)) ? "grid" : "none";
+
+                row.style.display =
+                    (name.includes(value) || category.includes(value)) ? "grid" : "none";
+
             });
+
         });
+
     </script>
+
 }
+

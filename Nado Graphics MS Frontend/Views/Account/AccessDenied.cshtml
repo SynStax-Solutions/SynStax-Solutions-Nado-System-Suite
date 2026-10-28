@@ -6,11 +6,10 @@
     var (action, controller) = AppRoles.DashboardFor(User.FindFirst(ClaimTypes.Role)?.Value);
 }
 
-<div class="text-center mt-5">
-    <h1 style="color: #D46271;">Access Denied</h1>
-    <p class="text-muted">Your role does not have permission to open this page.</p>
-    <a asp-controller="@controller" asp-action="@action" class="btn"
-       style="background-color: #68926D; color: white;">
+<div class="status-container">
+    <h1 class="status-title status-title-danger">Access Denied</h1>
+    <p class="status-description">Your role does not have permission to open this page.</p>
+    <a asp-controller="@controller" asp-action="@action" class="btn btn-primary">
         Back to my dashboard
     </a>
 </div>

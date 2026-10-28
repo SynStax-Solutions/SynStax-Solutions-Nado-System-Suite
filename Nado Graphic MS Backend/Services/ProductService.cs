@@ -1,28 +1,32 @@
-﻿using Nado_Graphics_MS_Backend.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
-using Microsoft.EntityFrameworkCore;
+using Nado_Graphics_MS_Backend.Repositories;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
     //This class is the service that handles product business logic.
     public class ProductService
     {
-        private readonly BMSDbContext _context;
+        private readonly IRepository<Product> _products;
+        private readonly IProductCategoryRepository _categories;
 
-        public ProductService(BMSDbContext context)
+        public ProductService(IRepository<Product> products, IProductCategoryRepository categories)
         {
-            _context = context;
+            _products = products;
+            _categories = categories;
         }
+
         //----------------------------------------------------------------------------------
         // Returns every product, active or inactive.
         public async Task<List<Product>> GetProductsAsync()
         {
-            return await _context.Products.ToListAsync();
+            return await _products.GetAllAsync();
         }
         //----------------------------------------------------------------------------------
         public async Task<Product?> GetProductAsync(int id)
         {
-            return await _context.Products.FindAsync(id);
+            return await _products.GetByIdAsync(id);
         }
         //----------------------------------------------------------------------------------
         // Creates a new product after validating if its category exists and its
@@ -33,7 +37,7 @@ namespace Nado_Graphics_MS_Backend.Services
             product.CreatedAt = DateTime.Now;
 
             //ProductCategoryID is required - confirm the category actually exists.
-            var category = await _context.ProductCategories.FindAsync(product.ProductCategoryID);
+            var category = await _categories.GetByIdAsync(product.ProductCategoryID);
 
             if (category == null)
             {
@@ -46,9 +50,9 @@ namespace Nado_Graphics_MS_Backend.Services
                 return false;
             }
 
-            _context.Products.Add(product);
+            await _products.AddAsync(product);
 
-            await _context.SaveChangesAsync();
+            await _products.SaveChangesAsync();
 
             return true;
         }
@@ -61,14 +65,14 @@ namespace Nado_Graphics_MS_Backend.Services
                 return false;
             }
 
-            var existingProduct = await _context.Products.FindAsync(id);
+            var existingProduct = await _products.GetByIdAsync(id);
 
             if (existingProduct == null)
             {
                 return false;
             }
 
-            var category = await _context.ProductCategories.FindAsync(product.ProductCategoryID);
+            var category = await _categories.GetByIdAsync(product.ProductCategoryID);
 
             if (category == null)
             {
@@ -83,7 +87,7 @@ namespace Nado_Graphics_MS_Backend.Services
             existingProduct.Price = product.Price;
             existingProduct.IsActive = product.IsActive;
 
-            await _context.SaveChangesAsync();
+            await _products.SaveChangesAsync();
 
             return true;
         }
@@ -91,16 +95,14 @@ namespace Nado_Graphics_MS_Backend.Services
         // Hard-deletes a product.
         public async Task<bool> DeleteProductAsync(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-
+            var product = await _products.GetByIdAsync(id);
             if (product == null)
             {
                 return false;
             }
 
-            _context.Products.Remove(product);
-
-            await _context.SaveChangesAsync();
+            _products.Remove(product);
+            await _products.SaveChangesAsync();
 
             return true;
         }

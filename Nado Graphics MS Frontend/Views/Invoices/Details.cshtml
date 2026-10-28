@@ -11,66 +11,81 @@
 
     var statusColor = Model.InvoiceStatus switch
     {
-        "Paid" => "#68926D",
-        "Partially Paid" => "#5A93C8",
-        "Overdue" => "#C85A5A",
-        "Extension Requested" => "#B08C3A",
-        "Cancelled" => "#999999",
-        _ => "#DFA738"
+        "Paid" => "var(--success, #47785B)",
+        "Partially Paid" => "var(--primary-hover, #B88C1F)",
+        "Overdue" => "var(--danger, #B54747)",
+        "Extension Requested" => "var(--primary-hover, #B88C1F)",
+        "Cancelled" => "var(--grey, #777777)",
+        _ => "var(--primary, #D4A72C)"
     };
+
+    var statusTextColor = Model.InvoiceStatus == "Unpaid"
+        || Model.InvoiceStatus == "Partially Paid"
+        || Model.InvoiceStatus == "Extension Requested"
+        ? "var(--black, #171717)"
+        : "var(--white, #FFFFFF)";
 
     var canAct = Model.InvoiceStatus != "Paid" && Model.InvoiceStatus != "Cancelled";
     var outstanding = Model.TotalAmount - Model.AmountPaid;
 }
 
-<div style="width: 100%; max-width: 900px;">
+<div style="width: 100%; max-width: 900px; color: var(--black, #171717) !important;">
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
         <div>
-            <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #24463A;">Invoice @Model.ReferenceNumber</h1>
-            <span style="display: inline-block; margin-top: 8px; background-color: @statusColor; color: white; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 600;">
+            <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: var(--black, #171717) !important;">
+                Invoice @Model.ReferenceNumber
+            </h1>
+
+            <span style="display: inline-block; margin-top: 8px; background-color: @statusColor !important; color: @statusTextColor !important; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 600;">
                 @Model.InvoiceStatus
             </span>
         </div>
+
         <a asp-controller="Invoices" asp-action="Index"
-               style="background-color: #68926D; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+           style="background-color: var(--dark-grey, #343434) !important; color: var(--white, #FFFFFF) !important; text-decoration: none !important; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
             Back
         </a>
     </div>
 
     @if (TempData["Success"] != null)
     {
-        <div style="background-color: #DCEEDC; color: #24463A; padding: 12px 16px; border-radius: 7px; margin-bottom: 20px;">@TempData["Success"]</div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div style="background-color: #F8D7DA; color: #842029; padding: 12px 16px; border-radius: 7px; margin-bottom: 20px;">@TempData["Error"]</div>
+        <div style="background-color: var(--background, #F5F5F5) !important; color: var(--success, #47785B) !important; padding: 12px 16px; border-radius: 7px; margin-bottom: 20px;">
+            @TempData["Success"]
+        </div>
     }
 
-    <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px; margin-bottom: 20px;">
+    @if (TempData["Error"] != null)
+    {
+        <div style="background-color: var(--background, #F5F5F5) !important; color: var(--danger, #B54747) !important; padding: 12px 16px; border-radius: 7px; margin-bottom: 20px;">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div style="background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px; margin-bottom: 20px;">
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
             <div>
-                <div style="font-weight: 600; color: #24463A; margin-bottom: 4px;">Client</div>
-                <div>@clientName</div>
+                <div style="font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 4px;">Client</div>
+                <div style="color: var(--black, #171717) !important;">@clientName</div>
             </div>
             <div>
-                <div style="font-weight: 600; color: #24463A; margin-bottom: 4px;">Invoice Date</div>
-                <div>@Model.InvoiceDate.ToString("dd MMM yyyy")</div>
+                <div style="font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 4px;">Invoice Date</div>
+                <div style="color: var(--black, #171717) !important;">@Model.InvoiceDate.ToString("dd MMM yyyy")</div>
             </div>
             <div>
-                <div style="font-weight: 600; color: #24463A; margin-bottom: 4px;">Due Date</div>
-                <div>@Model.DueDate.ToString("dd MMM yyyy")</div>
+                <div style="font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 4px;">Due Date</div>
+                <div style="color: var(--black, #171717) !important;">@Model.DueDate.ToString("dd MMM yyyy")</div>
             </div>
             <div>
-                <div style="font-weight: 600; color: #24463A; margin-bottom: 4px;">Notes</div>
-                <div>@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</div>
+                <div style="font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 4px;">Notes</div>
+                <div style="color: var(--black, #171717) !important;">@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</div>
             </div>
         </div>
 
-        <h3 style="color: #24463A; font-size: 18px; margin-bottom: 12px;">Products</h3>
+        <h3 style="color: var(--black, #171717) !important; font-size: 18px; margin-bottom: 12px;">Products</h3>
 
-        <div style="display: grid; grid-template-columns: 2fr 90px 120px 120px; gap: 10px; padding: 10px 0; border-bottom: 2px solid #68926D; font-weight: 700; color: #24463A; font-size: 14px;">
+        <div style="display: grid; grid-template-columns: 2fr 90px 120px 120px; gap: 10px; padding: 10px 0; border-bottom: 2px solid var(--primary, #D4A72C) !important; font-weight: 700; color: var(--black, #171717) !important; font-size: 14px;">
             <div>Product</div>
             <div>Qty</div>
             <div>Unit Price</div>
@@ -81,7 +96,7 @@
         {
             var productName = products.TryGetValue(item.ProductID, out var name) ? name : "Unknown Product";
 
-            <div style="display: grid; grid-template-columns: 2fr 90px 120px 120px; gap: 10px; padding: 10px 0; border-bottom: 1px solid #d9d9d9; font-size: 14px;">
+            <div style="display: grid; grid-template-columns: 2fr 90px 120px 120px; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--light-grey, #E5E5E5) !important; font-size: 14px; color: var(--black, #171717) !important;">
                 <div>@productName</div>
                 <div>@item.Quantity</div>
                 <div>R @item.UnitPrice.ToString("N2")</div>
@@ -89,7 +104,7 @@
             </div>
         }
 
-        <div style="display: flex; justify-content: flex-end; gap: 30px; margin-top: 15px; font-size: 16px;">
+        <div style="display: flex; justify-content: flex-end; gap: 30px; margin-top: 15px; font-size: 16px; color: var(--black, #171717) !important;">
             <div>Total: <strong>R @Model.TotalAmount.ToString("N2")</strong></div>
             <div>Paid: <strong>R @Model.AmountPaid.ToString("N2")</strong></div>
             <div>Outstanding: <strong>R @outstanding.ToString("N2")</strong></div>
@@ -99,34 +114,46 @@
 
     @if (canAct)
     {
-        <div style="background-color: white; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px; margin-bottom: 20px;">
-            <h3 style="color: #24463A; font-size: 18px; margin-bottom: 15px;">Record a Payment</h3>
+        <div style="background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important; border-radius: 14px; box-shadow: 0 5px 14px rgba(0,0,0,0.16); padding: 30px; margin-bottom: 20px;">
+
+            <h3 style="color: var(--black, #171717) !important; font-size: 18px; margin-bottom: 15px;">Record a Payment</h3>
+
             <form asp-controller="Invoices" asp-action="RecordPayment" asp-route-id="@Model.InvoiceID" method="post">
                 @Html.AntiForgeryToken()
+
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end;">
+
                     <div>
-                        <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px; font-size: 13px;">Amount (R)</label>
+                        <label style="display: block; font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 6px; font-size: 13px;">Amount (R)</label>
+
                         <input type="number" name="amount" step="0.01" min="0.01" max="@outstanding" required
-                               style="width: 100%; height: 42px; padding: 8px 10px; border: 1px solid #aaa; border-radius: 7px;" />
+                               style="width: 100%; height: 42px; padding: 8px 10px; border: 1px solid var(--grey, #777777) !important; border-radius: 7px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;" />
                     </div>
+
                     <div>
-                        <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px; font-size: 13px;">Method</label>
-                        <select name="paymentMethod" style="width: 100%; height: 42px; padding: 8px 10px; border: 1px solid #aaa; border-radius: 7px;">
+                        <label style="display: block; font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 6px; font-size: 13px;">Method</label>
+
+                        <select name="paymentMethod"
+                                style="width: 100%; height: 42px; padding: 8px 10px; border: 1px solid var(--grey, #777777) !important; border-radius: 7px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;">
                             <option value="Cash">Cash</option>
                             <option value="EFT">EFT</option>
                             <option value="Card">Card</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
+
                     <div>
-                        <label style="display: block; font-weight: 600; color: #24463A; margin-bottom: 6px; font-size: 13px;">Reference</label>
+                        <label style="display: block; font-weight: 600; color: var(--black, #171717) !important; margin-bottom: 6px; font-size: 13px;">Reference</label>
+
                         <input type="text" name="transactionReference" placeholder="Optional"
-                               style="width: 100%; height: 42px; padding: 8px 10px; border: 1px solid #aaa; border-radius: 7px;" />
+                               style="width: 100%; height: 42px; padding: 8px 10px; border: 1px solid var(--grey, #777777) !important; border-radius: 7px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;" />
                     </div>
+
                     <button type="submit"
-                            style="background-color: #68926D; color: white; border: none; padding: 0 20px; height: 42px; border-radius: 7px; font-weight: 600; cursor: pointer;">
+                            style="background-color: var(--primary, #D4A72C) !important; color: var(--black, #171717) !important; border: none !important; padding: 0 20px; height: 42px; border-radius: 7px; font-weight: 600; cursor: pointer;">
                         Record
                     </button>
+
                 </div>
             </form>
         </div>
@@ -137,19 +164,32 @@
         @if (canAct)
         {
             <a asp-controller="Invoices" asp-action="Edit" asp-route-id="@Model.InvoiceID"
-                   style="background-color: #24463A; color: white; text-decoration: none; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
+               style="background-color: var(--dark-grey, #343434) !important; color: var(--white, #FFFFFF) !important; text-decoration: none !important; padding: 10px 20px; border-radius: 7px; font-weight: 600;">
                 Edit
             </a>
 
             <div class="dropdown">
+
                 <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                        style="background-color: #B08C3A; color: white; border: none; padding: 10px 20px; border-radius: 7px; font-weight: 600; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.20);">
+                        style="background-color: var(--primary, #D4A72C) !important; color: var(--black, #171717) !important; border: none !important; padding: 10px 20px; border-radius: 7px; font-weight: 600; box-shadow: 0 3px 6px rgba(0,0,0,0.20);">
                     Actions
                 </button>
-                <ul class="dropdown-menu">
-                    <li><button type="button" class="dropdown-item" id="extendBtn">Request Extension</button></li>
-                    <li><button type="button" class="dropdown-item" id="cancelBtn">Cancel Invoice</button></li>
+
+                <ul class="dropdown-menu" style="background-color: var(--white, #FFFFFF) !important; border-color: var(--light-grey, #E5E5E5) !important;">
+                    <li>
+                        <button type="button" class="dropdown-item" id="extendBtn"
+                                style="color: var(--black, #171717) !important;">
+                            Request Extension
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item" id="cancelBtn"
+                                style="color: var(--danger, #B54747) !important;">
+                            Cancel Invoice
+                        </button>
+                    </li>
                 </ul>
+
             </div>
 
             <form asp-controller="Invoices" asp-action="Extend" asp-route-id="@Model.InvoiceID" method="post" id="extendForm" style="display: none;">

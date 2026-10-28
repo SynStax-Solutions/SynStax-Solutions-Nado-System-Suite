@@ -8,41 +8,21 @@
 
     <div style="margin-bottom: 25px;">
 
-        <h1 style="
-            margin: 0;
-            font-size: 32px;
-            font-weight: 700;
-            color: #24463A;">
+        <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: var(--black, #171717) !important;">
             Edit Supplier
         </h1>
 
-        <p style="
-            margin: 5px 0 0 0;
-            color: #555;
-            font-size: 15px;">
+        <p style="margin: 5px 0 0 0; color: var(--grey, #777777) !important; font-size: 15px;">
             Edit the details of @Model.SupplierName.
         </p>
 
     </div>
 
-    <div style="
-        background-color: white;
-        border: 2px solid black;
-        border-radius: 14px;
-        box-shadow: 0 6px 14px rgba(0,0,0,0.20);
-        padding: 25px;
-        max-width: 700px; ">
+    <div style="background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important; border: 2px solid var(--black, #171717) !important; border-radius: 14px; box-shadow: 0 6px 14px rgba(0,0,0,0.20); padding: 25px; max-width: 700px;">
 
-        <h2 style="
-            margin: 0;
-            color: #24463A;
-            font-size: 21px;
-            font-weight: 700;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #68926D; ">
+        <h2 style="margin: 0; color: var(--black, #171717) !important; font-size: 21px; font-weight: 700; padding-bottom: 10px; border-bottom: 2px solid var(--primary, #D4A72C) !important;">
             Supplier Information
         </h2>
-
 
         <form asp-action="Edit" method="post">
 
@@ -50,60 +30,43 @@
 
             <input type="hidden" asp-for="SupplierID" />
 
-
             <div asp-validation-summary="ModelOnly"
-                 style="
-                    color: #D46271;
-                    margin-top: 15px; ">
+                 style="color: var(--danger, #B54747) !important; margin-top: 15px;">
             </div>
-
 
             <div style="margin-top: 20px;">
 
                 <label asp-for="SupplierName"
-                       style="
-                            display: block;
-                            font-weight: 600;
-                            margin-bottom: 7px; ">
+                       style="display: block; font-weight: 600; margin-bottom: 7px; color: var(--black, #171717) !important;">
                     Supplier Name
-                    <span style="color: #D46271;">*</span>
+                    <span style="color: var(--danger, #B54747) !important;">*</span>
                 </label>
 
                 <input asp-for="SupplierName"
                        class="form-control"
                        placeholder="Enter supplier name"
-                       style="
-                            border: 2px solid black;
-                            border-radius: 7px;
-                            padding: 10px; "/>
+                       style="border: 2px solid var(--grey, #777777) !important; border-radius: 7px; padding: 10px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;" />
 
                 <span asp-validation-for="SupplierName"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747) !important;">
                 </span>
 
             </div>
 
-
             <div style="margin-top: 18px;">
 
                 <label asp-for="ContactNumber"
-                       style="
-                            display: block;
-                            font-weight: 600;
-                            margin-bottom: 7px;">
+                       style="display: block; font-weight: 600; margin-bottom: 7px; color: var(--black, #171717) !important;">
                     Contact Number
                 </label>
 
                 <input asp-for="ContactNumber"
                        class="form-control"
                        placeholder="Contact number"
-                       style="
-                            border: 2px solid black;
-                            border-radius: 7px;
-                            padding: 10px;" />
+                       style="border: 2px solid var(--grey, #777777) !important; border-radius: 7px; padding: 10px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;" />
 
                 <span asp-validation-for="ContactNumber"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747) !important;">
                 </span>
 
             </div>
@@ -111,10 +74,7 @@
             <div style="margin-top: 18px;">
 
                 <label asp-for="SupplierEmail"
-                       style="
-                            display: block;
-                            font-weight: 600;
-                            margin-bottom: 7px; ">
+                       style="display: block; font-weight: 600; margin-bottom: 7px; color: var(--black, #171717) !important;">
                     Email Address
                 </label>
 
@@ -122,13 +82,10 @@
                        type="email"
                        class="form-control"
                        placeholder="Supplier email"
-                       style="
-                            border: 2px solid black;
-                            border-radius: 7px;
-                            padding: 10px; "/>
+                       style="border: 2px solid var(--grey, #777777) !important; border-radius: 7px; padding: 10px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;" />
 
                 <span asp-validation-for="SupplierEmail"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747) !important;">
                 </span>
 
             </div>
@@ -136,11 +93,7 @@
             <div style="margin-top: 18px;">
 
                 <label asp-for="SupplierAddress"
-                       style="
-                            display: block;
-                            font-weight: 600;
-                            margin-bottom: 7px;
-                       ">
+                       style="display: block; font-weight: 600; margin-bottom: 7px; color: var(--black, #171717) !important;">
                     Supplier Address
                 </label>
 
@@ -148,36 +101,25 @@
                           class="form-control"
                           placeholder="Supplier address"
                           rows="3"
-                          style="
-                                border: 2px solid black;
-                                border-radius: 7px;
-                                padding: 10px;
-                          ">
-                </textarea>
+                          style="border: 2px solid var(--grey, #777777) !important; border-radius: 7px; padding: 10px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;"></textarea>
 
             </div>
 
             <div style="margin-top: 18px;">
 
                 <label asp-for="LeadTime"
-                       style="
-                            display: block;
-                            font-weight: 600;
-                            margin-bottom: 7px; ">
+                       style="display: block; font-weight: 600; margin-bottom: 7px; color: var(--black, #171717) !important;">
                     Lead Time
-                    <span style="color: #D46271;">*</span>
+                    <span style="color: var(--danger, #B54747) !important;">*</span>
                 </label>
 
                 <input asp-for="LeadTime"
                        class="form-control"
                        placeholder="e.g. 2 weeks, 3 months"
-                       style="
-                            border: 2px solid black;
-                            border-radius: 7px;
-                            padding: 10px; "/>
+                       style="border: 2px solid var(--grey, #777777) !important; border-radius: 7px; padding: 10px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;" />
 
                 <span asp-validation-for="LeadTime"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747) !important;">
                 </span>
 
             </div>
@@ -185,79 +127,52 @@
             <div style="margin-top: 18px;">
 
                 <label asp-for="ServiceType"
-                       style="
-                            display: block;
-                            font-weight: 600;
-                            margin-bottom: 7px; ">
+                       style="display: block; font-weight: 600; margin-bottom: 7px; color: var(--black, #171717) !important;">
                     Service Type
-                    <span style="color: #D46271;">*</span>
+                    <span style="color: var(--danger, #B54747) !important;">*</span>
                 </label>
 
                 <input asp-for="ServiceType"
                        class="form-control"
                        placeholder="e.g. Printing, Paper Supply"
-                       style="
-                            border: 2px solid black;
-                            border-radius: 7px;
-                            padding: 10px; "/>
+                       style="border: 2px solid var(--grey, #777777) !important; border-radius: 7px; padding: 10px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;" />
 
                 <span asp-validation-for="ServiceType"
-                      style="color: #D46271;">
+                      style="color: var(--danger, #B54747) !important;">
                 </span>
 
             </div>
+
             <div style="margin-top: 18px;">
 
-    <label asp-for="ServiceRate"
-           style="
-                display: block;
-                font-weight: 600;
-                margin-bottom: 7px;">
-        Service Rate
-    </label>
+                <label asp-for="ServiceRate"
+                       style="display: block; font-weight: 600; margin-bottom: 7px; color: var(--black, #171717) !important;">
+                    Service Rate
+                </label>
 
-    <input asp-for="ServiceRate"
-           type="number"
-           step="0.01"
-           min="0"
-           class="form-control"
-           placeholder="e.g. 250.00"
-           style="
-                border: 2px solid black;
-                border-radius: 7px;
-                padding: 10px;"/>
+                <input asp-for="ServiceRate"
+                       type="number"
+                       step="0.01"
+                       min="0"
+                       class="form-control"
+                       placeholder="e.g. 250.00"
+                       style="border: 2px solid var(--grey, #777777) !important; border-radius: 7px; padding: 10px; background-color: var(--white, #FFFFFF) !important; color: var(--black, #171717) !important;" />
 
-    <span asp-validation-for="ServiceRate"
-          style="color: #D46271;">
-    </span>
+                <span asp-validation-for="ServiceRate"
+                      style="color: var(--danger, #B54747) !important;">
+                </span>
 
-</div>
+            </div>
 
-            <div style="
-                display: flex;
-                justify-content: flex-end;
-                gap: 12px;
-                margin-top: 25px; ">
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 25px;">
 
                 <a asp-action="Create"
-                   style="
-                        background-color: #D46271;
-                        color: white;
-                        text-decoration: none;
-                        padding: 11px 22px;
-                        border-radius: 7px;
-                        font-weight: 600; ">
+                   style="background-color: var(--dark-grey, #343434) !important; color: var(--white, #FFFFFF) !important; text-decoration: none !important; padding: 11px 22px; border-radius: 7px; font-weight: 600;">
                     Cancel
                 </a>
 
                 <button type="submit"
-                        style="
-                            background-color: #5A93C8;
-                            color: white;
-                            border: none;
-                            padding: 11px 22px;
-                            border-radius: 7px;
-                            font-weight: 600;">
+                        style="background-color: var(--primary, #D4A72C) !important; color: var(--black, #171717) !important; border: none !important; padding: 11px 22px; border-radius: 7px; font-weight: 600;">
                     Save Changes
                 </button>
 
@@ -269,11 +184,8 @@
 
 </div>
 
-
 @section Scripts {
-
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
 }

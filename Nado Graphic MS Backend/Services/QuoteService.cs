@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Nado_Graphics_MS_Backend.Data;
+using Nado_Graphics_MS_Backend.Hubs;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Models.QuoteStates;
-using Microsoft.AspNetCore.SignalR;
-using Nado_Graphics_MS_Backend.Hubs;
+using Nado_Graphics_MS_Backend.Repositories;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
@@ -12,40 +13,47 @@ namespace Nado_Graphics_MS_Backend.Services
     // calculation, and state transitions occur.
     public class QuoteService
     {
-        private readonly BMSDbContext _context;
+        private readonly IQuoteRepository _quotes;
+        private readonly IRepository<Client> _clients;
+        private readonly IRepository<Product> _products;
         private readonly ReferenceNumberService _referenceNumberService;
         //added the below service declaration
         private readonly JobCardService _jobCardService;
         private readonly IHubContext<JobCardHub> _hubContext;
         //The 4 statuses allowed by the Check_Quote_Status constraint.
-        private static readonly string[] ValidStatuses = { "Pending", "Accepted", "Rejected", "Expired" };
+        //was: { "Pending", "Accepted", "Rejected", "Expired" }
+        private static readonly string[] ValidStatuses = Enum.GetNames<States.QuoteStatus>();
 
-        public QuoteService(BMSDbContext context, ReferenceNumberService referenceNumberService, JobCardService jobCardService, IHubContext<JobCardHub> hubContext)
+        public QuoteService(
+            IQuoteRepository quotes,
+            IRepository<Client> clients,
+            IRepository<Product> products,
+            ReferenceNumberService referenceNumberService,
+            JobCardService jobCardService,
+            IHubContext<JobCardHub> hubContext)
         {
-            _context = context;
+            _quotes = quotes;
+            _clients = clients;
+            _products = products;
             _referenceNumberService = referenceNumberService;
             _jobCardService = jobCardService;
             _hubContext = hubContext;
         }
+
         //----------------------------------------------------------------------------------
         // Returns every quote, newest first, with their line items
         // loaded so the API response contains full quote details
         // in a single query
         public async Task<List<Quote>> GetQuotesAsync()
         {
-            return await _context.Quotes
-                .Include(q => q.QuoteItems)
-                .OrderByDescending(q => q.QuoteDate)
-                .ToListAsync();
+            return await _quotes.GetAllWithItemsAsync();                
         }
         //----------------------------------------------------------------------------------
         // Fetches a single quote with its items. Returns null if not found
         // the controller turns that into a 404.
         public async Task<Quote?> GetQuoteAsync(int id)
         {
-            return await _context.Quotes
-                .Include(q => q.QuoteItems)
-                .FirstOrDefaultAsync(q => q.QuoteID == id); ;
+            return await _quotes.GetWithItemsAsync(id);                
         }
         //----------------------------------------------------------------------------------
         // Creates a new quote from scratch, including validating and pricing
@@ -60,7 +68,7 @@ namespace Nado_Graphics_MS_Backend.Services
             quote.QuoteDate = DateTime.Now;
 
             // A quote can't exist without a client linked to it.
-            var client = await _context.Clients.FindAsync(quote.ClientID);
+            var client = await _clients.GetByIdAsync(quote.ClientID);
 
             // If no status was supplied, default to Pending - this is the
             // only valid starting state for a new quote.
@@ -71,7 +79,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
             if (string.IsNullOrWhiteSpace(quote.QuoteStatus))
             {
-                quote.QuoteStatus = "Pending";
+                quote.QuoteStatus = States.QuoteStatus.Pending.ToString();
             }
 
             if (!ValidStatuses.Contains(quote.QuoteStatus))
@@ -92,7 +100,7 @@ namespace Nado_Graphics_MS_Backend.Services
             {
                 item.QuoteItemID = 0;
 
-                var product = await _context.Products.FindAsync(item.ProductID);
+                var product = await _products.GetByIdAsync(item.ProductID);
 
                 if (product == null || !product.IsActive)
                 {
@@ -120,9 +128,9 @@ namespace Nado_Graphics_MS_Backend.Services
 
             quote.ReferenceNumber = await _referenceNumberService.GenerateReferenceNumberAsync(client.FirstName);
 
-            _context.Quotes.Add(quote);
+            await _quotes.AddAsync(quote);
 
-            await _context.SaveChangesAsync();
+            await _quotes.SaveChangesAsync();
 
             return (true, null);
         }
@@ -136,9 +144,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return false;
             }
 
-            var existingQuote = await _context.Quotes
-                .Include(q => q.QuoteItems)
-                .FirstOrDefaultAsync(q => q.QuoteID == id);
+            var existingQuote = await _quotes.GetWithItemsAsync(id);                
 
             if (existingQuote == null)
             {
@@ -147,12 +153,12 @@ namespace Nado_Graphics_MS_Backend.Services
 
             //Only a Pending quote can be edited, once a client has responded, the
             //products/pricing underneath their decision shouldn't silently change.
-            if (existingQuote.QuoteStatus != "Pending")
+            if (existingQuote.QuoteStatus != States.QuoteStatus.Pending.ToString())
             {
                 return false;
             }
 
-            var client = await _context.Clients.FindAsync(quote.ClientID);
+            var client = await _clients.GetByIdAsync(quote.ClientID);
 
             if (client == null)
             {
@@ -172,7 +178,7 @@ namespace Nado_Graphics_MS_Backend.Services
             // validating each one like CreateQuoteAsync.
             foreach (var item in quote.QuoteItems)
             {
-                var product = await _context.Products.FindAsync(item.ProductID);
+                var product = await _products.GetByIdAsync(item.ProductID);
 
                 if (product == null || !product.IsActive)
                 {
@@ -201,7 +207,7 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             //Removes the old line items so they can be fully replaced by the incoming set.
-            _context.QuoteItems.RemoveRange(existingQuote.QuoteItems);
+            _quotes.RemoveItems(existingQuote.QuoteItems);
 
             existingQuote.ClientID = quote.ClientID;
             existingQuote.ValidUntil = quote.ValidUntil;
@@ -212,7 +218,7 @@ namespace Nado_Graphics_MS_Backend.Services
             //QuoteStatus is intentionally NOT updated here, it can only change via
             //AcceptQuoteAsync / RejectQuoteAsync / ExpireQuoteAsync.
 
-            await _context.SaveChangesAsync();
+            await _quotes.SaveChangesAsync();
 
             return true;
         }
@@ -220,16 +226,16 @@ namespace Nado_Graphics_MS_Backend.Services
         // Deletes a quote
         public async Task<bool> DeleteQuoteAsync(int id)
         {
-            var quote = await _context.Quotes.FindAsync(id);
+            var quote = await _quotes.GetByIdAsync(id);
 
             if (quote == null)
             {
                 return false;
             }
 
-            _context.Quotes.Remove(quote);
+            _quotes.Remove(quote);
 
-            await _context.SaveChangesAsync();
+            await _quotes.SaveChangesAsync();
 
             return true;
         }
@@ -238,7 +244,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<(bool Success, string? Error)> AcceptQuoteAsync(int id)
         {
             //This searches the database for the quote.
-            var quote = await _context.Quotes.FindAsync(id);
+            var quote = await _quotes.GetByIdAsync(id);
 
 
             //This checks whether the quote exists.
@@ -265,7 +271,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 }
 
                 //This saves both the accepted quote and the new Job Card.
-                await _context.SaveChangesAsync();
+                await _quotes.SaveChangesAsync();
                 await _hubContext.Clients.All.SendAsync("JobCardsUpdated");
                 //This returns a successful result.
                 return (true, null);
@@ -305,7 +311,7 @@ namespace Nado_Graphics_MS_Backend.Services
         // Same pattern as AcceptQuoteAsync, but for the Rejected transition.
         public async Task<(bool Success, string? Error)> RejectQuoteAsync(int id, string reason)
         {
-            var quote = await _context.Quotes.FindAsync(id);
+            var quote = await _quotes.GetByIdAsync(id);
 
             if (quote == null)
             {
@@ -318,7 +324,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
                 currentState.Reject(quote, reason);
 
-                await _context.SaveChangesAsync();
+                await _quotes.SaveChangesAsync();
 
                 return (true, null);
             }
@@ -331,7 +337,7 @@ namespace Nado_Graphics_MS_Backend.Services
         // Same pattern as AcceptQuoteAsync, but for the Expiry transition.
         public async Task<(bool Success, string? Error)> ExpireQuoteAsync(int id, string reason)
         {
-            var quote = await _context.Quotes.FindAsync(id);
+            var quote = await _quotes.GetByIdAsync(id);
 
             if (quote == null)
             {
@@ -344,7 +350,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
                 currentState.Expire(quote, reason);
 
-                await _context.SaveChangesAsync();
+                await _quotes.SaveChangesAsync();
 
                 return (true, null);
             }

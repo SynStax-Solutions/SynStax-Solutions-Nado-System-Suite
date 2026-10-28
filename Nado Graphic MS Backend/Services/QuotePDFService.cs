@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Repositories;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -11,13 +12,22 @@ namespace Nado_Graphics_MS_Backend.Services
     // Holds the logic for generating the PDF that matches Nado Graphics current quote layout
     public class QuotePDFService
     {
-        private readonly BMSDbContext _context;
+        private readonly IQuoteRepository _quotes;
+        private readonly IRepository<Client> _clients;
+        private readonly IProductRepository _products;
         private readonly CompanyInfoOptions _companyInfo;
         private readonly IWebHostEnvironment _environment;
 
-        public QuotePDFService(BMSDbContext context, IOptions<CompanyInfoOptions> companyInfo, IWebHostEnvironment environment)
+        public QuotePDFService(
+            IQuoteRepository quotes,
+            IRepository<Client> clients,
+            IProductRepository products,
+            IOptions<CompanyInfoOptions> companyInfo,
+            IWebHostEnvironment environment)
         {
-            _context = context;
+            _quotes = quotes;
+            _clients = clients;
+            _products = products;
             _companyInfo = companyInfo.Value;
             _environment = environment;
         }
@@ -25,16 +35,14 @@ namespace Nado_Graphics_MS_Backend.Services
         //salesRepName comes from the logged-in user who clicks to download.
         public async Task<byte[]?> GenerateQuotePdfAsync(int quoteId, string salesRepName)
         {
-            var quote = await _context.Quotes
-                .Include(q => q.QuoteItems)
-                .FirstOrDefaultAsync(q => q.QuoteID == quoteId);
+            var quote = await _quotes.GetWithItemsAsync(quoteId);
 
             if (quote == null)
             {
                 return null;
             }
 
-            var client = await _context.Clients.FindAsync(quote.ClientID);
+            var client = await _clients.GetByIdAsync(quote.ClientID);
 
             if (client == null)
             {
@@ -42,9 +50,7 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             var productIds = quote.QuoteItems.Select(i => i.ProductID).Distinct().ToList();
-            var products = await _context.Products
-                .Where(p => productIds.Contains(p.ProductID))
-                .ToDictionaryAsync(p => p.ProductID, p => p.ProductName);
+            var products = await _products.GetNamesByIdsAsync(productIds);
 
             var logoPath = Path.Combine(_environment.ContentRootPath, "Assets", "nado-logo.png");
             var hasLogo = File.Exists(logoPath);

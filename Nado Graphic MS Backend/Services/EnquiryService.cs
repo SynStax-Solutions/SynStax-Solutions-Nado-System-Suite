@@ -1,15 +1,16 @@
-﻿using System.Collections.Concurrent;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Repositories;
+using System.Collections.Concurrent;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
     public class EnquiryService
     {
-        private readonly BMSDbContext _context;
-        private readonly EmailService _emailService;
+        private readonly IEnquiryRepository _repo;
+        private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
 
         //Tracks recent submission timestamps per IP, in memory. Resets on app
@@ -18,9 +19,9 @@ namespace Nado_Graphics_MS_Backend.Services
         private const int MaxSubmissionsPerWindow = 3;
         private static readonly TimeSpan RateLimitWindow = TimeSpan.FromMinutes(10);
 
-        public EnquiryService(BMSDbContext context, EmailService emailService, IConfiguration configuration)
+        public EnquiryService(IEnquiryRepository repo, IEmailService emailService, IConfiguration configuration)
         {
-            _context = context;
+            _repo = repo;
             _emailService = emailService;
             _configuration = configuration;
         }
@@ -75,8 +76,8 @@ namespace Nado_Graphics_MS_Backend.Services
                 IsRead = false
             };
 
-            _context.Enquiries.Add(enquiry);
-            await _context.SaveChangesAsync();
+            await _repo.AddAsync(enquiry);
+            await _repo.SaveChangesAsync();
 
             var paEmail = _configuration["PaInbox:Email"];
 
@@ -111,7 +112,7 @@ namespace Nado_Graphics_MS_Backend.Services
         //Returns false if the enquiry doesn't exist.
         public async Task<bool> MarkAsReadAsync(int id)
         {
-            var enquiry = await _context.Enquiries.FindAsync(id);
+            var enquiry = await _repo.GetByIdAsync(id);
 
             if (enquiry == null)
             {
@@ -121,7 +122,7 @@ namespace Nado_Graphics_MS_Backend.Services
             if (!enquiry.IsRead)
             {
                 enquiry.IsRead = true;
-                await _context.SaveChangesAsync();
+                await _repo.SaveChangesAsync();
             }
 
             return true;
@@ -129,14 +130,12 @@ namespace Nado_Graphics_MS_Backend.Services
         //----------------------------------------------------------------------------------
         public async Task<List<Enquiry>> GetEnquiriesAsync()
         {
-            return await _context.Enquiries
-                .OrderByDescending(e => e.SubmittedAt)
-                .ToListAsync();
+            return await _repo.GetNewestFirstAsync();
         }
         //----------------------------------------------------------------------------------
         public async Task<Enquiry?> GetEnquiryAsync(int id)
         {
-            return await _context.Enquiries.FindAsync(id);
+            return await _repo.GetByIdAsync(id);
         }
         //----------------------------------------------------------------------------------
         private static bool IsValidEmail(string email)

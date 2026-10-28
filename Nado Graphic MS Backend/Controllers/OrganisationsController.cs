@@ -1,162 +1,66 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Nado_Graphics_MS_Backend.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Nado_Graphics_MS_Backend.Models;
-using Microsoft.AspNetCore.Authorization;
 using Nado_Graphics_MS_Backend.Security;
+using Nado_Graphics_MS_Backend.Services;
 
 namespace Nado_Graphics_MS_Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-
-    //Only a logged-in Manager (Owner) or PA/Admin can use these endpoints.
     [Authorize(Roles = AppRoles.ManagerOrAdmin)]
     public class OrganisationsController : ControllerBase
     {
-        //This stores the database context used to access organisation records.
-        private readonly BMSDbContext _context;
+        private readonly OrganisationService _organisationService;
 
-        //This receives the database contextusing dependency Injection
-        public OrganisationsController(BMSDbContext context)
+        public OrganisationsController(OrganisationService organisationService)
         {
-            _context = context;
+            _organisationService = organisationService;
         }
-        //--------------------------------------------------------------------------------------------------------------//
-        //This gets all organisations from the database
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Organisation>>> GetOrganisations()
         {
-            //This retrieves all organisation records.
-            return await _context.Organisations.ToListAsync();
+            return Ok(await _organisationService.GetOrganisationsAsync());
         }
-        //--------------------------------------------------------------------------------------------------------------//
 
-        //This gets one organisation using its ID.[HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Organisation>> GetOrganisation(int id)
         {
-            //This searches for the organisation using the supplied ID.
-            var organisation = await _context.Organisations.FindAsync(id);
-            //This checks whether the organisation does not exist
-            if (organisation == null)
-            {
-                //This returns a 404 response when the organisation is not found.
-                return NotFound();
-            }
-            //This returns the organisation to the frontend.
-            return organisation;
+            var organisation = await _organisationService.GetOrganisationAsync(id);
+            if (organisation == null) return NotFound();
+            return Ok(organisation);
         }
-        //--------------------------------------------------------------------------------------------------------------//
-        //This creates a new organisation.
+
         [HttpPost]
-        public async Task<ActionResult<Organisation>> CreateOrganisation(
-            Organisation organisation)
+        public async Task<ActionResult<Organisation>> CreateOrganisation(Organisation organisation)
         {
-            //This checks whether another organisation already uses the same name.
-            var nameExists = await _context.Organisations.AnyAsync(o => o.OrganisationName == organisation.OrganisationName);
+            var outcome = await _organisationService.CreateOrganisationAsync(organisation);
 
-            //This stops duplicate organisation names from being created.
-            if (nameExists)
-            {
-                //This returns a conflict response when the name already exists.
-                return Conflict("An organisation with this name already exists.");
-            }
+            if (outcome == OrganisationOutcome.DuplicateName)
+                return this.ApiConflict("An organisation with this name already exists.");
 
-            //This resets the ID so the database generates a new identity value.
-            organisation.OrganisationID = 0;
-            //This records the date and time that the organisation is created.
-            organisation.CreatedAt = DateTime.Now;
-
-            //This adds the new organisation to the database context.
-            _context.Organisations.Add(organisation);
-
-            //This saves the new organisation to the database.
-            await _context.SaveChangesAsync();
-
-            //This returns the newly created organisation together with its generated ID.
             return CreatedAtAction(nameof(GetOrganisation), new { id = organisation.OrganisationID }, organisation);
         }
-        //--------------------------------------------------------------------------------------------------------------//
-        //This updates an existing organisation.
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOrganisation(int id, Organisation organisation)
         {
-            //This checks that the ID in the URL matches the ID in the submitted organisation.
-            if (id != organisation.OrganisationID)
+            var outcome = await _organisationService.UpdateOrganisationAsync(id, organisation);
+
+            return outcome switch
             {
-                //This returns a bad request when the IDs do not match.
-                return BadRequest();
-            }
-
-            //This searches for the existing organisation using its ID.
-            var existingOrganisation = await _context.Organisations.FindAsync(id);
-
-            //This checks whether the organisation does not exist.
-            if (existingOrganisation == null)
-            {
-                //This returns a 404 response when the organisation is not found.
-                return NotFound();
-            }
-
-            //This checks whether another organisation already uses the submitted name.
-            var nameExists = await _context.Organisations.AnyAsync(o => o.OrganisationName == organisation.OrganisationName &&
-                    o.OrganisationID != id);
-
-            //This stops two different organisations from using the same name.
-            if (nameExists)
-            {
-                //This returns a conflict response when the organisation name already exists.
-                return Conflict("An organisation with this name already exists.");
-            }
-
-            //This updates the organisation name.
-            existingOrganisation.OrganisationName = organisation.OrganisationName;
-
-            //This updates the registration number.
-            existingOrganisation.RegistrationNumber = organisation.RegistrationNumber;
-
-            //This updates the email address.
-            existingOrganisation.Email = organisation.Email;
-
-            //This updates the phone number.
-            existingOrganisation.Phone = organisation.Phone;
-
-            //This updates the billing address.
-            existingOrganisation.BillingAddress = organisation.BillingAddress;
-
-            //This saves all organisation changes to the database.
-            await _context.SaveChangesAsync();
-
-            //This returns a successful response without a response body.
-            return NoContent();
+                OrganisationOutcome.IdMismatch => this.ApiBadRequest("The ID in the URL does not match the organisation."),
+                OrganisationOutcome.NotFound => NotFound(),
+                OrganisationOutcome.DuplicateName => this.ApiConflict("An organisation with this name already exists."),
+                _ => NoContent()
+            };
         }
-        //--------------------------------------------------------------------------------------------------------------//
-        //This deletes an existing organisation.
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrganisation(int id)
         {
-            //This searches for the organisation using its ID.
-            var organisation = await _context.Organisations.FindAsync(id);
-
-            //This checks whether the organisation does not exist.
-            if (organisation == null)
-            {
-                //This returns a 404 response when the organisation is not found.
-                return NotFound();
-            }
-
-            //This marks the organisation for deletion.
-            _context.Organisations.Remove(organisation);
-
-            //This permanently saves the deletion to the database.
-            await _context.SaveChangesAsync();
-
-            //This returns a successful response without a response body.
-            return NoContent();
+            return await _organisationService.DeleteOrganisationAsync(id) ? NoContent() : NotFound();
         }
     }
 }
-/* References
-Microsoft (n.d.) Role-based authorization in ASP.NET Core. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles
- */
-//--------------------------------------------------<>\\<>End of Program<>//<>------------------------------------------------------------//

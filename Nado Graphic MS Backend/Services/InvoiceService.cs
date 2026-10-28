@@ -2,6 +2,7 @@
 using Nado_Graphics_MS_Backend.Data;
 using Nado_Graphics_MS_Backend.Models;
 using Nado_Graphics_MS_Backend.Models.InvoiceStates;
+using Nado_Graphics_MS_Backend.Repositories;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
@@ -9,14 +10,26 @@ namespace Nado_Graphics_MS_Backend.Services
     // It interacts with the database context and handles business logic related to invoice management.
     public class InvoiceService
     {
-        private readonly BMSDbContext _context;
+        private readonly IInvoiceRepository _invoices;
+        private readonly IQuoteRepository _quotes;
+        private readonly IRepository<Client> _clients;
+        private readonly IRepository<Product> _products;
         private readonly ReferenceNumberService _referenceNumberService;
         private readonly JobCardService _jobCardService;
 
 
-        public InvoiceService(BMSDbContext context, ReferenceNumberService referenceNumberService, JobCardService jobCardService)
+        public InvoiceService(
+            IInvoiceRepository invoices,
+            IQuoteRepository quotes,
+            IRepository<Client> clients,
+            IRepository<Product> products,
+            ReferenceNumberService referenceNumberService,
+            JobCardService jobCardService)
         {
-            _context = context;
+            _invoices = invoices;
+            _quotes = quotes;
+            _clients = clients;
+            _products = products;
             _referenceNumberService = referenceNumberService;
             _jobCardService = jobCardService;
         }
@@ -27,19 +40,14 @@ namespace Nado_Graphics_MS_Backend.Services
         // and orders them by the invoice date in descending order. This allows for easy access to the most recent invoices.
         public async Task<List<Invoice>> GetInvoicesAsync()
         {
-            return await _context.Invoices
-                .Include(i => i.InvoiceItems)
-                .OrderByDescending(i => i.InvoiceDate)
-                .ToListAsync();
+            return await _invoices.GetAllWithItemsAsync();
         }
         //----------------------------------------------------------------------------------//
         // The GetInvoiceAsync method retrieves a specific invoice by its ID from the database, including its associated invoice items.
         // If the invoice is not found, it returns null. This method is useful for viewing or editing a specific invoice.
         public async Task<Invoice?> GetInvoiceAsync(int id)
         {
-            return await _context.Invoices
-                .Include(i => i.InvoiceItems)
-                .FirstOrDefaultAsync(i => i.InvoiceID == id);
+            return await _invoices.GetWithItemsAsync(id);
         }
         //----------------------------------------------------------------------------------//
         //----------------------------------------------------
@@ -48,7 +56,7 @@ namespace Nado_Graphics_MS_Backend.Services
         // If the invoice is created successfully, it returns a success result; otherwise, it returns an error message.
         public async Task<(bool Success, string? Error, Invoice? Invoice)> CreateInvoiceManuallyAsync(CreateManualInvoiceRequest request)
         {
-            var client = await _context.Clients.FindAsync(request.ClientID);
+            var client = await _clients.GetByIdAsync(request.ClientID);
 
             if (client == null)
             {
@@ -66,7 +74,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
             foreach (var item in request.InvoiceItems)
             {
-                var product = await _context.Products.FindAsync(item.ProductID);
+                var product = await _products.GetByIdAsync(item.ProductID);
 
                 if (product == null || !product.IsActive)
                 {
@@ -107,11 +115,11 @@ namespace Nado_Graphics_MS_Backend.Services
                 AmountPaid = 0
             };
 
-            _context.Invoices.Add(invoice);
+            await _invoices.AddAsync(invoice);
 
             await _jobCardService.CreateFromInvoiceAsync(invoice, $"{client.FirstName} {client.LastName}", string.Join(", ", descriptionParts));
 
-            await _context.SaveChangesAsync();
+            await _invoices.SaveChangesAsync();
             await _jobCardService.NotifyJobCardsUpdatedAsync();
 
             return (true, null, invoice);
@@ -122,9 +130,7 @@ namespace Nado_Graphics_MS_Backend.Services
         // it returns the created invoice; otherwise, it returns an error message.
         public async Task<(bool Success, string? Error, Invoice? Invoice)> CreateInvoiceFromQuoteAsync(int quoteId)
         {
-            var quote = await _context.Quotes
-                .Include(q => q.QuoteItems)
-                .FirstOrDefaultAsync(q => q.QuoteID == quoteId);
+            var quote = await _quotes.GetWithItemsAsync(quoteId);
 
             if (quote == null)
             {
@@ -136,7 +142,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return (false, "Can only create an invoice from an accepted quote.", null);
             }
 
-            if (await _context.Invoices.AnyAsync(i => i.QuoteID == quoteId))
+            if (await _invoices.ExistsForQuoteAsync(quoteId))
             {
                 return (false, "An invoice already exists for this quote.", null);
             }
@@ -146,7 +152,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return (false, "The quote has no items.", null);
             }
 
-            var client = await _context.Clients.FindAsync(quote.ClientID);
+            var client = await _clients.GetByIdAsync(quote.ClientID);
 
             if (client == null)
             {
@@ -161,7 +167,7 @@ namespace Nado_Graphics_MS_Backend.Services
             // If any validation fails, return an error message.
             foreach (var item in quote.QuoteItems)
             {
-                var product = await _context.Products.FindAsync(item.ProductID);
+                var product = await _products.GetByIdAsync(item.ProductID);
 
                 if (product == null || !product.IsActive)
                 {
@@ -204,10 +210,10 @@ namespace Nado_Graphics_MS_Backend.Services
                 AmountPaid = 0
             };
 
-            _context.Invoices.Add(invoice);
+            await _invoices.AddAsync(invoice);
             await _jobCardService.CreateFromInvoiceAsync(invoice, $"{client.FirstName} {client.LastName}", string.Join(", ", descriptionParts));
 
-            await _context.SaveChangesAsync();
+            await _invoices.SaveChangesAsync();
             await _jobCardService.NotifyJobCardsUpdatedAsync();
 
 
@@ -225,9 +231,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return false;
             }
 
-            var existingInvoice = await _context.Invoices
-                .Include(i => i.InvoiceItems)
-                .FirstOrDefaultAsync(i => i.InvoiceID == id);
+            var existingInvoice = await _invoices.GetWithItemsAsync(id);
 
             if (existingInvoice == null)
             {
@@ -240,7 +244,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return false;
             }
 
-            var client = await _context.Clients.FindAsync(invoice.ClientID);
+            var client = await _clients.GetByIdAsync(invoice.ClientID);
 
             if (client == null)
             {
@@ -257,7 +261,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
             foreach (var item in invoice.InvoiceItems)
             {
-                var product = await _context.Products.FindAsync(item.ProductID);
+                var product = await _products.GetByIdAsync(item.ProductID);
 
                 if (product == null || !product.IsActive)
                 {
@@ -290,7 +294,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return false;
             }
 
-            _context.InvoiceItems.RemoveRange(existingInvoice.InvoiceItems);
+            _invoices.RemoveItems(existingInvoice.InvoiceItems);
 
             existingInvoice.ClientID = invoice.ClientID;
             existingInvoice.DueDate = invoice.DueDate;
@@ -298,7 +302,7 @@ namespace Nado_Graphics_MS_Backend.Services
             existingInvoice.InvoiceItems = newItems;
             existingInvoice.TotalAmount = total;
 
-            await _context.SaveChangesAsync();
+            await _invoices.SaveChangesAsync();
 
             return true;
         }
@@ -309,7 +313,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<bool> DeleteInvoiceAsync(int id)
         {
             // Validate that the invoice exists in the database. If it does not exist, return false.
-            var invoice = await _context.Invoices.FindAsync(id);
+            var invoice = await _invoices.GetByIdAsync(id);
 
             // Validate that the invoice is not already paid or cancelled. If it is, return false.
             if (invoice == null)
@@ -318,8 +322,8 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             // Remove the invoice from the database and save changes.
-            _context.Invoices.Remove(invoice);
-            await _context.SaveChangesAsync();
+            _invoices.Remove(invoice);
+            await _invoices.SaveChangesAsync();
 
             return true;
         }
@@ -327,7 +331,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<(bool Success, string? Error)> ExtensionInvoiceAsync(int id, string reason)
         {
             // Validate that the invoice exists in the database. If it does not exist, return an error message.
-            var invoice = await _context.Invoices.FindAsync(id);
+            var invoice = await _invoices.GetByIdAsync(id);
 
             if (invoice == null)
             {
@@ -346,7 +350,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
                 invoice.DueDate = invoice.DueDate.AddDays(30);
 
-                await _context.SaveChangesAsync();
+                await _invoices.SaveChangesAsync();
                 return (true, null);
             }
             catch (InvalidOperationException ex)
@@ -357,7 +361,7 @@ namespace Nado_Graphics_MS_Backend.Services
         //----------------------------------------------------------------------------------//
         public async Task<(bool Success, string? Error)> CancelInvoiceAsync(int id, string reason)
         {
-            var invoice = await _context.Invoices.FindAsync(id);
+            var invoice = await _invoices.GetByIdAsync(id);
 
             if (invoice == null)
             {
@@ -375,7 +379,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 state.Cancelled(invoice, reason);
 
 
-                await _context.SaveChangesAsync();
+                await _invoices.SaveChangesAsync();
                 return (true, null);
             }
             catch (InvalidOperationException ex)
@@ -389,7 +393,7 @@ namespace Nado_Graphics_MS_Backend.Services
         // If the payment is recorded successfully, it returns a success result; otherwise, it returns an error message.
         public async Task<(bool Success, string? Error)> RecordPaymentAsync(int id, RecordPaymentRequest request)
         {
-            var invoice = await _context.Invoices.FindAsync(id);
+            var invoice = await _invoices.GetByIdAsync(id);
 
             if (invoice == null)
             {
@@ -423,7 +427,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
                 invoice.AmountPaid = newAmountPaid;
 
-                _context.Payments.Add(new Payment
+                await _invoices.AddPaymentAsync(new Payment
                 {
                     InvoiceID = invoice.InvoiceID,
                     ClientID = invoice.ClientID,
@@ -435,7 +439,8 @@ namespace Nado_Graphics_MS_Backend.Services
                     Notes = request.Notes
                 });
 
-                await _context.SaveChangesAsync();
+                //The invoice update and the payment record are saved together.
+                await _invoices.SaveChangesAsync();
                 return (true, null);
             }
             catch (InvalidOperationException ex)

@@ -1,44 +1,48 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Nado_Graphics_MS_Backend.Data;
-using Nado_Graphics_MS_Backend.Models;
-using Microsoft.AspNetCore.SignalR;
 using Nado_Graphics_MS_Backend.Hubs;
+using Nado_Graphics_MS_Backend.Models;
+using Nado_Graphics_MS_Backend.Repositories;
 
 namespace Nado_Graphics_MS_Backend.Services
 {
     //This class is the service that handles job card business logic. 
     public class JobCardService
     {
-        //The below line stores the database context used to access the database. 
-        private readonly BMSDbContext _context;
+        private readonly IJobCardRepository _jobCards;
+        private readonly ISupplierRepository _suppliers;
+        private readonly IQuoteRepository _quotes;
+        private readonly IRepository<Client> _clients;
         private readonly IHubContext<JobCardHub> _hubContext;
 
         //The constructor receives the database context using dependency injection. 
-        public JobCardService(BMSDbContext context, IHubContext<JobCardHub> hubContext)
+        public JobCardService(
+           IJobCardRepository jobCards,
+           ISupplierRepository suppliers,
+           IQuoteRepository quotes,
+           IRepository<Client> clients,
+           IHubContext<JobCardHub> hubContext)
         {
-            _context = context;
+            _jobCards = jobCards;
+            _suppliers = suppliers;
+            _quotes = quotes;
+            _clients = clients;
             _hubContext = hubContext;
         }
+
         //----------------------------------------------------------------------------------// 
 
         //This gets all job cards from the database, newest first. 
         public async Task<List<JobCard>> GetJobCardsAsync()
         {
-            return await _context.JobCards
-                .Include(j => j.Supplier)
-                .Where(j => j.JobStatus != "Archived")
-                .OrderByDescending(j => j.JobDate)
-                .ToListAsync();
+            return await _jobCards.GetActiveAsync();
         }
         //-------------------------------------------------------------------------------------------// 
 
         public async Task<List<JobCard>> GetArchivedJobCardsAsync()
         {
-            return await _context.JobCards
-                .Include(j => j.Supplier)
-                .Where(j => j.JobStatus == "Archived")
-                .OrderByDescending(j => j.JobDate)
-                .ToListAsync();
+            return await _jobCards.GetArchivedAsync();
         }
         //----------------------------------------------------------------------------------// 
 
@@ -46,14 +50,14 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<JobCard?> GetJobCardAsync(int id)
         {
             //This searches the database for the selected job card. 
-            return await _context.JobCards.Include(j => j.Supplier).FirstOrDefaultAsync(j => j.JobCardID == id);
+            return await _jobCards.GetWithSupplierAsync(id);
         }
         //----------------------------------------------------------------------------------// 
 
         //This gets all suppliers so a supplier can be assigned to a Job Card. 
         public async Task<List<Supplier>> GetSuppliersAsync()
         {
-            return await _context.Suppliers.OrderBy(s => s.SupplierName).ToListAsync();
+            return await _suppliers.GetAllOrderedByNameAsync();
         }
         //----------------------------------------------------------------------------------// 
 
@@ -61,9 +65,8 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<bool> AssignSupplierAsync(int id, int supplierId)
         {
             //This searches for the selected Job Card. 
-            var jobCard = await _context.JobCards
-                .FirstOrDefaultAsync(j => j.JobCardID == id);
-
+            var jobCard = await _jobCards.GetByIdAsync(id);
+                
             //This checks whether the Job Card exists. 
             if (jobCard == null)
             {
@@ -71,7 +74,7 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             //This searches for the selected Supplier. 
-            var supplier = await _context.Suppliers.FirstOrDefaultAsync(s => s.SupplierID == supplierId);
+            var supplier = await _suppliers.GetByIdAsync(supplierId);
 
             //This checks whether the Supplier exists. 
             if (supplier == null)
@@ -83,9 +86,8 @@ namespace Nado_Graphics_MS_Backend.Services
             jobCard.SupplierID = supplierId;
 
             //This saves the assignment. 
-            await _context.SaveChangesAsync();
-
-            await _hubContext.Clients.All.SendAsync("JobCardsUpdated");
+            await _jobCards.SaveChangesAsync();
+            await NotifyJobCardsUpdatedAsync();
 
             return true;
         }
@@ -95,7 +97,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<(bool Success, string? Error)> CreateFromAcceptedQuoteAsync(int quoteId)
         {
             //This gets the accepted quote together with its items. 
-            var quote = await _context.Quotes.Include(q => q.QuoteItems).FirstOrDefaultAsync(q => q.QuoteID == quoteId);
+            var quote = await _quotes.GetWithItemsAsync(quoteId);
 
             //This checks whether the quote exists. 
             if (quote == null)
@@ -104,7 +106,7 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             //This checks that the quote has actually been accepted. 
-            if (quote.QuoteStatus != "Accepted")
+            if (quote.QuoteStatus != States.QuoteStatus.Accepted.ToString())
             {
                 return (false, "Only an accepted quote can create a job card.");
             }
@@ -113,16 +115,10 @@ namespace Nado_Graphics_MS_Backend.Services
             var jobReference = $"{quote.ReferenceNumber}-JOB";
 
             //This checks whether this accepted quote already created a job card. 
-            var existingJobCard = await _context.JobCards.FirstOrDefaultAsync(j => j.ReferenceNumber == jobReference);
-
-            //This prevents duplicate job cards from being created. 
-            if (existingJobCard != null)
-            {
-                return (true, null);
-            }
+            if (await _jobCards.ReferenceExistsAsync(jobReference)) return (true, null);
 
             //This gets the client linked to the quote. 
-            var client = await _context.Clients.FindAsync(quote.ClientID);
+            var client = await _clients.GetByIdAsync(quote.ClientID);
 
             //This checks whether the client still exists. 
             if (client == null)
@@ -138,8 +134,7 @@ namespace Nado_Graphics_MS_Backend.Services
 
             var jobDescription = productNames.Count > 0 ? string.Join(", ", productNames) : quote.Notes;
 
-            //This creates the new job card. 
-            var jobCard = new JobCard
+            await _jobCards.AddAsync(new JobCard
             {
                 ReferenceNumber = jobReference,
                 ClientID = quote.ClientID,
@@ -148,10 +143,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 JobStatus = "Not Started",
                 PaymentStatus = "Pending Payment",
                 JobDate = DateTime.Now
-            };
-
-            //This adds the new job card to the database context. 
-            _context.JobCards.Add(jobCard);
+            });
 
             //This does not save yet. 
             //The QuoteService saves both the accepted quote and job card together. 
@@ -168,7 +160,7 @@ namespace Nado_Graphics_MS_Backend.Services
             //matches the job card the accepted quote already created.
             var jobReference = $"{invoice.ReferenceNumber}-JOB";
 
-            if (await _context.JobCards.AnyAsync(j => j.ReferenceNumber == jobReference))
+            if (await _jobCards.ReferenceExistsAsync(jobReference))
             {
                 return;
             }
@@ -179,7 +171,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 description = description.Substring(0, 497) + "...";
             }
 
-            _context.JobCards.Add(new JobCard
+            await _jobCards.AddAsync(new JobCard
             {
                 ReferenceNumber = jobReference,
                 ClientID = invoice.ClientID,
@@ -208,7 +200,7 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             //This searches for the existing job card. 
-            var existingJobCard = await _context.JobCards.FirstOrDefaultAsync(j => j.JobCardID == id);
+            var existingJobCard = await _jobCards.GetByIdAsync(id);
 
             //This checks whether the job card exists. 
             if (existingJobCard == null)
@@ -230,9 +222,9 @@ namespace Nado_Graphics_MS_Backend.Services
             //This stops the normal Job Card edit from accidentally changing the assigned Supplier. 
         
             //This saves the updated job card. 
-            await _context.SaveChangesAsync();
+            await _jobCards.SaveChangesAsync();
 
-            await _hubContext.Clients.All.SendAsync("JobCardsUpdated");
+            await NotifyJobCardsUpdatedAsync();
 
             //This returns a successful result. 
             return true;
@@ -254,7 +246,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return false;
             }
 
-            var jobCard = await _context.JobCards.FirstOrDefaultAsync(j => j.JobCardID == id);
+            var jobCard = await _jobCards.GetByIdAsync(id);
 
             if (jobCard == null)
             {
@@ -272,7 +264,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 jobCard.CompletedAt = null;
             }
 
-            await _context.SaveChangesAsync();
+            await _jobCards.SaveChangesAsync();
 
             await _hubContext.Clients.All.SendAsync("JobCardsUpdated");
 
@@ -284,8 +276,7 @@ namespace Nado_Graphics_MS_Backend.Services
         public async Task<bool> DeleteJobCardAsync(int id)
         {
             //This searches for the job card. 
-            var jobCard = await _context.JobCards
-                .FirstOrDefaultAsync(j => j.JobCardID == id);
+            var jobCard = await _jobCards.GetByIdAsync(id);
 
             //This checks whether the job card exists. 
             if (jobCard == null)
@@ -294,12 +285,12 @@ namespace Nado_Graphics_MS_Backend.Services
             }
 
             //This marks the job card for deletion. 
-            _context.JobCards.Remove(jobCard);
+            _jobCards.Remove(jobCard);
 
             //This saves the deletion. 
-            await _context.SaveChangesAsync();
+            await _jobCards.SaveChangesAsync();
 
-            await _hubContext.Clients.All.SendAsync("JobCardsUpdated");
+            await NotifyJobCardsUpdatedAsync();
 
             return true;
         }
@@ -314,8 +305,7 @@ namespace Nado_Graphics_MS_Backend.Services
                 return false;
             }
 
-            var jobCard = await _context.JobCards
-                .FirstOrDefaultAsync(j => j.JobCardID == id);
+            var jobCard = await _jobCards.GetByIdAsync(id);
 
             if (jobCard == null)
             {
@@ -324,9 +314,9 @@ namespace Nado_Graphics_MS_Backend.Services
 
             jobCard.PaymentStatus = paymentStatus;
 
-            await _context.SaveChangesAsync();
+            await _jobCards.SaveChangesAsync();
 
-            await _hubContext.Clients.All.SendAsync("JobCardsUpdated");
+            await NotifyJobCardsUpdatedAsync();
 
             return true;
         }
