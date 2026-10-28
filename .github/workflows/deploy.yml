@@ -24,7 +24,7 @@ env:
 
 jobs:
   # ---------------------------------------------------------------------------
-  # 1. Build and test (the same steps as ci-build-test.yml)
+  # 1. Build + test (same steps as ci-build-test.yml)
   # ---------------------------------------------------------------------------
   build-and-test:
     runs-on: ubuntu-latest
@@ -79,7 +79,7 @@ jobs:
           fail-on-empty: false
 
   # ---------------------------------------------------------------------------
-  # 2. Publish and deploy to MonsterASP via Web Deploy (API and Frontend)
+  # 2. Publish + deploy to MonsterASP via Web Deploy (API and Frontend)
   # ---------------------------------------------------------------------------
   deploy:
     name: Deploy ${{ matrix.name }}
@@ -141,14 +141,21 @@ jobs:
         shell: pwsh
         run: |
           $site = "${{ matrix.site }}"
-          $deployArgs = @(
+          $pw   = $env:WEBDEPLOY_PASSWORD
+          if ([string]::IsNullOrEmpty($pw)) { throw "Web Deploy password secret is empty - check the repository secrets." }
+
+          # Build ONE raw command-line string so the quotes around the password
+          # reach msdeploy untouched (PowerShell mangles quotes in argument arrays).
+          $cmdline = @(
             "-verb:sync",
-            "-source:contentPath=$env:PUBLISH_DIR",
-            "-dest:contentPath=$site,computerName=https://$site.siteasp.net:8172/msdeploy.axd?site=$site,userName=$site,password=`"$env:WEBDEPLOY_PASSWORD`",authType=Basic",
+            "-source:contentPath=`"$env:PUBLISH_DIR`"",
+            "-dest:contentPath=$site,computerName=https://$site.siteasp.net:8172/msdeploy.axd?site=$site,userName=$site,password=`"$pw`",authType=Basic",
             "-allowUntrusted",
             "-enableRule:AppOffline",       # takes the app offline briefly so files aren't locked
             "-enableRule:DoNotDeleteRule",  # keeps server-only files (appsettings.json, Uploads/)
             "-verbose"
-          )
-          & "${{ steps.msdeploy.outputs.path }}" @deployArgs
-          if ($LASTEXITCODE -ne 0) { throw "Web Deploy failed with exit code $LASTEXITCODE" }
+          ) -join " "
+
+          $proc = Start-Process -FilePath "${{ steps.msdeploy.outputs.path }}" `
+                                -ArgumentList $cmdline -NoNewWindow -Wait -PassThru
+          if ($proc.ExitCode -ne 0) { throw "Web Deploy failed with exit code $($proc.ExitCode)" }
