@@ -128,7 +128,10 @@
 
             @foreach (var product in productsList)
             {
-                <option value="@product.ProductID" data-price="@product.Price">@product.ProductName (R@product.Price)</option>
+                <option value="@product.ProductID"
+                        data-price="@product.Price">
+                    @product.ProductName (R @product.Price.ToString("N2"))
+                </option>
             }
 
         </select>
@@ -218,7 +221,22 @@
 
             calculateLineTotal(row);
 
-            row.querySelector(".item-product").addEventListener("change", function () { calculateLineTotal(row); });
+            row.querySelector(".item-product").addEventListener("change", function () {
+
+             const selectedOption = this.options[this.selectedIndex];
+              const unitPriceInput = row.querySelector(".item-unitprice");
+
+            if (selectedOption.value !== "") 
+             {
+                  unitPriceInput.value = selectedOption.dataset.price;
+             }
+             else {
+                  unitPriceInput.value = "";
+             }
+
+             calculateLineTotal(row);
+
+            });
             row.querySelector(".item-quantity").addEventListener("input", function () { calculateLineTotal(row); });
             row.querySelector(".item-unitprice").addEventListener("input", function () { calculateLineTotal(row); });
             row.querySelector(".remove-item-btn").addEventListener("click", function () {

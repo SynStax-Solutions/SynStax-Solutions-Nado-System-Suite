@@ -92,8 +92,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(
-            SupplierModel model)
+        public async Task<IActionResult> Edit(SupplierModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -109,7 +108,7 @@ namespace Nado_Graphics_MS_Frontend.Controllers
                 return View(model);
             }
 
-            return RedirectToAction(nameof(Details));
+            return RedirectToAction(nameof(Details), new { id = model.SupplierID });
         }
         //----------------------------------------------------------------------------------//
         [HttpPost]

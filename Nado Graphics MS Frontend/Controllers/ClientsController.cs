@@ -158,8 +158,8 @@ namespace Nado_Graphics_MS_Frontend.Controllers
                 return View(model);
             }
 
-            //This returns the updated Client as the response.
-            return Ok(model);
+            //This redirects to the updated Client's Details page.
+            return RedirectToAction(nameof(Details), new { id = model.ClientID });
         }
         //----------------------------------------------------------------------------------//
 
